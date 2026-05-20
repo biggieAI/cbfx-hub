@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBFX — Workstation Request Wizard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+  --blue-dark:#1e3a5a;--blue-mid:#90aac8;--blue-bg:#ccd8e8;
+  --active:#1a1c22;
+}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
+
+.topbar{background:var(--nav);padding:14px 44px;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--white)}
+.topbar-sub{font-size:11px;color:rgba(244,247,250,.4);letter-spacing:.1em;text-transform:uppercase}
+
+.wizard-wrap{max-width:720px;margin:0 auto;padding:48px 24px 80px}
+
+.step-bar{display:flex;align-items:center;margin-bottom:44px;gap:0}
+.step-item{display:flex;align-items:center;flex:1}
+.step-item:last-child{flex:0 0 auto}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border-dark);background:var(--surface2);color:var(--muted);flex-shrink:0;transition:all .2s}
+.step-dot.active{background:var(--nav);border-color:var(--nav);color:var(--white)}
+.step-dot.done{background:var(--border-dark);border-color:var(--border-dark);color:var(--white)}
+.step-dot.done::after{content:'✓';font-size:13px}
+.step-dot.done .step-num{display:none}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 8px;transition:background .2s}
+.step-line.done{background:var(--border-dark)}
+.step-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap}
+.step-label.active{color:var(--text)}
+.step-col{display:flex;flex-direction:column;align-items:center}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:none}
+.panel.active{display:block}
+
+.panel-header{background:var(--nav);padding:20px 28px}
+.panel-eyebrow{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,247,250,.45);margin-bottom:4px}
+.panel-title{font-size:22px;font-weight:700;color:var(--white);letter-spacing:-.01em}
+
+.panel-body{padding:28px}
+
+.field-group{margin-bottom:24px}
+.field-group:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;display:block}
+.field-label span{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px}
+input[type=text],input[type=email],select,textarea{
+  width:100%;padding:11px 14px;font-family:'Figtree',sans-serif;font-size:15px;font-weight:400;
+  color:var(--text);background:var(--white);border:1px solid var(--border-dark);border-radius:5px;
+  outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none
+}
+input[type=text]:focus,input[type=email]:focus,select:focus,textarea:focus{border-color:var(--nav)}
+input::placeholder,textarea::placeholder{color:var(--muted);font-weight:400}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7585' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+textarea{resize:vertical;min-height:80px}
+.field-hint{font-size:11px;color:var(--muted);margin-top:5px}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-opt{flex:1;min-width:140px}
+.radio-opt input{display:none}
+.radio-opt label{
+  display:block;padding:11px 16px;border:1px solid var(--border-dark);border-radius:5px;
+  font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;
+  background:var(--white);transition:all .15s;text-align:center
+}
+.radio-opt input:checked + label{background:var(--nav);border-color:var(--nav);color:var(--white)}
+.radio-opt label:hover{border-color:var(--nav)}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--white);border:1px solid var(--border);border-radius:5px;margin-bottom:8px}
+.toggle-row:last-child{margin-bottom:0}
+.toggle-label{font-size:14px;font-weight:500;color:var(--text2)}
+.toggle-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--border-dark);border-radius:11px;cursor:pointer;transition:background .2s}
+.toggle input:checked ~ .toggle-track{background:var(--nav)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:white;transition:transform .2s;pointer-events:none}
+.toggle input:checked ~ .toggle-track .toggle-thumb{transform:translateX(18px)}
+
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+
+.artist-card{background:var(--white);border:1px solid var(--border);border-radius:6px;margin-bottom:12px;overflow:hidden}
+.artist-card-header{background:var(--surface2);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.artist-card-title{font-size:13px;font-weight:600;color:var(--text)}
+.artist-card-body{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;font-family:'Figtree',sans-serif}
+.remove-btn:hover{color:var(--text)}
+
+.artist-card-body.is-reserve input[type=text],
+.artist-card-body.is-reserve input[type=email]{
+  background:var(--surface2);color:var(--muted);pointer-events:none;
+  border-color:var(--border);opacity:.55
+}
+.artist-card-body.is-reserve .radio-opt label{
+  pointer-events:none;opacity:.45
+}
+.artist-card-body.is-reserve .pw-row{
+  opacity:.4;pointer-events:none
+}
+.reserve-notice{
+  grid-column:1/-1;display:none;align-items:center;gap:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:5px;padding:9px 12px;font-size:12px;color:var(--muted)
+}
+.reserve-notice .rn-icon{
+  width:16px;height:16px;border-radius:50%;background:var(--border-dark);
+  color:var(--white);font-size:10px;font-weight:700;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0
+}
+.artist-card-body.is-reserve .reserve-notice{display:flex}
+.add-artist-btn{
+  width:100%;padding:12px;border:1.5px dashed var(--border-dark);border-radius:5px;
+  background:transparent;color:var(--muted);font-family:'Figtree',sans-serif;font-size:14px;
+  font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px
+}
+.add-artist-btn:hover{border-color:var(--nav);color:var(--text);background:var(--surface2)}
+
+.panel-footer{padding:20px 28px;border-top:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:space-between}
+.btn-back{padding:10px 22px;border:1px solid var(--border-dark);border-radius:5px;background:transparent;font-family:'Figtree',sans-serif;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
+.btn-back:hover{background:var(--surface);border-color:var(--nav)}
+.btn-next{padding:10px 28px;border:none;border-radius:5px;background:var(--nav);font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;color:var(--white);cursor:pointer;transition:background .15s;letter-spacing:.01em}
+.btn-next:hover{background:#2d3040}
+.btn-generate{padding:11px 32px;border:none;border-radius:5px;background:var(--nav);font-family:'Figtree',sans-serif;font-size:15px;font-weight:700;color:var(--white);cursor:pointer;transition:background .15s;letter-spacing:.02em}
+.btn-generate:hover{background:#2d3040}
+
+.review-section{margin-bottom:20px}
+.review-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.review-section-title::after{content:'';height:1px;background:var(--border);flex:1}
+.review-grid{display:grid;grid-template-columns:160px 1fr;row-gap:8px;align-items:baseline}
+.rv-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.rv-value{font-size:14px;color:var(--text)}
+.rv-value.mono{font-size:13px;font-weight:600;color:var(--blue-dark)}
+.rv-value.tbd{color:var(--muted);font-style:italic}
+
+.review-artist{background:var(--white);border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden}
+.review-artist-head{background:var(--nav);padding:9px 16px;display:flex;align-items:center;justify-content:space-between}
+.review-artist-name{font-size:13px;font-weight:600;color:var(--white)}
+.review-artist-body{padding:14px 16px}
+.badge-sm{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px}
+.b-new{background:var(--nav);color:var(--white);border:1px solid #3d4452}
+.b-hold{background:var(--surface2);color:var(--text2);border:1px solid var(--border-dark)}
+.b-inst{background:var(--border-dark);color:var(--white);border:1px solid var(--border-dark)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">CBFX Studios</span>
+  <span class="topbar-sub">Workstation Request Wizard</span>
+</div>
+
+<div class="wizard-wrap">
+
+  <div class="step-bar">
+    <div class="step-col">
+      <div class="step-dot active" id="dot-1"><span class="step-num">1</span></div>
+      <div class="step-label active" id="lbl-1">Artists</div>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step-col">
+      <div class="step-dot" id="dot-2"><span class="step-num">2</span></div>
+      <div class="step-label" id="lbl-2">Services</div>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step-col">
+      <div class="step-dot" id="dot-3"><span class="step-num">3</span></div>
+      <div class="step-label" id="lbl-3">Review</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Artists -->
+  <div class="panel active" id="step-1">
+    <div class="panel-header">
+      <div class="panel-eyebrow">Step 1 of 3</div>
+      <div class="panel-title">Artist Information</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="field-group">
+        <label class="field-label">Requested By</label>
+        <input type="text" id="req-by" placeholder="e.g. ruben.rodas" value="ruben.rodas">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Batch Label <span>— optional</span></label>
+        <input type="text" id="batch-label" placeholder="e.g. #002 — Dexter S2 prep">
+      </div>
+
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label">Artists to onboard</label>
+        <div id="artist-list"></div>
+        <button class="add-artist-btn" onclick="addArtist()">+ Add Artist</button>
+      </div>
+
+    </div>
+    <div class="panel-footer">
+      <span></span>
+      <button class="btn-next" onclick="goTo(2)">Next: Services →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Services -->
+  <div class="panel" id="step-2">
+    <div class="panel-header">
+      <div class="panel-eyebrow">Step 2 of 3</div>
+      <div class="panel-title">Services &amp; Configuration</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="field-group">
+        <label class="field-label">Instance Type</label>
+        <div class="radio-group">
+          <div class="radio-opt"><input type="radio" name="instance" id="inst-g6" value="g6.4xlarge" checked><label for="inst-g6">g6.4xlarge<br><span style="font-size:11px;opacity:.6;font-weight:400">Artist Workstation</span></label></div>
+          <div class="radio-opt"><input type="radio" name="instance" id="inst-g6-2" value="g6.12xlarge"><label for="inst-g6-2">g6.12xlarge<br><span style="font-size:11px;opacity:.6;font-weight:400">Senior / Lead</span></label></div>
+          <div class="radio-opt"><input type="radio" name="instance" id="inst-other" value="other"><label for="inst-other">Other<br><span style="font-size:11px;opacity:.6;font-weight:400">Specify below</span></label></div>
+        </div>
+        <div id="inst-other-wrap" style="display:none;margin-top:10px">
+          <input type="text" id="inst-custom" placeholder="e.g. g6.48xlarge">
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label">Services to provision</label>
+        <div class="toggle-row">
+          <div><div class="toggle-label">AWS EC2 Instance</div><div class="toggle-sub">Provision the virtual machine</div></div>
+          <label class="toggle"><input type="checkbox" id="svc-ec2" checked disabled><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Leostream VDI Login</div><div class="toggle-sub">Session pool access at vdi.cbfx.com</div></div>
+          <label class="toggle"><input type="checkbox" id="svc-leo" checked><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">AWS Deadline Cloud</div><div class="toggle-sub">IAM user + monitor repo connection</div></div>
+          <label class="toggle"><input type="checkbox" id="svc-deadline" checked><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">ShotGrid / Flow Desktop</div><div class="toggle-sub">Studio pipeline access</div></div>
+          <label class="toggle"><input type="checkbox" id="svc-sg"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">WireGuard VPN Tunnel</div><div class="toggle-sub">Secure tunnel certificate for remote access</div></div>
+          <label class="toggle"><input type="checkbox" id="svc-wg" checked onchange="document.getElementById('wg-config-wrap').style.display=this.checked?'block':'none'"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+      </div>
+
+      <div class="field-group" id="wg-config-wrap" style="margin-top:16px">
+        <label class="field-label">WireGuard Certificate</label>
+        <div class="radio-group">
+          <div class="radio-opt"><input type="radio" name="wg-type" id="wg-new" value="new" checked onchange="document.getElementById('wg-existing-note').style.display='none'"><label for="wg-new">Generate New<br><span style="font-size:11px;opacity:.6;font-weight:400">First-time artist</span></label></div>
+          <div class="radio-opt"><input type="radio" name="wg-type" id="wg-existing" value="existing" onchange="document.getElementById('wg-existing-note').style.display='block'"><label for="wg-existing">Has Existing<br><span style="font-size:11px;opacity:.6;font-weight:400">Returning artist</span></label></div>
+        </div>
+        <div id="wg-existing-note" style="display:none;margin-top:10px">
+          <input type="text" id="wg-peer-note" placeholder="Peer public key or previous machine name (optional)">
+          <div class="field-hint" style="font-size:11px;color:var(--muted);margin-top:5px">If known, provide the existing peer public key or previous hostname to reuse the tunnel config.</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field-group">
+        <label class="field-label">Credential contact for reserve slots</label>
+        <div class="radio-group">
+          <div class="radio-opt"><input type="radio" name="cred-contact" id="cc-ethan" value="Ethan" checked><label for="cc-ethan">Ethan</label></div>
+          <div class="radio-opt"><input type="radio" name="cred-contact" id="cc-riss" value="Riss"><label for="cc-riss">Riss</label></div>
+          <div class="radio-opt"><input type="radio" name="cred-contact" id="cc-other" value="other"><label for="cc-other">Other</label></div>
+        </div>
+        <div id="cc-other-wrap" style="display:none;margin-top:10px">
+          <input type="text" id="cc-custom" placeholder="Name or username">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Notes <span>— optional</span></label>
+        <textarea id="batch-notes" placeholder="Any special requirements, show context, start dates..."></textarea>
+      </div>
+
+    </div>
+    <div class="panel-footer">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" onclick="goTo(3)">Next: Review →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Review -->
+  <div class="panel" id="step-3">
+    <div class="panel-header">
+      <div class="panel-eyebrow">Step 3 of 3</div>
+      <div class="panel-title">Review &amp; Generate</div>
+    </div>
+    <div class="panel-body" id="review-body">
+    </div>
+    <div class="panel-footer">
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-generate" onclick="generateDoc()">⬇ Generate Request Doc</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let artistCount = 0;
+let artists = [];
+
+function setReserveState(id, isReserve) {
+  const body = document.querySelector('#artist-card-' + id + ' .artist-card-body');
+  const header = document.querySelector('#artist-card-' + id + ' .artist-card-header');
+  if (!body) return;
+  body.classList.toggle('is-reserve', isReserve);
+  header.style.background = isReserve ? 'var(--surface2)' : 'var(--surface2)';
+  const inputs = body.querySelectorAll('input[type=text], input[type=email]');
+  inputs.forEach(el => { el.disabled = isReserve; });
+}
+
+function addArtist(data) {
+  artistCount++;
+  const id = artistCount;
+  const d = data || {};
+  const isReserve = d.type === 'reserve';
+  const card = document.createElement('div');
+  card.className = 'artist-card';
+  card.id = 'artist-card-' + id;
+  card.innerHTML = `
+    <div class="artist-card-header">
+      <span class="artist-card-title">Artist #${id}</span>
+      <button class="remove-btn" onclick="removeArtist(${id})" title="Remove">×</button>
+    </div>
+    <div class="artist-card-body${isReserve?' is-reserve':''}">
+      <div class="field-group" style="margin:0">
+        <label class="field-label">First Name</label>
+        <input type="text" id="fn-${id}" placeholder="Arslan" value="${d.first||''}" ${isReserve?'disabled':''}>
+      </div>
+      <div class="field-group" style="margin:0">
+        <label class="field-label">Last Name</label>
+        <input type="text" id="ln-${id}" placeholder="Naqvi" value="${d.last||''}" ${isReserve?'disabled':''}>
+      </div>
+      <div class="field-group" style="margin:0;grid-column:1/-1">
+        <label class="field-label">Email</label>
+        <input type="email" id="em-${id}" placeholder="arslan.n@gmail.com" value="${d.email||''}" ${isReserve?'disabled':''}>
+      </div>
+      <div class="field-group" style="margin:0;grid-column:1/-1">
+        <label class="field-label">Artist Type</label>
+        <div class="radio-group" style="gap:8px">
+          <div class="radio-opt" style="min-width:100px"><input type="radio" name="type-${id}" id="type-named-${id}" value="named" ${(!d.type||d.type==='named')?'checked':''}><label for="type-named-${id}" style="padding:8px 12px;font-size:13px">Named Artist</label></div>
+          <div class="radio-opt" style="min-width:100px"><input type="radio" name="type-${id}" id="type-reserve-${id}" value="reserve" ${isReserve?'checked':''}><label for="type-reserve-${id}" style="padding:8px 12px;font-size:13px">Reserve Slot</label></div>
+        </div>
+      </div>
+      <div class="reserve-notice">
+        <div class="rn-icon">i</div>
+        Name, email &amp; password are assigned later when the artist is scheduled. Only the machine will be built now.
+      </div>
+      <div class="field-group pw-row" style="margin:0;grid-column:1/-1">
+        <label class="field-label">Password</label>
+        <div class="radio-group" style="gap:8px">
+          <div class="radio-opt"><input type="radio" name="pw-${id}" id="pw-gen-${id}" value="generate" ${(!d.pw||d.pw==='generate')?'checked':''}><label for="pw-gen-${id}" style="padding:8px 12px;font-size:13px">Generate New</label></div>
+          <div class="radio-opt"><input type="radio" name="pw-${id}" id="pw-exist-${id}" value="existing" ${d.pw==='existing'?'checked':''}><label for="pw-exist-${id}" style="padding:8px 12px;font-size:13px">Has Existing</label></div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('artist-list').appendChild(card);
+  artists.push(id);
+
+  document.querySelectorAll(`input[name="type-${id}"]`).forEach(r => {
+    r.addEventListener('change', () => {
+      const isRes = document.querySelector(`input[name="type-${id}"]:checked`)?.value === 'reserve';
+      const body = document.querySelector('#artist-card-' + id + ' .artist-card-body');
+      body.classList.toggle('is-reserve', isRes);
+      ['fn','ln','em'].forEach(f => {
+        const el = document.getElementById(f + '-' + id);
+        if (el) { el.disabled = isRes; if (isRes) el.value = ''; }
+      });
+    });
+  });
+}
+
+function removeArtist(id) {
+  const card = document.getElementById('artist-card-' + id);
+  if (card) card.remove();
+  artists = artists.filter(a => a !== id);
+}
+
+function getInstanceType() {
+  const sel = document.querySelector('input[name="instance"]:checked');
+  if (!sel) return 'g6.4xlarge';
+  if (sel.value === 'other') return document.getElementById('inst-custom').value || 'TBD';
+  return sel.value;
+}
+
+function getCredContact() {
+  const sel = document.querySelector('input[name="cred-contact"]:checked');
+  if (!sel) return 'Ethan';
+  if (sel.value === 'other') return document.getElementById('cc-custom').value || 'TBD';
+  return sel.value;
+}
+
+function collectArtists() {
+  return artists.map(id => {
+    const card = document.getElementById('artist-card-' + id);
+    if (!card) return null;
+    const fn = document.getElementById('fn-' + id)?.value.trim() || '';
+    const ln = document.getElementById('ln-' + id)?.value.trim() || '';
+    const em = document.getElementById('em-' + id)?.value.trim() || '';
+    const type = card.querySelector(`input[name="type-${id}"]:checked`)?.value || 'named';
+    const pw = card.querySelector(`input[name="pw-${id}"]:checked`)?.value || 'generate';
+    return { id, fn, ln, em, type, pw };
+  }).filter(Boolean);
+}
+
+function goTo(step) {
+  [1,2,3].forEach(s => {
+    document.getElementById('step-' + s).classList.toggle('active', s === step);
+    const dot = document.getElementById('dot-' + s);
+    const lbl = document.getElementById('lbl-' + s);
+    dot.classList.remove('active','done');
+    lbl.classList.remove('active');
+    if (s < step) { dot.classList.add('done'); dot.innerHTML = ''; }
+    else if (s === step) { dot.classList.add('active'); dot.innerHTML = `<span class="step-num">${s}</span>`; lbl.classList.add('active'); }
+    else { dot.innerHTML = `<span class="step-num">${s}</span>`; }
+  });
+  [1,2].forEach(l => {
+    document.getElementById('line-' + l)?.classList.toggle('done', l < step);
+  });
+  if (step === 3) buildReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildReview() {
+  const data = collectArtists();
+  const inst = getInstanceType();
+  const contact = getCredContact();
+  const reqBy = document.getElementById('req-by').value || 'ruben.rodas';
+  const batchLabel = document.getElementById('batch-label').value || '';
+  const notes = document.getElementById('batch-notes').value || '';
+  const svcLeo = document.getElementById('svc-leo').checked;
+  const svcDL = document.getElementById('svc-deadline').checked;
+  const svcSG = document.getElementById('svc-sg').checked;
+  const svcWG = document.getElementById('svc-wg').checked;
+  const wgType = document.querySelector('input[name="wg-type"]:checked')?.value || 'new';
+  const wgPeer = document.getElementById('wg-peer-note')?.value.trim() || '';
+
+  let html = `<div class="review-section">
+    <div class="review-section-title">Batch Details</div>
+    <div class="review-grid">
+      <span class="rv-label">Requested by</span><span class="rv-value mono">${reqBy}</span>
+      <span class="rv-label">Batch</span><span class="rv-value">${batchLabel || '—'}</span>
+      <span class="rv-label">Date</span><span class="rv-value">${new Date().toISOString().slice(0,10)}</span>
+      <span class="rv-label">Machines</span><span class="rv-value">${data.length} × ${inst}</span>
+      <span class="rv-label">Services</span><span class="rv-value">EC2${svcLeo?', Leostream':''}${svcDL?', Deadline Cloud':''}${svcSG?', ShotGrid':''}${svcWG?', WireGuard VPN':''}</span>
+      ${svcWG?`<span class="rv-label">WireGuard</span><span class="rv-value">${wgType==='existing'?'Reuse existing cert'+(wgPeer?' — '+wgPeer:''):'Generate new certificate'}</span>`:''}
+      ${notes?`<span class="rv-label">Notes</span><span class="rv-value" style="font-size:13px">${notes}</span>`:''}
+    </div>
+  </div>`;
+
+  if (data.length === 0) {
+    html += `<div style="color:var(--muted);font-style:italic;font-size:14px">No artists added. Go back and add at least one.</div>`;
+  } else {
+    html += `<div class="review-section"><div class="review-section-title">Artists (${data.length})</div>`;
+    data.forEach((a, i) => {
+      const username = (a.fn && a.ln) ? `${a.fn.toLowerCase()}.${a.ln.toLowerCase()}` : '—';
+      const isReserve = a.type === 'reserve';
+      html += `<div class="review-artist">
+        <div class="review-artist-head">
+          <span class="review-artist-name">${isReserve ? `Reserve Slot ${String.fromCharCode(65+i)}` : (a.fn && a.ln ? a.fn+' '+a.ln : 'Artist #'+(i+1))}</span>
+          <div style="display:flex;gap:6px">
+            <span class="badge-sm ${isReserve?'b-hold':'b-new'}">${isReserve?'Reserve':'New Artist'}</span>
+            <span class="badge-sm b-inst">${inst}</span>
+          </div>
+        </div>
+        <div class="review-artist-body">
+          <div class="review-grid">
+            <span class="rv-label">Username</span><span class="rv-value mono">${isReserve?'TBD':username}</span>
+            <span class="rv-label">Email</span><span class="rv-value">${isReserve?'TBD':(a.em||'—')}</span>
+            <span class="rv-label">Password</span><span class="rv-value">${a.pw==='existing'?'Use existing':'Generate new'}</span>
+            ${isReserve?`<span class="rv-label">Credential hold</span><span class="rv-value" style="color:var(--muted);font-style:italic">Contact: ${contact}</span>`:''}
+          </div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('review-body').innerHTML = html;
+}
+
+function generateDoc() {
+  const data = collectArtists();
+  const inst = getInstanceType();
+  const contact = getCredContact();
+  const reqBy = document.getElementById('req-by').value || 'ruben.rodas';
+  const batchLabel = document.getElementById('batch-label').value;
+  const notes = document.getElementById('batch-notes').value;
+  const svcLeo = document.getElementById('svc-leo').checked;
+  const svcDL = document.getElementById('svc-deadline').checked;
+  const svcSG = document.getElementById('svc-sg').checked;
+  const svcWG = document.getElementById('svc-wg').checked;
+  const wgType = document.querySelector('input[name="wg-type"]:checked')?.value || 'new';
+  const wgPeer = document.getElementById('wg-peer-note')?.value.trim() || '';
+  const today = new Date().toISOString().slice(0,10);
+  const named = data.filter(a=>a.type==='named').length;
+  const reserve = data.filter(a=>a.type==='reserve').length;
+
+  function username(a){ return `${a.fn.toLowerCase()}.${a.ln.toLowerCase()}`; }
+
+  function cardHtml(a, idx) {
+    const isReserve = a.type === 'reserve';
+    const slotLabel = isReserve ? `Freelance Artist — Slot ${String.fromCharCode(65 + data.filter((x,i)=>x.type==='reserve'&&i<=data.indexOf(a)).length - 1)}` : `${a.fn} ${a.ln}`;
+    const uname = isReserve ? null : username(a);
+
+    let sectionsHtml = '';
+
+    sectionsHtml += `<div class="section"><div class="section-label">AWS Instance</div><div class="field-grid">
+      <span class="fl">Full Name</span><span class="fv">${isReserve?'TBD — assign when artist is scheduled':a.fn+' '+a.ln}</span>
+      <span class="fl">Username</span><span class="${isReserve?'fv tbd':'fv mono'}">${isReserve?'firstname.lastname':uname}</span>
+      <span class="fl">Email</span><span class="${isReserve?'fv tbd':'fv email'}">${isReserve?'TBD':a.em}</span>
+      <span class="fl">Instance Type</span><span class="fv">${inst} — Artist Workstation</span>
+      <span class="fl">Password</span><span class="fv">${isReserve?'<span class="fv tbd">Generate at time of scheduling</span>':('<span class="badge-gen">'+(a.pw==='existing'?'Use Existing':'Generate New')+'</span>')}</span>
+    </div></div>`;
+
+    if (svcLeo) {
+      sectionsHtml += `<div class="section"><div class="section-label">Leostream VDI</div><div class="field-grid">
+        <span class="fl">Portal URL</span><span class="fv url">https://vdi.cbfx.com/</span>
+        <span class="fl">Username</span><span class="${isReserve?'fv tbd':'fv mono'}">${isReserve?'Create when identity confirmed':uname}</span>
+        <span class="fl">Action</span><span class="fv note">${isReserve?'Create when artist identity confirmed':'Create Leostream login. Confirm machine appears in artist session pool after provisioning.'}</span>
+      </div></div>`;
+    }
+
+    if (svcDL) {
+      sectionsHtml += `<div class="section"><div class="section-label">AWS Deadline Cloud</div><div class="field-grid">
+        <span class="fl">Sign-In URL</span><span class="fv url">https://us-east-1.signin.aws/</span>
+        <span class="fl">Monitor Repo</span><span class="fv url">https://cbfx.us-east-1.deadlinecloud.amazonaws.com</span>
+        <span class="fl">IAM Username</span><span class="${isReserve?'fv tbd':'fv mono'}">${isReserve?'Create at scheduling time':uname}</span>
+        <span class="fl">Action</span><span class="fv note">${isReserve?'Create at scheduling time':'Create IAM user, attach Deadline Cloud artist policy, connect to monitor repo.'}</span>
+      </div></div>`;
+    }
+
+    if (svcSG) {
+      sectionsHtml += `<div class="section"><div class="section-label">ShotGrid / Flow Desktop</div><div class="field-grid">
+        <span class="fl">Username</span><span class="${isReserve?'fv tbd':'fv mono'}">${isReserve?'TBD':uname}</span>
+        <span class="fl">Email</span><span class="${isReserve?'fv tbd':'fv email'}">${isReserve?'TBD':a.em}</span>
+        <span class="fl">Action</span><span class="fv note">Create ShotGrid user account and assign to active shows.</span>
+      </div></div>`;
+    }
+
+    if (svcWG) {
+      const wgIsExisting = wgType === 'existing';
+      sectionsHtml += `<div class="section"><div class="section-label">WireGuard VPN Tunnel</div><div class="field-grid">
+        <span class="fl">Certificate</span><span class="fv"><span class="badge-gen">${wgIsExisting?'Reuse Existing':'Generate New'}</span></span>
+        <span class="fl">Artist Status</span><span class="fv">${wgIsExisting?'Returning artist — existing tunnel config':'First-time artist — new peer keypair required'}</span>
+        ${wgIsExisting && wgPeer ? `<span class="fl">Peer / Host Ref</span><span class="fv mono">${wgPeer}</span>` : ''}
+        <span class="fl">Action</span><span class="fv note">${wgIsExisting?'Locate existing peer config and provision tunnel on new machine. Verify handshake after setup.':'Generate new WireGuard keypair. Add peer to server config. Distribute client config file to artist securely.'}</span>
+      </div></div>`;
+    }
+
+    const checkItems = ['EC2 '+inst+' provisioned'+(isReserve?' &amp; held in reserve pool':''),
+      'Studio image applied',
+      ...(svcLeo?[isReserve?'Leostream login created when scheduled':'Leostream login created — machine visible at vdi.cbfx.com']:[]),
+      ...(svcDL?[isReserve?'Deadline Cloud IAM user — pending scheduling':'Deadline Cloud IAM user created + repo connected']:[]),
+      ...(svcSG?['ShotGrid user account created']:[]),
+      ...(svcWG?[wgType==='existing'?'WireGuard — reuse existing cert, verify tunnel handshake':'WireGuard — generate keypair, add peer, distribute config']:[]),
+      ...(isReserve?[`HOLD — credentials pending artist scheduling (contact: ${contact})`]:[])
+    ];
+
+    sectionsHtml += `<div class="section"><div class="section-label">Checklist</div><div class="checklist">
+      ${checkItems.map((c,ci)=>{
+        const isHold = c.startsWith('HOLD');
+        return `<div class="check-item${isHold?' hold-item':''}"><div class="check-box${isHold?' hold':''}"></div>${c}</div>`;
+      }).join('')}
+    </div></div>`;
+
+    return `<div class="request-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="badge ${isReserve?'badge-hold':'badge-new'}">${isReserve?'Freelance Reserve':'New Artist'}</span>
+          <span class="card-title">${slotLabel}</span>
+        </div>
+        <span class="badge badge-instance">${inst}</span>
+      </div>
+      <div class="card-body">${sectionsHtml}</div>
+    </div>`;
+  }
+
+  const allCards = data.map((a,i) => cardHtml(a,i)).join('');
+
+  const doc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBFX — Workstation Build Request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;--nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;--text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;--blue-dark:#1e3a5a;--blue-bg:#ccd8e8;--blue-border:#90aac8}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;font-weight:400;line-height:1.6}
+.page{max-width:860px;margin:0 auto;padding:0 0 80px}
+.topbar{background:var(--nav);padding:15px 44px;display:flex;align-items:center;justify-content:space-between;margin-bottom:48px}
+.topbar-brand{font-size:16px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--white)}
+.topbar-meta{font-size:11px;color:rgba(244,247,250,.45);letter-spacing:.1em;text-transform:uppercase}
+.content{padding:0 44px}
+.header{margin-bottom:36px}
+.header-eyebrow{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.header-title{font-size:40px;font-weight:700;color:var(--text);line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
+.header-title span{color:var(--muted);font-weight:300}
+.header-meta{display:flex;gap:10px;flex-wrap:wrap}
+.meta-item{font-size:12px;color:var(--muted);padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px}
+.meta-item strong{color:var(--text2);font-weight:600}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-dark);border:1px solid var(--border-dark);border-radius:6px;overflow:hidden;margin-bottom:32px}
+.stat{background:var(--surface);padding:18px 20px}
+.stat-num{font-size:30px;font-weight:700;color:var(--text);line-height:1;letter-spacing:-.02em}
+.stat-num.muted{color:var(--muted);font-weight:500;font-size:22px}
+.stat-lbl{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:5px}
+.request-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:18px;overflow:hidden}
+.card-header{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--nav)}
+.card-header-left{display:flex;align-items:center;gap:12px}
+.card-title{font-size:15px;font-weight:600;color:var(--white);letter-spacing:.01em}
+.badge{display:inline-block;font-family:'Figtree',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:3px;white-space:nowrap}
+.badge-new{background:var(--nav);color:var(--white);border:1px solid #3d4452}
+.badge-hold{background:var(--border);color:var(--text2);border:1px solid var(--border-dark)}
+.badge-instance{background:var(--border-dark);color:var(--white);border:1px solid var(--border-dark)}
+.badge-gen{background:var(--blue-bg);color:var(--blue-dark);border:1px solid var(--blue-border);font-family:'Figtree',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;display:inline-block}
+.section{padding:20px 22px;border-bottom:1px solid var(--border)}
+.section:last-child{border-bottom:none}
+.section-label{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';height:1px;background:var(--border);flex:1}
+.field-grid{display:grid;grid-template-columns:170px 1fr;row-gap:11px;align-items:baseline}
+.fl{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-top:2px}
+.fv{font-size:15px;font-weight:400;color:var(--text)}
+.fv.mono{font-size:14px;font-weight:600;color:var(--blue-dark);letter-spacing:.01em}
+.fv.email{font-size:14px;font-weight:500;color:var(--text2)}
+.fv.url{font-size:13px;font-weight:400;color:var(--text2);word-break:break-all}
+.fv.tbd{font-size:14px;color:var(--muted);font-style:italic}
+.fv.note{font-size:14px;color:var(--text2);line-height:1.55}
+.checklist{display:flex;flex-direction:column;gap:9px}
+.check-item{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2)}
+.check-box{width:16px;height:16px;border:1px solid var(--border-dark);border-radius:3px;flex-shrink:0;background:var(--white)}
+.check-box.hold{border-color:var(--border-dark);background:var(--surface2)}
+.check-item.hold-item{color:var(--text2);font-weight:600;font-style:italic}
+.footer{margin-top:52px;padding:20px 44px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface2)}
+.footer-brand{font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+.footer-text{font-size:11px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+${notes?`.notes-block{background:var(--white);border:1px solid var(--border);border-radius:5px;padding:14px 18px;font-size:13px;color:var(--text2);margin-bottom:24px}`:''}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="topbar"><span class="topbar-brand">CBFX Studios</span><span class="topbar-meta">AWS Onboarding — Phase 1</span></div>
+<div class="content">
+<div class="header">
+  <div class="header-eyebrow">Chicken Bone FX — Infrastructure Request</div>
+  <div class="header-title">Workstation <span>Build</span> Request</div>
+  <div class="header-meta">
+    <span class="meta-item">Batch <strong>${batchLabel||'—'}</strong></span>
+    <span class="meta-item">Date <strong>${today}</strong></span>
+    <span class="meta-item">Requested by <strong>${reqBy}</strong></span>
+    <span class="meta-item">Environment <strong>AWS EC2 / Rocky Linux 9.6</strong></span>
+  </div>
+</div>
+${notes?`<div class="notes-block"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)">Notes</strong><br>${notes}</div>`:''}
+<div class="stats-row">
+  <div class="stat"><div class="stat-num">${data.length}</div><div class="stat-lbl">Machines Requested</div></div>
+  <div class="stat"><div class="stat-num">${named}</div><div class="stat-lbl">Named Artists</div></div>
+  <div class="stat"><div class="stat-num">${reserve}</div><div class="stat-lbl">Reserve Slots</div></div>
+  <div class="stat"><div class="stat-num muted">${inst.replace('xlarge','xl')}</div><div class="stat-lbl">Instance Type</div></div>
+</div>
+${allCards}
+</div>
+<div class="footer"><span class="footer-brand">CBFX</span><span class="footer-text">Internal Use Only — Onboarding Phase 1 — ${today}</span></div>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([doc], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cbfx_workstation_request_${today}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.querySelectorAll('input[name="instance"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('inst-other-wrap').style.display = r.value === 'other' && r.checked ? 'block' : (document.querySelector('input[name="instance"]:checked')?.value === 'other' ? 'block' : 'none');
+  });
+});
+document.querySelectorAll('input[name="cred-contact"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('cc-other-wrap').style.display = document.querySelector('input[name="cred-contact"]:checked')?.value === 'other' ? 'block' : 'none';
+  });
+});
+
+addArtist();
+</script>
+</body>
+</html>
