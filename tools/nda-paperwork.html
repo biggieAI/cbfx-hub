@@ -483,6 +483,18 @@
   .step-panel { display: none; }
   .step-panel.active { display: block; }
 
+  @media print {
+    .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
+    .wizard-step { display: block !important; }
+    .wizard-step:not(.active) { display: none !important; }
+    .review-field-label { color: #666 !important; }
+    .review-field-value { color: #000 !important; font-weight: 600 !important; }
+    .review-section-title { color: #333 !important; border-color: #ccc !important; }
+    @page { margin: 1.5cm; }
+  }
+
   @media (max-width: 560px) {
     .field-row { grid-template-columns: 1fr; }
     .radio-grid.cols-4 { grid-template-columns: 1fr 1fr; }
@@ -770,8 +782,9 @@
 
     <div class="btn-row">
       <button class="btn btn-back" onclick="goStep(2)">&#8592; Back</button>
-      <button class="btn btn-success" onclick="sendEmail()">&#9993; Send to Onboarding</button>
+      <button class="btn btn-success" onclick="sendEmail()">&#9993; Open in Gmail</button>
       <button class="btn btn-ghost" onclick="copyToClipboard()">&#128203; Copy to Clipboard</button>
+      <button class="btn btn-ghost" onclick="exportPDF()">&#x2193; Export PDF</button>
       <span class="copy-confirm" id="copyConfirm">&#10003; Copied!</span>
     </div>
   </div>
@@ -983,12 +996,14 @@
   function sendEmail() {
     var name = val('fullName');
     var show = val('showProject');
-    var subject = '[NDA/Paperwork] ' + name + ' — ' + show;
-    var body = buildEmailBody();
-    var mailto = 'mailto:onboarding@chicken-bone.com'
-      + '?subject=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(body);
-    window.location.href = mailto;
+    var subject = encodeURIComponent('[NDA/Paperwork] ' + name + ' — ' + show);
+    var body = encodeURIComponent(buildEmailBody());
+    var gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent('onboarding@chicken-bone.com') + '&su=' + subject + '&body=' + body;
+    window.open(gmailUrl, '_blank');
+  }
+
+  function exportPDF() {
+    window.print();
   }
 
   function copyToClipboard() {
@@ -1026,27 +1041,4 @@
   ['fullName','email','phone','showProject','startDate','endDate','requestedBy'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) {
-      el.addEventListener('input', function() {
-        el.classList.remove('invalid');
-        var errEl = document.getElementById(id + 'Err');
-        if (errEl) errEl.classList.remove('show');
-      });
-    }
-  });
-
-  document.querySelectorAll('input[name="engagement"]').forEach(function(r) {
-    r.addEventListener('change', function() {
-      document.getElementById('engagementErr').classList.remove('show');
-      document.getElementById('engagementGroup').classList.remove('radio-group-invalid');
-    });
-  });
-
-  document.querySelectorAll('input[name="department"]').forEach(function(r) {
-    r.addEventListener('change', function() {
-      document.getElementById('departmentErr').classList.remove('show');
-      document.getElementById('departmentGroup').classList.remove('radio-group-invalid');
-    });
-  });
-</script>
-</body>
-</html>
+   

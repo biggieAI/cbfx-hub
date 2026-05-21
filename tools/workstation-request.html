@@ -149,6 +149,18 @@ textarea{resize:vertical;min-height:80px}
 .b-new{background:var(--nav);color:var(--white);border:1px solid #3d4452}
 .b-hold{background:var(--surface2);color:var(--text2);border:1px solid var(--border-dark)}
 .b-inst{background:var(--border-dark);color:var(--white);border:1px solid var(--border-dark)}
+
+@media print {
+  .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
+  .wizard-step { display: block !important; }
+  .wizard-step:not(.active) { display: none !important; }
+  .review-field-label { color: #666 !important; }
+  .review-field-value { color: #000 !important; font-weight: 600 !important; }
+  .review-section-title { color: #333 !important; border-color: #ccc !important; }
+  @page { margin: 1.5cm; }
+}
 </style>
 </head>
 <body>
@@ -304,6 +316,7 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div class="panel-footer">
       <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-back" onclick="exportPDF()">&#x2193; Export PDF</button>
       <button class="btn-generate" onclick="generateDoc()">⬇ Generate Request Doc</button>
     </div>
   </div>
@@ -686,23 +699,4 @@ ${allCards}
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `cbfx_workstation_request_${today}.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-document.querySelectorAll('input[name="instance"]').forEach(r => {
-  r.addEventListener('change', () => {
-    document.getElementById('inst-other-wrap').style.display = r.value === 'other' && r.checked ? 'block' : (document.querySelector('input[name="instance"]:checked')?.value === 'other' ? 'block' : 'none');
-  });
-});
-document.querySelectorAll('input[name="cred-contact"]').forEach(r => {
-  r.addEventListener('change', () => {
-    document.getElementById('cc-other-wrap').style.display = document.querySelector('input[name="cred-contact"]:checked')?.value === 'other' ? 'block' : 'none';
-  });
-});
-
-addArtist();
-</script>
-</body>
-</html>
+  a.download = `c

@@ -659,6 +659,18 @@
     .topbar { padding: 0 16px; }
     .main { margin-top: 20px; }
   }
+
+  @media print {
+    .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
+    .wizard-step { display: block !important; }
+    .wizard-step:not(.active) { display: none !important; }
+    .review-field-label { color: #666 !important; }
+    .review-field-value { color: #000 !important; font-weight: 600 !important; }
+    .review-section-title { color: #333 !important; border-color: #ccc !important; }
+    @page { margin: 1.5cm; }
+  }
 </style>
 </head>
 <body>
@@ -1000,14 +1012,15 @@
     <!-- Actions -->
     <div class="panel-card" style="padding:24px 36px;">
       <div class="action-row">
-        <a id="mailto-link" href="#" class="btn btn-success">
+        <button class="btn btn-success" onclick="openInGmail()">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h11A1.5 1.5 0 0 1 15 3.5v9A1.5 1.5 0 0 1 13.5 14h-11A1.5 1.5 0 0 1 1 12.5v-9zm1.5-.5a.5.5 0 0 0-.5.5v.691l6 3.6 6-3.6V3.5a.5.5 0 0 0-.5-.5H2.5zm12 2.309-5.57 3.341a.75.75 0 0 1-.76 0L2.5 5.309V12.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V5.309z" fill="currentColor"/></svg>
-          Send Bid Request
-        </a>
+          Open in Gmail
+        </button>
         <button class="btn btn-secondary" onclick="copyToClipboard()">
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" fill="currentColor"/><path d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" fill="currentColor"/></svg>
           Copy to Clipboard
         </button>
+        <button class="btn btn-secondary" onclick="exportPDF()">&#x2193; Export PDF</button>
         <span class="copy-feedback" id="copy-feedback">Copied!</span>
       </div>
 
@@ -1348,13 +1361,21 @@
   }
 
   function buildMailto() {
+    // no-op: Gmail URL is built dynamically on click
+  }
+
+  function openInGmail() {
     const show = getVal('show-title');
     const client = getVal('client');
     const bidDue = document.getElementById('bid-due').value;
-    const subject = '[Bid Request] ' + show + ' — ' + client + ' — Due ' + formatDate(bidDue);
-    const body = buildEmailBody();
-    const href = 'mailto:bids@chicken-bone.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    document.getElementById('mailto-link').href = href;
+    const subject = encodeURIComponent('[Bid Request] ' + show + ' — ' + client + ' — Due ' + formatDate(bidDue));
+    const body = encodeURIComponent(buildEmailBody());
+    const gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent('bids@chicken-bone.com') + '&su=' + subject + '&body=' + body;
+    window.open(gmailUrl, '_blank');
+  }
+
+  function exportPDF() {
+    window.print();
   }
 
   // ============================================================
@@ -1362,32 +1383,4 @@
   // ============================================================
   function copyToClipboard() {
     const show = getVal('show-title');
-    const client = getVal('client');
-    const bidDue = document.getElementById('bid-due').value;
-    const subject = '[Bid Request] ' + show + ' — ' + client + ' — Due ' + formatDate(bidDue);
-    const text = 'To: bids@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildEmailBody();
-
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(showCopied);
-    } else {
-      // Fallback
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.focus();
-      ta.select();
-      try { document.execCommand('copy'); showCopied(); } catch(e) {}
-      document.body.removeChild(ta);
-    }
-  }
-
-  function showCopied() {
-    const el = document.getElementById('copy-feedback');
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2200);
-  }
-</script>
-</body>
-</html>
+    const client = getVal('cl

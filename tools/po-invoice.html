@@ -157,6 +157,18 @@
     .memo-row{grid-template-columns:1fr;gap:2px}
     .memo-key{font-size:12px}
   }
+
+  @media print {
+    .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
+    .wizard-step { display: block !important; }
+    .wizard-step:not(.active) { display: none !important; }
+    .review-field-label { color: #666 !important; }
+    .review-field-value { color: #000 !important; font-weight: 600 !important; }
+    .review-section-title { color: #333 !important; border-color: #ccc !important; }
+    @page { margin: 1.5cm; }
+  }
 </style>
 </head>
 <body>
@@ -328,8 +340,9 @@
       </div>
 
       <div class="actions-row">
-        <button class="btn btn-primary" onclick="sendToAccounting()">Send to Accounting</button>
+        <button class="btn btn-primary" onclick="sendToAccounting()">&#9993; Open in Gmail</button>
         <button class="btn btn-accent" onclick="copySummary()">Copy Summary</button>
+        <button class="btn btn-secondary" onclick="exportPDF()">&#x2193; Export PDF</button>
         <button class="btn btn-secondary" onclick="goBack(2)">← Edit</button>
       </div>
     </div>
@@ -526,28 +539,4 @@
       `Approval From:    ${val('approver')}`,
     );
     if (val('costCode')) lines.push(`Budget Line/Code: ${val('costCode')}`);
-    lines.push('','---','Attach the physical PO or invoice document directly in your email client after sending.');
-    return lines.join('\n');
-  }
-
-  function sendToAccounting() {
-    const typeLabel = getTypeLabel();
-    const amtRaw = fmt(val('amount'));
-    const subject = encodeURIComponent(`[${typeLabel}] ${val('vendor')} — ${val('show')} — $${amtRaw}`);
-    const body = encodeURIComponent(getSummaryText());
-    window.location.href = `mailto:accounting@chicken-bone.com?subject=${subject}&body=${body}`;
-  }
-
-  function copySummary() {
-    navigator.clipboard.writeText(getSummaryText()).then(() => showToast('Summary copied'));
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }
-</script>
-</body>
-</html>
+    lines.push('','---','Attach the physical PO or invoice document directly in your email client after

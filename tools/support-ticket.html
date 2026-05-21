@@ -133,6 +133,17 @@ textarea.tall{min-height:130px}
 .radio-error{font-size:12px;color:#a03030;margin-top:6px;display:none}
 .radio-group-wrap.has-error .radio-error{display:block}
 
+@media print {
+  .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
+  .wizard-step { display: block !important; }
+  .wizard-step:not(.active) { display: none !important; }
+  .review-field-label { color: #666 !important; }
+  .review-field-value { color: #000 !important; font-weight: 600 !important; }
+  .review-section-title { color: #333 !important; border-color: #ccc !important; }
+  @page { margin: 1.5cm; }
+}
 </style>
 </head>
 <body>
@@ -326,8 +337,9 @@ textarea.tall{min-height:130px}
       <hr class="divider">
 
       <div class="action-row">
-        <button class="btn-email" onclick="openEmail()">✉ Open Email Client</button>
+        <button class="btn-email" onclick="openEmail()">✉ Open in Gmail</button>
         <button class="btn-copy" id="copy-btn" onclick="copyToClipboard()">⎘ Copy to Clipboard</button>
+        <button class="btn-copy" onclick="exportPDF()">&#x2193; Export PDF</button>
       </div>
       <div class="submit-note" id="submit-note">
         This will open your default email client addressed to <strong>support@gpltech.com</strong>. If priority is <strong>High</strong>, please CC your supervisor before sending.
@@ -549,44 +561,14 @@ function indent(text) {
 function openEmail() {
   var subject = encodeURIComponent(buildSubject());
   var body = encodeURIComponent(buildBody());
-  window.location.href = 'mailto:support@gpltech.com?subject=' + subject + '&body=' + body;
+  var gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent('support@gpltech.com') + '&su=' + subject + '&body=' + body;
+  window.open(gmailUrl, '_blank');
+}
+
+function exportPDF() {
+  window.print();
 }
 
 function copyToClipboard() {
   var text = 'Subject: ' + buildSubject() + '\n\n' + buildBody();
-  var btn = document.getElementById('copy-btn');
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(function() {
-      showCopied(btn);
-    }).catch(function() {
-      fallbackCopy(text, btn);
-    });
-  } else {
-    fallbackCopy(text, btn);
-  }
-}
-
-function fallbackCopy(text, btn) {
-  var ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  try { document.execCommand('copy'); showCopied(btn); } catch(e) {}
-  document.body.removeChild(ta);
-}
-
-function showCopied(btn) {
-  var orig = btn.innerHTML;
-  btn.innerHTML = '✓ Copied!';
-  btn.classList.add('copied');
-  setTimeout(function() {
-    btn.innerHTML = orig;
-    btn.classList.remove('copied');
-  }, 2200);
-}
-</script>
-</body>
-</html>
+  var btn = doc

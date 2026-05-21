@@ -317,6 +317,18 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
   .review-key{flex:0 0 120px;}
   .radio-cards.two .radio-card{min-width:140px;}
 }
+
+@media print {
+  .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
+  .wizard-step { display: block !important; }
+  .wizard-step:not(.active) { display: none !important; }
+  .review-field-label { color: #666 !important; }
+  .review-field-value { color: #000 !important; font-weight: 600 !important; }
+  .review-section-title { color: #333 !important; border-color: #ccc !important; }
+  @page { margin: 1.5cm; }
+}
 </style>
 </head>
 <body>
@@ -776,16 +788,17 @@ function buildReview() {
   document.getElementById('actionButtons').innerHTML = `
     <button class="btn btn-green" onclick="sendToArtist()">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l14-7-5 14-3-5-6-2z"/></svg>
-      Send to Artist
+      Open in Gmail (Artist)
     </button>
     <button class="btn btn-yellow" onclick="sendToProduction()">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l14-7-5 14-3-5-6-2z"/></svg>
-      Send to Production
+      Open in Gmail (Production)
     </button>
     <button class="btn btn-outline" onclick="copySummary()">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="10" height="12" rx="2"/><path d="M13 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2"/></svg>
       Copy Summary
     </button>
+    <button class="btn btn-outline" onclick="exportPDF()">&#x2193; Export PDF</button>
   `;
 }
 
@@ -862,8 +875,8 @@ function sendToArtist() {
   const end = fmtDate(v('endDate'));
   const subject = encodeURIComponent(`[CBFX Booking | ${bType}] ${show} — ${start} to ${end}`);
   const body = encodeURIComponent(artistEmailBody());
-  const to = encodeURIComponent(v('artistEmail'));
-  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  const gmailUrl1 = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(v('artistEmail')) + '&su=' + subject + '&body=' + body;
+  window.open(gmailUrl1, '_blank');
 }
 
 function sendToProduction() {
@@ -873,30 +886,3 @@ function sendToProduction() {
   const end = fmtDate(v('endDate'));
   const subject = encodeURIComponent(`[CBFX Internal | ${bType}] ${show} — ${v('artistName')} | ${start} to ${end}`);
   const body = encodeURIComponent(productionEmailBody());
-  window.location.href = `mailto:production@chicken-bone.com?subject=${subject}&body=${body}`;
-}
-
-function copySummary() {
-  const text = productionEmailBody();
-  navigator.clipboard.writeText(text).then(() => {
-    const t = document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }).catch(() => {
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    const t = document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  });
-}
-</script>
-</body>
-</html>
