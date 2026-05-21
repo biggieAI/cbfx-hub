@@ -519,4 +519,120 @@
 
   function memoRow(key, v) {
     if (!v) return '';
-    return `<div class="memo-row"><di
+    return `<div class="memo-row"><div class="memo-key">${key}</div><div class="memo-val">${v}</div></div>`;
+  }
+
+  function getTypeLabel() {
+    const t = radio('subType');
+    return t === 'Purchase Order' ? 'PO' : 'Invoice';
+  }
+
+  function buildSummary() {
+    const type = radio('subType');
+    const typeLabel = getTypeLabel();
+    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const box = document.getElementById('memoBox');
+    if (!box) return;
+    box.innerHTML = `
+      <div class="memo-header">
+        <div class="memo-title">${typeLabel} SUBMISSION — CBFX / Chicken Bone FX</div>
+        <div class="memo-date">Submitted ${today}</div>
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Submission</div>
+        ${memoRow('Type', type)}
+        ${memoRow('Show / Project', val('show'))}
+        ${memoRow('Submitted By', val('submitter'))}
+        ${memoRow('Submitter Email', val('submitterEmail'))}
+        ${memoRow('Date', fmtDate(val('subDate')))}
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Vendor</div>
+        ${memoRow('Vendor / Payee', val('vendor'))}
+        ${val('vendorEmail') ? memoRow('Vendor Email', val('vendorEmail')) : ''}
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Financial</div>
+        ${memoRow('PO Number', val('poNumber'))}
+        ${type === 'Invoice' ? memoRow('Invoice Number', val('invNumber')) : ''}
+        ${memoRow('Amount', amtStr)}
+        ${memoRow('Due Date', fmtDate(val('dueDate')))}
+        ${memoRow('Description', val('description'))}
+        ${memoRow('Approval From', val('approver'))}
+        ${val('costCode') ? memoRow('Budget Line / Code', val('costCode')) : ''}
+      </div>
+    `;
+  }
+
+  function getSummaryText() {
+    const type = radio('subType');
+    const typeLabel = getTypeLabel();
+    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const lines = [
+      `${typeLabel} SUBMISSION — CBFX / Chicken Bone FX`,
+      `Submitted ${today}`,
+      '',
+      '--- SUBMISSION ---',
+      `Type:             ${type}`,
+      `Show / Project:   ${val('show')}`,
+      `Submitted By:     ${val('submitter')}`,
+      `Submitter Email:  ${val('submitterEmail')}`,
+      `Date:             ${fmtDate(val('subDate'))}`,
+      '',
+      '--- VENDOR ---',
+      `Vendor / Payee:   ${val('vendor')}`,
+    ];
+    if (val('vendorEmail')) lines.push(`Vendor Email:     ${val('vendorEmail')}`);
+    lines.push(
+      '',
+      '--- FINANCIAL ---',
+      `PO Number:        ${val('poNumber')}`,
+    );
+    if (type === 'Invoice') lines.push(`Invoice Number:   ${val('invNumber')}`);
+    lines.push(
+      `Amount:           ${amtStr}`,
+      `Due Date:         ${fmtDate(val('dueDate'))}`,
+      `Description:      ${val('description')}`,
+      `Approval From:    ${val('approver')}`,
+    );
+    if (val('costCode')) lines.push(`Budget Line/Code: ${val('costCode')}`);
+    lines.push('','---','Attach the physical PO or invoice document directly in your email client after sending.');
+    return lines.join('\n');
+  }
+
+  function sendToAccounting() {
+    const typeLabel = getTypeLabel();
+    const amtRaw = fmt(val('amount'));
+    const subject = encodeURIComponent(`[${typeLabel}] ${val('vendor')} — ${val('show')} — $${amtRaw}`);
+    const body = encodeURIComponent(getSummaryText());
+    window.open(`https://mail.google.com/mail/?view=cm&to=accounting@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
+  }
+
+  function copySummary() {
+    navigator.clipboard.writeText(getSummaryText()).then(() => showToast('Summary copied')).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = getSummaryText();
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Summary copied');
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function exportPDF() {
+    window.print();
+  }
+</script>
+</body>
+</html>

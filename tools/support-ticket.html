@@ -562,4 +562,88 @@ function buildBody() {
   lines.push('CBFX SUPPORT TICKET');
   lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   lines.push('');
-  li
+  lines.push('SUBMITTER');
+  lines.push('  Name:   ' + getField('submitter-name'));
+  lines.push('  Email:  ' + getField('submitter-email'));
+  lines.push('');
+  lines.push('PRIORITY');
+  lines.push('  ' + getRadio('priority'));
+  lines.push('');
+  lines.push('ISSUE TYPE');
+  lines.push('  ' + getRadio('issue-type'));
+  lines.push('');
+  lines.push('AFFECTED SYSTEM');
+  lines.push('  ' + getField('affected-system'));
+  lines.push('');
+  lines.push('─────────────────────────────────────────────────');
+  lines.push('');
+  lines.push('DESCRIPTION');
+  lines.push(indent(getField('issue-description')));
+  lines.push('');
+  lines.push('STEPS TO REPRODUCE');
+  lines.push(indent(getField('issue-steps')));
+  lines.push('');
+  lines.push('EXPECTED BEHAVIOR');
+  lines.push(indent(getField('issue-expected')));
+  lines.push('');
+  lines.push('ACTUAL BEHAVIOR');
+  lines.push(indent(getField('issue-actual')));
+  lines.push('');
+  lines.push('─────────────────────────────────────────────────');
+  lines.push('Submitted via CBFX Hub Support Ticket Wizard');
+  return lines.join('\n');
+}
+
+function indent(text) {
+  return (text || '').split('\n').map(function(l){ return '  ' + l; }).join('\n');
+}
+
+function openEmail() {
+  var subject = encodeURIComponent(buildSubject());
+  var body = encodeURIComponent(buildBody());
+  window.open('https://mail.google.com/mail/?view=cm&to=support@gpltech.com&su=' + subject + '&body=' + body, '_blank');
+}
+
+function copyToClipboard() {
+  var text = 'Subject: ' + buildSubject() + '\n\n' + buildBody();
+  var btn = document.getElementById('copy-btn');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function() {
+      showCopied(btn);
+    }).catch(function() {
+      fallbackCopy(text, btn);
+    });
+  } else {
+    fallbackCopy(text, btn);
+  }
+}
+
+function fallbackCopy(text, btn) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); showCopied(btn); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function showCopied(btn) {
+  if (!btn) return;
+  var orig = btn.innerHTML;
+  btn.innerHTML = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(function() {
+    btn.innerHTML = orig;
+    btn.classList.remove('copied');
+  }, 2200);
+}
+
+function exportPDF() {
+  window.print();
+}
+</script>
+</body>
+</html>

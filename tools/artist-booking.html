@@ -894,4 +894,63 @@ function productionEmailBody() {
   body += `  Show:          ${v('showProject')}\n`;
   if (v('clientBroadcaster')) body += `  Client:        ${v('clientBroadcaster')}\n`;
   if (v('episodeSegment')) body += `  Episode:       ${v('episodeSegment')}\n`;
-  body += `  Start Date:    ${fmtDate(v
+  body += `  Start Date:    ${fmtDate(v('startDate'))}\n`;
+  body += `  End Date:      ${fmtDate(v('endDate'))}\n`;
+  if (v('estDays')) body += `  Est. Days:     ${v('estDays')}\n`;
+  body += `  Work Location: ${vRadio('workLocation')}\n`;
+  body += `  Rate:          ${fmtRate()}\n`;
+  body += `  Turnaround:    ${vRadio('turnaround')}\n`;
+  if (v('shotCount')) body += `  Shot Count:    ${v('shotCount')}\n`;
+  if (v('specialReqs')) { body += `\nSPECIAL REQUIREMENTS\n  ${v('specialReqs')}\n`; }
+  if (v('internalNotes')) { body += `\nINTERNAL NOTES\n  ${v('internalNotes')}\n`; }
+  body += `\n═══════════════════════════════════════\n`;
+  body += `Hold bookings must be confirmed or released within 5 business days.\n`;
+  return body;
+}
+
+function sendToArtist() {
+  const bType = vRadio('bookingType');
+  const show = v('showProject');
+  const start = fmtDate(v('startDate'));
+  const end = fmtDate(v('endDate'));
+  const subject = encodeURIComponent(`[CBFX Booking | ${bType}] ${show} — ${start} to ${end}`);
+  const body = encodeURIComponent(artistEmailBody());
+  const to = encodeURIComponent(v('artistEmail'));
+  window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`, '_blank');
+}
+
+function sendToProduction() {
+  const bType = vRadio('bookingType');
+  const show = v('showProject');
+  const start = fmtDate(v('startDate'));
+  const end = fmtDate(v('endDate'));
+  const subject = encodeURIComponent(`[CBFX Internal | ${bType}] ${show} — ${v('artistName')} | ${start} to ${end}`);
+  const body = encodeURIComponent(productionEmailBody());
+  window.open(`https://mail.google.com/mail/?view=cm&to=production@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
+}
+
+function copySummary() {
+  const text = productionEmailBody();
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('toast');
+    if (t) { t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const t = document.getElementById('toast');
+    if (t) { t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+  });
+}
+
+function exportPDF() {
+  window.print();
+}
+</script>
+</body>
+</html>

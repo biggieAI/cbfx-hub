@@ -1016,7 +1016,6 @@
     var department = getRadio('department');
     var endDateVal = val('endDate');
     var lines = [];
-
     lines.push('CONTRACTOR ONBOARDING REQUEST');
     lines.push('==============================');
     lines.push('');
@@ -1040,4 +1039,53 @@
     });
     lines.push('');
     lines.push('---');
-    lines.push('Submitted via CBFX
+    lines.push('Submitted via CBFX Hub — NDA & Paperwork Wizard');
+    return lines.join('\n');
+  }
+
+  function sendEmail() {
+    var name = val('fullName');
+    var show = val('showProject');
+    var subject = '[NDA/Paperwork] ' + name + ' — ' + show;
+    var body = buildEmailBody();
+    var url = 'https://mail.google.com/mail/?view=cm&to=onboarding@chicken-bone.com&su='
+      + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    window.open(url, '_blank');
+  }
+
+  function copyToClipboard() {
+    var name = val('fullName');
+    var show = val('showProject');
+    var subject = '[NDA/Paperwork] ' + name + ' — ' + show;
+    var text = 'To: onboarding@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildEmailBody();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function() { fallbackCopy(text); });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    showCopyConfirm();
+  }
+
+  function showCopyConfirm() {
+    var el = document.getElementById('copyConfirm');
+    if (el) { el.classList.add('show'); setTimeout(function() { el.classList.remove('show'); }, 2500); }
+  }
+
+  function exportPDF() {
+    window.print();
+  }
+</script>
+</body>
+</html>

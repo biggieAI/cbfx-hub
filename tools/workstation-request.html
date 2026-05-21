@@ -698,4 +698,40 @@ ${notes?`<div class="notes-block"><strong style="font-size:11px;text-transform:u
 </div>
 ${allCards}
 </div>
-<div class="footer">
+<div class="footer"><span class="footer-brand">CBFX</span><span class="footer-text">Internal Use Only — Onboarding Phase 1 — ${today}</span></div>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([doc], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cbfx_workstation_request_${today}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPDF() {
+  window.print();
+}
+
+document.querySelectorAll('input[name="instance"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const w = document.getElementById('inst-other-wrap');
+    if (!w) return;
+    w.style.display = document.querySelector('input[name="instance"]:checked')?.value === 'other' ? 'block' : 'none';
+  });
+});
+document.querySelectorAll('input[name="cred-contact"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const w = document.getElementById('cc-other-wrap');
+    if (!w) return;
+    w.style.display = document.querySelector('input[name="cred-contact"]:checked')?.value === 'other' ? 'block' : 'none';
+  });
+});
+
+addArtist();
+</script>
+</body>
+</html>

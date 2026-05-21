@@ -533,10 +533,119 @@
     const period = RATE_PERIOD[engage] || '';
     const rateStr = fmt(val('rateAmount'));
     const rateDisplay = rateStr ? `${rateStr} ${period}` : '';
-
     const extras = [
       val('kitFee') && parseFloat(val('kitFee')) > 0 ? `Kit/Equipment Fee: ${fmt(val('kitFee'))}` : null,
       val('boxRental') && parseFloat(val('boxRental')) > 0 ? `Box Rental: ${fmt(val('boxRental'))}` : null,
     ].filter(Boolean).join(' | ') || null;
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const box = document.getElementById('memoBox');
+    if (!box) return;
+    box.innerHTML = `
+      <div class="memo-header">
+        <div class="memo-title">DEAL MEMO — CBFX / Chicken Bone FX</div>
+        <div class="memo-date">Prepared ${today}</div>
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Crew</div>
+        ${memoRow('Artist Name', val('artistName'))}
+        ${memoRow('Artist Email', val('artistEmail'))}
+        ${memoRow('Role / Title', val('role'))}
+        ${memoRow('Department', radio('dept'))}
+        ${memoRow('Requested By', val('requestedBy'))}
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Project</div>
+        ${memoRow('Show / Project', val('show'))}
+        ${memoRow('Start Date', fmtDate(val('startDate')))}
+        ${val('endDate') ? memoRow('End Date', fmtDate(val('endDate'))) : ''}
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Compensation</div>
+        ${memoRow('Engagement Type', engage)}
+        ${memoRow('Rate', rateDisplay)}
+        ${memoRow('Overtime', radio('ot'))}
+        ${extras ? memoRow('Additional Fees', extras) : ''}
+      </div>
+      <div class="memo-section">
+        <div class="memo-section-title">Billing & Payment</div>
+        ${memoRow('Billing Entity', val('billingEntity'))}
+        ${memoRow('Payment Terms', radio('terms'))}
+        ${val('addlTerms') ? memoRow('Additional Terms', val('addlTerms')) : ''}
+      </div>
+    `;
+  }
 
-   
+  function getMemoText() {
+    const engage = radio('engage');
+    const period = RATE_PERIOD[engage] || '';
+    const rateStr = fmt(val('rateAmount'));
+    const rateDisplay = rateStr ? `${rateStr} ${period}` : '';
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const lines = [
+      'DEAL MEMO — CBFX / Chicken Bone FX',
+      `Prepared ${today}`,
+      '',
+      '--- CREW ---',
+      `Artist Name:    ${val('artistName')}`,
+      `Artist Email:   ${val('artistEmail')}`,
+      `Role / Title:   ${val('role')}`,
+      `Department:     ${radio('dept')}`,
+      `Requested By:   ${val('requestedBy')}`,
+      '',
+      '--- PROJECT ---',
+      `Show / Project: ${val('show')}`,
+      `Start Date:     ${fmtDate(val('startDate'))}`,
+    ];
+    if (val('endDate')) lines.push(`End Date:       ${fmtDate(val('endDate'))}`);
+    lines.push(
+      '',
+      '--- COMPENSATION ---',
+      `Engagement Type: ${engage}`,
+      `Rate:            ${rateDisplay}`,
+      `Overtime:        ${radio('ot')}`,
+    );
+    if (val('kitFee') && parseFloat(val('kitFee')) > 0) lines.push(`Kit/Equipment Fee: ${fmt(val('kitFee'))}`);
+    if (val('boxRental') && parseFloat(val('boxRental')) > 0) lines.push(`Box Rental:      ${fmt(val('boxRental'))}`);
+    lines.push(
+      '',
+      '--- BILLING & PAYMENT ---',
+      `Billing Entity:  ${val('billingEntity')}`,
+      `Payment Terms:   ${radio('terms')}`,
+    );
+    if (val('addlTerms')) lines.push(`Additional Terms: ${val('addlTerms')}`);
+    lines.push('','---','This is an internal record. Official deal memos require countersignature from the supervising producer.');
+    return lines.join('\n');
+  }
+
+  function sendToProduction() {
+    const subject = encodeURIComponent(`[Deal Memo] ${val('artistName')} — ${val('show')}`);
+    const body = encodeURIComponent(getMemoText());
+    window.open(`https://mail.google.com/mail/?view=cm&to=production@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
+  }
+
+  function copyMemo() {
+    navigator.clipboard.writeText(getMemoText()).then(() => showToast('Deal memo copied')).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = getMemoText();
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Deal memo copied');
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function exportPDF() {
+    window.print();
+  }
+</script>
+</body>
+</html>

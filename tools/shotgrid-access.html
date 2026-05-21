@@ -1012,4 +1012,112 @@
   function getData() {
     const pipelineChecked = [...document.querySelectorAll('input[name="pipeline"]:checked')].map(c => c.value);
     const dept = document.querySelector('input[name="department"]:checked');
-    const perm = document.querySelector('input
+    const perm = document.querySelector('input[name="permGroup"]:checked');
+    const startRaw = document.getElementById('startDate').value;
+    let startFormatted = startRaw;
+    if (startRaw) {
+      const d = new Date(startRaw + 'T00:00:00');
+      startFormatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    return {
+      artistName: document.getElementById('artistName').value.trim(),
+      artistEmail: document.getElementById('artistEmail').value.trim(),
+      dept: dept ? dept.value : '',
+      roleTitle: document.getElementById('roleTitle').value.trim(),
+      startDate: startFormatted,
+      requesterName: document.getElementById('requesterName').value.trim(),
+      requesterEmail: document.getElementById('requesterEmail').value.trim(),
+      showAssignment: document.getElementById('showAssignment').value.trim(),
+      permGroup: perm ? perm.value : '',
+      pipeline: pipelineChecked.length > 0 ? pipelineChecked.join(', ') : 'None',
+      notes: document.getElementById('additionalNotes').value.trim()
+    };
+  }
+
+  function buildReview() {
+    const d = getData();
+    function set(id, val) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!val) { el.textContent = '—'; el.classList.add('empty'); }
+      else { el.textContent = val; el.classList.remove('empty'); }
+    }
+    set('r-artistName', d.artistName);
+    set('r-artistEmail', d.artistEmail);
+    set('r-dept', d.dept);
+    set('r-roleTitle', d.roleTitle);
+    set('r-startDate', d.startDate);
+    set('r-requesterName', d.requesterName);
+    set('r-requesterEmail', d.requesterEmail);
+    set('r-showAssignment', d.showAssignment);
+    set('r-permGroup', d.permGroup);
+    set('r-pipeline', d.pipeline);
+    set('r-notes', d.notes || '');
+  }
+
+  function buildEmailBody(d) {
+    return [
+      'ShotGrid Access Request',
+      '=======================',
+      '',
+      'ARTIST INFORMATION',
+      '------------------',
+      'Name:        ' + d.artistName,
+      'Email:       ' + d.artistEmail,
+      'Department:  ' + d.dept,
+      'Role/Title:  ' + d.roleTitle,
+      'Start Date:  ' + d.startDate,
+      '',
+      'REQUESTER',
+      '---------',
+      'Requested By:     ' + d.requesterName,
+      'Requester Email:  ' + d.requesterEmail,
+      '',
+      'ACCESS CONFIGURATION',
+      '--------------------',
+      'Show(s):            ' + d.showAssignment,
+      'Permission Group:   ' + d.permGroup,
+      'Pipeline Tools:     ' + d.pipeline,
+      '',
+      'ADDITIONAL NOTES',
+      '----------------',
+      d.notes || 'None',
+      '',
+      '---',
+      'Submitted via CBFX Hub — ShotGrid Access Request Wizard'
+    ].join('\n');
+  }
+
+  function sendRequest() {
+    const d = getData();
+    const subject = encodeURIComponent('[ShotGrid Access] ' + d.artistName + ' — ' + d.showAssignment);
+    const body = encodeURIComponent(buildEmailBody(d));
+    window.open('https://mail.google.com/mail/?view=cm&to=onboarding@chicken-bone.com&su=' + subject + '&body=' + body, '_blank');
+  }
+
+  function copyRequest() {
+    const d = getData();
+    const text = 'Subject: [ShotGrid Access] ' + d.artistName + ' — ' + d.showAssignment + '\n\n' + buildEmailBody(d);
+    navigator.clipboard.writeText(text).then(() => {
+      const fb = document.getElementById('copyFeedback');
+      if (fb) { fb.classList.add('show'); setTimeout(() => fb.classList.remove('show'), 2000); }
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const fb = document.getElementById('copyFeedback');
+      if (fb) { fb.classList.add('show'); setTimeout(() => fb.classList.remove('show'), 2000); }
+    });
+  }
+
+  function exportPDF() {
+    window.print();
+  }
+</script>
+</body>
+</html>
