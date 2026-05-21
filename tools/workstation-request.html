@@ -150,6 +150,14 @@ textarea{resize:vertical;min-height:80px}
 .b-hold{background:var(--surface2);color:var(--text2);border:1px solid var(--border-dark)}
 .b-inst{background:var(--border-dark);color:var(--white);border:1px solid var(--border-dark)}
 
+/* VALIDATION COLLAPSE */
+.field-group-collapsed{display:none!important}
+.validation-banner{
+  display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
+  padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
+}
+.validation-banner.show{display:flex;align-items:center;gap:8px}
+
 @media print {
   .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
   body { background: #fff !important; color: #000 !important; }
@@ -690,13 +698,4 @@ ${notes?`<div class="notes-block"><strong style="font-size:11px;text-transform:u
 </div>
 ${allCards}
 </div>
-<div class="footer"><span class="footer-brand">CBFX</span><span class="footer-text">Internal Use Only — Onboarding Phase 1 — ${today}</span></div>
-</div>
-</body>
-</html>`;
-
-  const blob = new Blob([doc], {type:'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `c
+<div class="footer">

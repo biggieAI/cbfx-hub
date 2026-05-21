@@ -133,6 +133,14 @@ textarea.tall{min-height:130px}
 .radio-error{font-size:12px;color:#a03030;margin-top:6px;display:none}
 .radio-group-wrap.has-error .radio-error{display:block}
 
+/* Validation collapse */
+.field-group-collapsed{display:none!important}
+.validation-banner{
+  display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
+  padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
+}
+.validation-banner.show{display:flex;align-items:center;gap:8px}
+
 @media print {
   .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
   body { background: #fff !important; color: #000 !important; }
@@ -184,6 +192,7 @@ textarea.tall{min-height:130px}
       <div class="panel-title">Issue Classification</div>
     </div>
     <div class="panel-body">
+      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="two-col">
         <div class="field-group" id="fg-name">
@@ -254,6 +263,7 @@ textarea.tall{min-height:130px}
       <div class="panel-title">Issue Detail</div>
     </div>
     <div class="panel-body">
+      <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="field-group" id="fg-title">
         <label class="field-label" for="issue-title">Short Title <span class="optional">— becomes email subject</span></label>
@@ -416,7 +426,37 @@ function validate(step) {
     ok = requireText('fg-actual', 'issue-actual') && ok;
   }
 
+  // Collapse valid groups, surface invalid ones
+  var banner = document.getElementById('val-banner-' + step);
+  var stepEl = document.getElementById('step-' + step);
+  var allGroups = stepEl ? stepEl.querySelectorAll('.field-group') : [];
+
+  if (!ok) {
+    if (banner) banner.classList.add('show');
+    allGroups.forEach(function(group) {
+      var hasError = group.classList.contains('has-error') || group.querySelector('.radio-group-wrap.has-error');
+      if (hasError) {
+        group.classList.remove('field-group-collapsed');
+      } else {
+        group.classList.add('field-group-collapsed');
+      }
+    });
+  } else {
+    if (banner) banner.classList.remove('show');
+    allGroups.forEach(function(group) { group.classList.remove('field-group-collapsed'); });
+  }
+
   return ok;
+}
+
+// Re-expand collapsed fields when user starts editing
+document.querySelectorAll('.panel input, .panel textarea').forEach(function(el) {
+  el.addEventListener('input', expandAllGroups);
+  el.addEventListener('change', expandAllGroups);
+});
+function expandAllGroups() {
+  document.querySelectorAll('.field-group-collapsed').forEach(function(g) { g.classList.remove('field-group-collapsed'); });
+  document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
 }
 
 function requireText(groupId, inputId) {
@@ -522,53 +562,4 @@ function buildBody() {
   lines.push('CBFX SUPPORT TICKET');
   lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   lines.push('');
-  lines.push('SUBMITTER');
-  lines.push('  Name:   ' + getField('submitter-name'));
-  lines.push('  Email:  ' + getField('submitter-email'));
-  lines.push('');
-  lines.push('PRIORITY');
-  lines.push('  ' + getRadio('priority'));
-  lines.push('');
-  lines.push('ISSUE TYPE');
-  lines.push('  ' + getRadio('issue-type'));
-  lines.push('');
-  lines.push('AFFECTED SYSTEM');
-  lines.push('  ' + getField('affected-system'));
-  lines.push('');
-  lines.push('─────────────────────────────────────────────────');
-  lines.push('');
-  lines.push('DESCRIPTION');
-  lines.push(indent(getField('issue-description')));
-  lines.push('');
-  lines.push('STEPS TO REPRODUCE');
-  lines.push(indent(getField('issue-steps')));
-  lines.push('');
-  lines.push('EXPECTED BEHAVIOR');
-  lines.push(indent(getField('issue-expected')));
-  lines.push('');
-  lines.push('ACTUAL BEHAVIOR');
-  lines.push(indent(getField('issue-actual')));
-  lines.push('');
-  lines.push('─────────────────────────────────────────────────');
-  lines.push('Submitted via CBFX Hub Support Ticket Wizard');
-  return lines.join('\n');
-}
-
-function indent(text) {
-  return text.split('\n').map(function(l){ return '  ' + l; }).join('\n');
-}
-
-function openEmail() {
-  var subject = encodeURIComponent(buildSubject());
-  var body = encodeURIComponent(buildBody());
-  var gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent('support@gpltech.com') + '&su=' + subject + '&body=' + body;
-  window.open(gmailUrl, '_blank');
-}
-
-function exportPDF() {
-  window.print();
-}
-
-function copyToClipboard() {
-  var text = 'Subject: ' + buildSubject() + '\n\n' + buildBody();
-  var btn = doc
+  li

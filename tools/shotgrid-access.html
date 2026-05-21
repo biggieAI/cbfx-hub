@@ -258,7 +258,11 @@
   .radio-card input[type="radio"] {
     position: absolute;
     opacity: 0;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
   }
   .radio-card-inner {
     display: flex;
@@ -491,6 +495,25 @@
   .wizard-step { display: none; }
   .wizard-step.active { display: block; }
 
+  /* VALIDATION COLLAPSE */
+  .field-group-collapsed { display: none !important; }
+  .validation-banner {
+    display: none;
+    background: #fdecea;
+    border: 1px solid #e8504a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c0392b;
+    margin-bottom: 20px;
+  }
+  .validation-banner.show {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   @media print {
     .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
     body { background: #fff !important; color: #000 !important; }
@@ -539,6 +562,7 @@
     <div class="card">
       <div class="card-title">Artist Information</div>
       <div class="card-subtitle">Details about the artist being onboarded to ShotGrid.</div>
+      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="field-group">
         <div class="field">
@@ -553,12 +577,11 @@
         </div>
       </div>
 
-      <div class="field-group full">
+      <div class="field-group full field-radio-group" id="fg-dept">
         <div class="field">
           <label>Department <span class="req">*</span></label>
           <span class="field-error" id="err-dept">Please select a department.</span>
         </div>
-      </div>
       <div class="radio-cards cols3" style="margin-bottom:16px;" id="dept-cards">
         <label class="radio-card">
           <input type="radio" name="department" value="Compositing">
@@ -589,6 +612,7 @@
           <div class="radio-card-inner"><span class="radio-card-label">Other</span></div>
         </label>
       </div>
+      </div><!-- /fg-dept -->
 
       <div class="field-group">
         <div class="field">
@@ -633,6 +657,7 @@
     <div class="card">
       <div class="card-title">Access Configuration</div>
       <div class="card-subtitle">Define the shows, permissions, and pipeline tools for this account.</div>
+      <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="field-group full">
         <div class="field">
@@ -644,6 +669,7 @@
       </div>
 
       <div class="divider"></div>
+      <div class="field-group full field-radio-group" id="fg-perm">
       <div class="section-label">ShotGrid Permission Group <span style="color:var(--error)">*</span></div>
       <span class="field-error" id="err-permGroup" style="display:none;margin-bottom:8px;">Please select a permission group.</span>
       <div class="radio-cards" style="margin-bottom:16px;" id="perm-cards">
@@ -683,6 +709,7 @@
           </div>
         </label>
       </div>
+      </div><!-- /fg-perm -->
 
       <div class="divider"></div>
       <div class="section-label">Pipeline Tools Access</div>
@@ -944,7 +971,37 @@
       else { permErrEl.style.display = 'none'; }
     }
 
+    // Collapse valid groups, surface invalid ones
+    const banner = document.getElementById('val-banner-' + step);
+    const stepEl = document.getElementById('step' + step);
+    const allGroups = stepEl ? stepEl.querySelectorAll('.field-group') : [];
+
+    if (!valid) {
+      if (banner) banner.classList.add('show');
+      allGroups.forEach(function(group) {
+        const hasError = group.querySelector('.invalid, .field-error.show, .field-error[style*="display: block"], .field-error[style*="display:block"]');
+        if (hasError) {
+          group.classList.remove('field-group-collapsed');
+        } else {
+          group.classList.add('field-group-collapsed');
+        }
+      });
+    } else {
+      if (banner) banner.classList.remove('show');
+      allGroups.forEach(function(group) { group.classList.remove('field-group-collapsed'); });
+    }
+
     return valid;
+  }
+
+  // Re-expand collapsed fields when user starts editing
+  document.querySelectorAll('.wizard-step input, .wizard-step textarea, .wizard-step select').forEach(function(el) {
+    el.addEventListener('input', expandAllGroups);
+    el.addEventListener('change', expandAllGroups);
+  });
+  function expandAllGroups() {
+    document.querySelectorAll('.field-group-collapsed').forEach(function(g) { g.classList.remove('field-group-collapsed'); });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
   }
 
   function toggleCheck(label) {
@@ -955,56 +1012,4 @@
   function getData() {
     const pipelineChecked = [...document.querySelectorAll('input[name="pipeline"]:checked')].map(c => c.value);
     const dept = document.querySelector('input[name="department"]:checked');
-    const perm = document.querySelector('input[name="permGroup"]:checked');
-    const rv = document.querySelector('input[name="rvAccess"]:checked');
-    const startRaw = document.getElementById('startDate').value;
-    let startFormatted = startRaw;
-    if (startRaw) {
-      const d = new Date(startRaw + 'T00:00:00');
-      startFormatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    }
-
-    // Build pipeline tools string
-    const toolsList = [];
-    if (rv && rv.value !== 'Not Needed') toolsList.push('RV/Screening Room: ' + rv.value);
-    toolsList.push(...pipelineChecked);
-
-    return {
-      artistName: document.getElementById('artistName').value.trim(),
-      artistEmail: document.getElementById('artistEmail').value.trim(),
-      dept: dept ? dept.value : '',
-      roleTitle: document.getElementById('roleTitle').value.trim(),
-      startDate: startFormatted,
-      requesterName: document.getElementById('requesterName').value.trim(),
-      requesterEmail: document.getElementById('requesterEmail').value.trim(),
-      showAssignment: document.getElementById('showAssignment').value.trim(),
-      permGroup: perm ? perm.value : '',
-      rvAccess: rv ? rv.value : 'Not Needed',
-      pipeline: toolsList.length > 0 ? toolsList.join(', ') : 'None',
-      notes: document.getElementById('additionalNotes').value.trim()
-    };
-  }
-
-  function buildReview() {
-    const d = getData();
-    function set(id, val) {
-      const el = document.getElementById(id);
-      if (!val) { el.textContent = '—'; el.classList.add('empty'); }
-      else { el.textContent = val; el.classList.remove('empty'); }
-    }
-    set('r-artistName', d.artistName);
-    set('r-artistEmail', d.artistEmail);
-    set('r-dept', d.dept);
-    set('r-roleTitle', d.roleTitle);
-    set('r-startDate', d.startDate);
-    set('r-requesterName', d.requesterName);
-    set('r-requesterEmail', d.requesterEmail);
-    set('r-showAssignment', d.showAssignment);
-    set('r-permGroup', d.permGroup);
-    set('r-rvAccess', d.rvAccess);
-    const clientPortal = [...document.querySelectorAll('input[name="pipeline"]:checked')].map(c => c.value);
-    set('r-pipeline', clientPortal.length > 0 ? clientPortal.join(', ') : 'Not requested');
-    set('r-notes', d.notes || '');
-  }
-
-  function bui
+    const perm = document.querySelector('input

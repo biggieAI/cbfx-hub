@@ -310,6 +310,14 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .step{display:none;}
 .step.active{display:block;}
 
+/* VALIDATION COLLAPSE */
+.field-collapsed{display:none!important}
+.validation-banner{
+  display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
+  padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
+}
+.validation-banner.show{display:flex;align-items:center;gap:8px}
+
 /* Responsive */
 @media(max-width:560px){
   .field-row{grid-template-columns:1fr;}
@@ -371,6 +379,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 <div class="step active" id="step1">
   <h1 class="step-heading">Artist Details</h1>
   <p class="step-sub">Who is being booked, and who is making the request?</p>
+  <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
 
   <div class="field-row">
     <div class="field">
@@ -429,6 +438,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 <div class="step" id="step2">
   <h1 class="step-heading">Booking Details</h1>
   <p class="step-sub">Define the engagement, dates, and rate.</p>
+  <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
 
   <div class="field">
     <label class="field-label" for="showProject">Show / Project</label>
@@ -515,6 +525,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 <div class="step" id="step3">
   <h1 class="step-heading">Show & Notes</h1>
   <p class="step-sub">Additional details about the project and any special requirements.</p>
+  <div class="validation-banner" id="val-banner-3">&#9888; Please complete the highlighted fields below.</div>
 
   <div class="field-row">
     <div class="field">
@@ -672,7 +683,37 @@ function validateStep(n) {
     if (!ta) { setErr('turnaround', true, 'Please select a turnaround'); ok = false; }
   }
 
+  // Collapse valid fields, surface invalid ones
+  const banner = document.getElementById('val-banner-' + n);
+  const stepEl = document.getElementById('step' + n);
+  const allFields = stepEl ? stepEl.querySelectorAll('.field') : [];
+
+  if (!ok) {
+    if (banner) banner.classList.add('show');
+    allFields.forEach(function(field) {
+      const hasErr = field.querySelector('.field-error.show, .error');
+      if (hasErr) {
+        field.classList.remove('field-collapsed');
+      } else {
+        field.classList.add('field-collapsed');
+      }
+    });
+  } else {
+    if (banner) banner.classList.remove('show');
+    allFields.forEach(function(field) { field.classList.remove('field-collapsed'); });
+  }
+
   return ok;
+}
+
+// Re-expand collapsed fields when user starts editing
+document.querySelectorAll('.step input, .step textarea, .step select').forEach(function(el) {
+  el.addEventListener('input', expandAllGroups);
+  el.addEventListener('change', expandAllGroups);
+});
+function expandAllGroups() {
+  document.querySelectorAll('.field-collapsed').forEach(function(g) { g.classList.remove('field-collapsed'); });
+  document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
 }
 
 function v(id) { return (document.getElementById(id)?.value || '').trim(); }
@@ -853,36 +894,4 @@ function productionEmailBody() {
   body += `  Show:          ${v('showProject')}\n`;
   if (v('clientBroadcaster')) body += `  Client:        ${v('clientBroadcaster')}\n`;
   if (v('episodeSegment')) body += `  Episode:       ${v('episodeSegment')}\n`;
-  body += `  Start Date:    ${fmtDate(v('startDate'))}\n`;
-  body += `  End Date:      ${fmtDate(v('endDate'))}\n`;
-  if (v('estDays')) body += `  Est. Days:     ${v('estDays')}\n`;
-  body += `  Work Location: ${vRadio('workLocation')}\n`;
-  body += `  Rate:          ${fmtRate()}\n`;
-  body += `  Turnaround:    ${vRadio('turnaround')}\n`;
-  if (v('shotCount')) body += `  Shot Count:    ${v('shotCount')}\n`;
-  if (v('specialReqs')) { body += `\nSPECIAL REQUIREMENTS\n  ${v('specialReqs')}\n`; }
-  if (v('internalNotes')) { body += `\nINTERNAL NOTES\n  ${v('internalNotes')}\n`; }
-  body += `\n═══════════════════════════════════════\n`;
-  body += `Hold bookings must be confirmed or released within 5 business days.\n`;
-  return body;
-}
-
-// ─── Actions ─────────────────────────────────────────────────────────────────
-function sendToArtist() {
-  const bType = vRadio('bookingType');
-  const show = v('showProject');
-  const start = fmtDate(v('startDate'));
-  const end = fmtDate(v('endDate'));
-  const subject = encodeURIComponent(`[CBFX Booking | ${bType}] ${show} — ${start} to ${end}`);
-  const body = encodeURIComponent(artistEmailBody());
-  const gmailUrl1 = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(v('artistEmail')) + '&su=' + subject + '&body=' + body;
-  window.open(gmailUrl1, '_blank');
-}
-
-function sendToProduction() {
-  const bType = vRadio('bookingType');
-  const show = v('showProject');
-  const start = fmtDate(v('startDate'));
-  const end = fmtDate(v('endDate'));
-  const subject = encodeURIComponent(`[CBFX Internal | ${bType}] ${show} — ${v('artistName')} | ${start} to ${end}`);
-  const body = encodeURIComponent(productionEmailBody());
+  body += `  Start Date:    ${fmtDate(v

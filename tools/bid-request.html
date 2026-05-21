@@ -637,6 +637,25 @@
   /* HIDDEN */
   .hidden { display: none !important; }
 
+  /* VALIDATION COLLAPSE */
+  .field-collapsed { display: none !important; }
+  .validation-banner {
+    display: none;
+    background: #fdecea;
+    border: 1px solid #e8504a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c0392b;
+    margin-bottom: 20px;
+  }
+  .validation-banner.show {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   /* SELECT ARROW */
   .select-wrap { position: relative; }
   .select-wrap::after {
@@ -708,6 +727,7 @@
     <div class="panel-card">
       <h2>Project Info</h2>
       <p class="panel-desc">Basic details about the project and who's requesting the bid.</p>
+      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="section-header">Project Details</div>
 
@@ -785,6 +805,7 @@
     <div class="panel-card">
       <h2>Scope &amp; Complexity</h2>
       <p class="panel-desc">Shot breakdown, deliverable specs, and turnaround requirements.</p>
+      <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="section-header">Shot Breakdown</div>
 
@@ -1117,6 +1138,22 @@
     if (!reqEmail || !emailOk) { showError('err-req-email'); markField('req-email', false); ok = false; }
     else { clearError('err-req-email'); markField('req-email', true); }
 
+    // Collapse valid fields
+    const banner = document.getElementById('val-banner-1');
+    const stepEl = document.getElementById('step-1');
+    const allFields = stepEl ? stepEl.querySelectorAll('.field') : [];
+    if (!ok) {
+      if (banner) banner.classList.add('show');
+      allFields.forEach(function(field) {
+        const hasErr = field.querySelector('.field-error.visible, .error');
+        if (hasErr) { field.classList.remove('field-collapsed'); }
+        else { field.classList.add('field-collapsed'); }
+      });
+    } else {
+      if (banner) banner.classList.remove('show');
+      allFields.forEach(function(field) { field.classList.remove('field-collapsed'); });
+    }
+
     return ok;
   }
 
@@ -1143,7 +1180,33 @@
     if (!vfxSup) { showError('err-vfx-sup'); markField('vfx-sup', false); ok = false; }
     else { clearError('err-vfx-sup'); markField('vfx-sup', true); }
 
+    // Collapse valid fields
+    const banner = document.getElementById('val-banner-2');
+    const stepEl = document.getElementById('step-2');
+    const allFields = stepEl ? stepEl.querySelectorAll('.field') : [];
+    if (!ok) {
+      if (banner) banner.classList.add('show');
+      allFields.forEach(function(field) {
+        const hasErr = field.querySelector('.field-error.visible, .error');
+        if (hasErr) { field.classList.remove('field-collapsed'); }
+        else { field.classList.add('field-collapsed'); }
+      });
+    } else {
+      if (banner) banner.classList.remove('show');
+      allFields.forEach(function(field) { field.classList.remove('field-collapsed'); });
+    }
+
     return ok;
+  }
+
+  // Re-expand collapsed fields when user starts editing
+  document.querySelectorAll('.step-panel input, .step-panel textarea, .step-panel select').forEach(function(el) {
+    el.addEventListener('input', expandAllGroups);
+    el.addEventListener('change', expandAllGroups);
+  });
+  function expandAllGroups() {
+    document.querySelectorAll('.field-collapsed').forEach(function(g) { g.classList.remove('field-collapsed'); });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
   }
 
   // ============================================================
@@ -1311,76 +1374,4 @@
     const resolution = getRadio('resolution');
     const frameRate = getVal('frame-rate') ? getVal('frame-rate') + ' fps' : '—';
     const colorspace = getVal('colorspace') || 'ACES 1.3 / ACEScg';
-    const turnaround = getRadio('turnaround');
-    const vfxSup = getVal('vfx-sup');
-    const crewSize = getVal('crew-size');
-
-    const lines = [
-      '=== BID REQUEST ===',
-      '',
-      'PROJECT INFO',
-      '------------',
-      'Show / Project Title : ' + show,
-      'Client / Broadcaster : ' + client,
-      'Contact at Client    : ' + (contactClient || '(not provided)'),
-      'Bid Due Date         : ' + formatDate(bidDue),
-      'Work Type            : ' + workType,
-      '',
-      'REQUESTER',
-      '---------',
-      'Name  : ' + reqName,
-      'Email : ' + reqEmail,
-      '',
-      'SHOT BREAKDOWN',
-      '--------------',
-      'Tier A — Hero / Photoreal  : ' + tiers.a,
-      'Tier B — Standard Comp     : ' + tiers.b,
-      'Tier C — Simple / Cleanup  : ' + tiers.c,
-      'Tier D — Roto / Paint Only : ' + tiers.d,
-      'TOTAL                      : ' + total,
-      '',
-      'SCOPE & DELIVERABLES',
-      '--------------------',
-      'Frame Handles       : ' + handles + ' frames/shot',
-      'Deliverable Format  : ' + delivFormat,
-      'Resolution          : ' + resolution,
-      'Frame Rate          : ' + (getVal('frame-rate') ? getVal('frame-rate') + ' fps' : '—'),
-      'Colorspace          : ' + colorspace,
-      'Turnaround          : ' + turnaround,
-      'VFX Supervisor      : ' + vfxSup,
-      'Est. Crew Size      : ' + (crewSize || '(not provided)'),
-      '',
-      '---',
-      'Note: Bid packages should be accompanied by client reference materials',
-      'sent separately to bids@chicken-bone.com.',
-      '',
-      'Generated via CBFX Hub Bid Request Wizard',
-    ];
-
-    return lines.join('\n');
-  }
-
-  function buildMailto() {
-    // no-op: Gmail URL is built dynamically on click
-  }
-
-  function openInGmail() {
-    const show = getVal('show-title');
-    const client = getVal('client');
-    const bidDue = document.getElementById('bid-due').value;
-    const subject = encodeURIComponent('[Bid Request] ' + show + ' — ' + client + ' — Due ' + formatDate(bidDue));
-    const body = encodeURIComponent(buildEmailBody());
-    const gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent('bids@chicken-bone.com') + '&su=' + subject + '&body=' + body;
-    window.open(gmailUrl, '_blank');
-  }
-
-  function exportPDF() {
-    window.print();
-  }
-
-  // ============================================================
-  // COPY TO CLIPBOARD
-  // ============================================================
-  function copyToClipboard() {
-    const show = getVal('show-title');
-    const client = getVal('cl
+    const turnaround = getRad

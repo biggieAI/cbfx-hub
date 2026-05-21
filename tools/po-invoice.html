@@ -151,6 +151,15 @@
 
   .hidden{display:none!important}
 
+  /* VALIDATION COLLAPSE */
+  .form-row-collapsed{display:none!important}
+  .form-row-2-collapsed{display:none!important}
+  .validation-banner{
+    display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
+    padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
+  }
+  .validation-banner.show{display:flex;align-items:center;gap:8px}
+
   @media(max-width:540px){
     .type-cards{grid-template-columns:1fr}
     .form-row-2{grid-template-columns:1fr}
@@ -193,6 +202,7 @@
     <div class="card">
       <div class="card-title">Submission Type & Project</div>
       <div class="card-sub">What are you submitting, and for which project?</div>
+      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="form-row">
         <label>Submission Type</label>
@@ -262,6 +272,7 @@
     <div class="card">
       <div class="card-title">Financial Details</div>
       <div class="card-sub">Amount, codes, and approval.</div>
+      <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="form-row-2">
         <div class="form-row" style="margin-bottom:0">
@@ -403,7 +414,26 @@
       if (!val(f)) { setErr(f, 'Required'); ok = false; }
     });
 
-    if (!ok) return;
+    // Collapse valid form-rows
+    const banner = document.getElementById('val-banner-1');
+    const stepEl = document.getElementById('step-1');
+    const allRows = stepEl ? stepEl.querySelectorAll('.form-row, .form-row-2') : [];
+    if (!ok) {
+      if (banner) banner.classList.add('show');
+      allRows.forEach(function(row) {
+        const errEl = row.querySelector('.err-msg');
+        const hasErr = row.querySelector('.error') || (errEl && errEl.textContent.trim());
+        if (hasErr) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); }
+        else {
+          if (row.classList.contains('form-row-2')) row.classList.add('form-row-2-collapsed');
+          else row.classList.add('form-row-collapsed');
+        }
+      });
+      return;
+    } else {
+      if (banner) banner.classList.remove('show');
+      allRows.forEach(function(row) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); });
+    }
 
     updateTypeUI();
     showStep(2);
@@ -425,10 +455,42 @@
       setErr('invNumber', 'Required for invoices'); ok = false;
     }
 
-    if (!ok) return;
+    // Collapse valid form-rows
+    const banner = document.getElementById('val-banner-2');
+    const stepEl = document.getElementById('step-2');
+    const allRows = stepEl ? stepEl.querySelectorAll('.form-row, .form-row-2') : [];
+    if (!ok) {
+      if (banner) banner.classList.add('show');
+      allRows.forEach(function(row) {
+        const errEl = row.querySelector('.err-msg');
+        const hasErr = row.querySelector('.error') || (errEl && errEl.textContent.trim());
+        if (hasErr) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); }
+        else {
+          if (row.classList.contains('form-row-2')) row.classList.add('form-row-2-collapsed');
+          else row.classList.add('form-row-collapsed');
+        }
+      });
+      return;
+    } else {
+      if (banner) banner.classList.remove('show');
+      allRows.forEach(function(row) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); });
+    }
 
     buildSummary();
     showStep(3);
+  }
+
+  // Re-expand collapsed fields when user starts editing
+  document.querySelectorAll('#step-1 input, #step-1 textarea, #step-2 input, #step-2 textarea, #step-2 select').forEach(function(el) {
+    el.addEventListener('input', expandAllGroups);
+    el.addEventListener('change', expandAllGroups);
+  });
+  function expandAllGroups() {
+    document.querySelectorAll('.form-row-collapsed, .form-row-2-collapsed').forEach(function(g) {
+      g.classList.remove('form-row-collapsed');
+      g.classList.remove('form-row-2-collapsed');
+    });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
   }
 
   function goBack(step) { showStep(step); }
@@ -457,86 +519,4 @@
 
   function memoRow(key, v) {
     if (!v) return '';
-    return `<div class="memo-row"><div class="memo-key">${key}</div><div class="memo-val">${v}</div></div>`;
-  }
-
-  function getTypeLabel() {
-    const t = radio('subType');
-    return t === 'Purchase Order' ? 'PO' : 'Invoice';
-  }
-
-  function buildSummary() {
-    const type = radio('subType');
-    const typeLabel = getTypeLabel();
-    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
-    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-
-    document.getElementById('memoBox').innerHTML = `
-      <div class="memo-header">
-        <div class="memo-title">${typeLabel} SUBMISSION — CBFX / Chicken Bone FX</div>
-        <div class="memo-date">Submitted ${today}</div>
-      </div>
-
-      <div class="memo-section">
-        <div class="memo-section-title">Submission</div>
-        ${memoRow('Type', type)}
-        ${memoRow('Show / Project', val('show'))}
-        ${memoRow('Submitted By', val('submitter'))}
-        ${memoRow('Submitter Email', val('submitterEmail'))}
-        ${memoRow('Date', fmtDate(val('subDate')))}
-      </div>
-
-      <div class="memo-section">
-        <div class="memo-section-title">Vendor</div>
-        ${memoRow('Vendor / Payee', val('vendor'))}
-        ${val('vendorEmail') ? memoRow('Vendor Email', val('vendorEmail')) : ''}
-      </div>
-
-      <div class="memo-section">
-        <div class="memo-section-title">Financial</div>
-        ${memoRow('PO Number', val('poNumber'))}
-        ${type === 'Invoice' ? memoRow('Invoice Number', val('invNumber')) : ''}
-        ${memoRow('Amount', amtStr)}
-        ${memoRow('Due Date', fmtDate(val('dueDate')))}
-        ${memoRow('Description', val('description'))}
-        ${memoRow('Approval From', val('approver'))}
-        ${val('costCode') ? memoRow('Budget Line / Code', val('costCode')) : ''}
-      </div>
-    `;
-  }
-
-  function getSummaryText() {
-    const type = radio('subType');
-    const typeLabel = getTypeLabel();
-    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
-    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-
-    const lines = [
-      `${typeLabel} SUBMISSION — CBFX / Chicken Bone FX`,
-      `Submitted ${today}`,
-      '',
-      '--- SUBMISSION ---',
-      `Type:             ${type}`,
-      `Show / Project:   ${val('show')}`,
-      `Submitted By:     ${val('submitter')}`,
-      `Submitter Email:  ${val('submitterEmail')}`,
-      `Date:             ${fmtDate(val('subDate'))}`,
-      '',
-      '--- VENDOR ---',
-      `Vendor / Payee:   ${val('vendor')}`,
-    ];
-    if (val('vendorEmail')) lines.push(`Vendor Email:     ${val('vendorEmail')}`);
-    lines.push(
-      '',
-      '--- FINANCIAL ---',
-      `PO Number:        ${val('poNumber')}`,
-    );
-    if (type === 'Invoice') lines.push(`Invoice Number:   ${val('invNumber')}`);
-    lines.push(
-      `Amount:           ${amtStr}`,
-      `Due Date:         ${fmtDate(val('dueDate'))}`,
-      `Description:      ${val('description')}`,
-      `Approval From:    ${val('approver')}`,
-    );
-    if (val('costCode')) lines.push(`Budget Line/Code: ${val('costCode')}`);
-    lines.push('','---','Attach the physical PO or invoice document directly in your email client after
+    return `<div class="memo-row"><di

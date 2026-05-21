@@ -483,6 +483,25 @@
   .step-panel { display: none; }
   .step-panel.active { display: block; }
 
+  /* VALIDATION COLLAPSE */
+  .field-row-collapsed { display: none !important; }
+  .validation-banner {
+    display: none;
+    background: #fdecea;
+    border: 1px solid #e8504a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c0392b;
+    margin-bottom: 20px;
+  }
+  .validation-banner.show {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   @media print {
     .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
     body { background: #fff !important; color: #000 !important; }
@@ -543,6 +562,7 @@
     <div class="card">
       <div class="card-title">Contractor Information</div>
       <div class="card-desc">All fields marked required must be completed before proceeding.</div>
+      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
 
       <div class="field-row">
         <div class="field">
@@ -897,7 +917,38 @@
       depGrp.classList.remove('radio-group-invalid');
     }
 
+    // Collapse valid rows, surface invalid ones
+    var banner = document.getElementById('val-banner-1');
+    var stepEl = document.getElementById('step1');
+    var allRows = stepEl ? stepEl.querySelectorAll('.field-row') : [];
+
+    if (hasError) {
+      if (banner) banner.classList.add('show');
+      allRows.forEach(function(row) {
+        var hasErr = row.querySelector('.invalid, .field-error.show, .radio-group-invalid');
+        if (hasErr) {
+          row.classList.remove('field-row-collapsed');
+        } else {
+          row.classList.add('field-row-collapsed');
+        }
+      });
+      // Also check engagement/department errors (standalone elements outside field-row)
+    } else {
+      if (banner) banner.classList.remove('show');
+      allRows.forEach(function(row) { row.classList.remove('field-row-collapsed'); });
+    }
+
     if (!hasError) goStep(2);
+  }
+
+  // Re-expand collapsed fields when user starts editing
+  document.querySelectorAll('#step1 input, #step1 textarea').forEach(function(el) {
+    el.addEventListener('input', expandAllGroups);
+    el.addEventListener('change', expandAllGroups);
+  });
+  function expandAllGroups() {
+    document.querySelectorAll('.field-row-collapsed').forEach(function(g) { g.classList.remove('field-row-collapsed'); });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
   }
 
   // ─── DOC CHECKBOX ─────────────────────────────────────────────────────────
@@ -989,56 +1040,4 @@
     });
     lines.push('');
     lines.push('---');
-    lines.push('Submitted via CBFX Hub — NDA & Paperwork Wizard');
-    return lines.join('\n');
-  }
-
-  function sendEmail() {
-    var name = val('fullName');
-    var show = val('showProject');
-    var subject = encodeURIComponent('[NDA/Paperwork] ' + name + ' — ' + show);
-    var body = encodeURIComponent(buildEmailBody());
-    var gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent('onboarding@chicken-bone.com') + '&su=' + subject + '&body=' + body;
-    window.open(gmailUrl, '_blank');
-  }
-
-  function exportPDF() {
-    window.print();
-  }
-
-  function copyToClipboard() {
-    var name = val('fullName');
-    var show = val('showProject');
-    var subject = '[NDA/Paperwork] ' + name + ' — ' + show;
-    var text = 'To: onboarding@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildEmailBody();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(fallbackCopy.bind(null, text));
-    } else {
-      fallbackCopy(text);
-    }
-  }
-
-  function fallbackCopy(text) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta);
-    showCopyConfirm();
-  }
-
-  function showCopyConfirm() {
-    var el = document.getElementById('copyConfirm');
-    el.classList.add('show');
-    setTimeout(function() { el.classList.remove('show'); }, 2500);
-  }
-
-  // ─── CLEAR VALIDATION ON INPUT ────────────────────────────────────────────
-  ['fullName','email','phone','showProject','startDate','endDate','requestedBy'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) {
-   
+    lines.push('Submitted via CBFX
