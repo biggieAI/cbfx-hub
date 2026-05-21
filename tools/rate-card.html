@@ -620,7 +620,7 @@
   function sendToProduction() {
     const subject = encodeURIComponent(`[Deal Memo] ${val('artistName')} — ${val('show')}`);
     const body = encodeURIComponent(getMemoText());
-    window.open(`https://mail.google.com/mail/?view=cm&to=production@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
+    window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=production@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
   }
 
   function copyMemo() {

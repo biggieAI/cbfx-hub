@@ -607,7 +607,7 @@
     const amtRaw = fmt(val('amount'));
     const subject = encodeURIComponent(`[${typeLabel}] ${val('vendor')} — ${val('show')} — $${amtRaw}`);
     const body = encodeURIComponent(getSummaryText());
-    window.open(`https://mail.google.com/mail/?view=cm&to=accounting@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
+    window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=accounting@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
   }
 
   function copySummary() {
