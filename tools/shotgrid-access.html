@@ -674,32 +674,47 @@
 
       <div class="divider"></div>
       <div class="section-label">Pipeline Tools Access</div>
-      <p class="field-hint" style="margin-bottom:12px;">Check all that apply — leave unchecked if not needed.</p>
+
+      <div style="margin-bottom:16px;">
+        <div class="section-label" style="margin-bottom:8px;">RV / Screening Room <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">— Where is access needed?</span></div>
+        <div class="radio-cards cols2" id="rv-cards">
+          <label class="radio-card">
+            <input type="radio" name="rvAccess" value="Not Needed">
+            <div class="radio-card-inner">
+              <span class="radio-card-label">Not Needed</span>
+              <span class="radio-card-sub">Skip RV entirely</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="rvAccess" value="Workstation">
+            <div class="radio-card-inner">
+              <span class="radio-card-label">Workstation</span>
+              <span class="radio-card-sub">Local RV install on EC2</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="rvAccess" value="Through ShotGrid">
+            <div class="radio-card-inner">
+              <span class="radio-card-label">Through ShotGrid</span>
+              <span class="radio-card-sub">SG Screening Room web</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="rvAccess" value="Both">
+            <div class="radio-card-inner">
+              <span class="radio-card-label">Both</span>
+              <span class="radio-card-sub">Workstation + SG web</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-bottom:8px;">Additional Access</div>
       <div class="toggles" id="pipeline-toggles">
-        <label class="toggle-item" onclick="toggleCheck(this)">
-          <input type="checkbox" name="pipeline" value="Nuke Submit">
-          <div class="toggle-box"></div>
-          <span class="toggle-label">Nuke Submit</span>
-        </label>
-        <label class="toggle-item" onclick="toggleCheck(this)">
-          <input type="checkbox" name="pipeline" value="Deadline Submit">
-          <div class="toggle-box"></div>
-          <span class="toggle-label">Deadline Submit</span>
-        </label>
-        <label class="toggle-item" onclick="toggleCheck(this)">
-          <input type="checkbox" name="pipeline" value="RV/Screening Room">
-          <div class="toggle-box"></div>
-          <span class="toggle-label">RV / Screening Room</span>
-        </label>
         <label class="toggle-item" onclick="toggleCheck(this)">
           <input type="checkbox" name="pipeline" value="Client Review Portal">
           <div class="toggle-box"></div>
           <span class="toggle-label">Client Review Portal</span>
-        </label>
-        <label class="toggle-item" onclick="toggleCheck(this)">
-          <input type="checkbox" name="pipeline" value="ShotGrid Cuts">
-          <div class="toggle-box"></div>
-          <span class="toggle-label">ShotGrid Cuts</span>
         </label>
       </div>
 
@@ -780,9 +795,13 @@
             <span class="review-field-value" id="r-permGroup"></span>
           </div>
         </div>
-        <div style="margin-top:12px;">
+        <div style="margin-top:12px;" class="review-grid">
           <div class="review-field">
-            <span class="review-field-label">Pipeline Tools</span>
+            <span class="review-field-label">RV / Screening Room</span>
+            <span class="review-field-value" id="r-rvAccess"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Client Review Portal</span>
             <span class="review-field-value" id="r-pipeline"></span>
           </div>
         </div>
@@ -924,12 +943,19 @@
     const pipelineChecked = [...document.querySelectorAll('input[name="pipeline"]:checked')].map(c => c.value);
     const dept = document.querySelector('input[name="department"]:checked');
     const perm = document.querySelector('input[name="permGroup"]:checked');
+    const rv = document.querySelector('input[name="rvAccess"]:checked');
     const startRaw = document.getElementById('startDate').value;
     let startFormatted = startRaw;
     if (startRaw) {
       const d = new Date(startRaw + 'T00:00:00');
       startFormatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     }
+
+    // Build pipeline tools string
+    const toolsList = [];
+    if (rv && rv.value !== 'Not Needed') toolsList.push('RV/Screening Room: ' + rv.value);
+    toolsList.push(...pipelineChecked);
+
     return {
       artistName: document.getElementById('artistName').value.trim(),
       artistEmail: document.getElementById('artistEmail').value.trim(),
@@ -940,7 +966,8 @@
       requesterEmail: document.getElementById('requesterEmail').value.trim(),
       showAssignment: document.getElementById('showAssignment').value.trim(),
       permGroup: perm ? perm.value : '',
-      pipeline: pipelineChecked.length > 0 ? pipelineChecked.join(', ') : 'None',
+      rvAccess: rv ? rv.value : 'Not Needed',
+      pipeline: toolsList.length > 0 ? toolsList.join(', ') : 'None',
       notes: document.getElementById('additionalNotes').value.trim()
     };
   }
@@ -961,7 +988,9 @@
     set('r-requesterEmail', d.requesterEmail);
     set('r-showAssignment', d.showAssignment);
     set('r-permGroup', d.permGroup);
-    set('r-pipeline', d.pipeline);
+    set('r-rvAccess', d.rvAccess);
+    const clientPortal = [...document.querySelectorAll('input[name="pipeline"]:checked')].map(c => c.value);
+    set('r-pipeline', clientPortal.length > 0 ? clientPortal.join(', ') : 'Not requested');
     set('r-notes', d.notes || '');
   }
 
@@ -985,47 +1014,7 @@
       '',
       'ACCESS CONFIGURATION',
       '--------------------',
-      'Show(s):            ' + d.showAssignment,
-      'Permission Group:   ' + d.permGroup,
-      'Pipeline Tools:     ' + d.pipeline,
-      '',
-      'ADDITIONAL NOTES',
-      '----------------',
-      d.notes || 'None',
-      '',
-      '---',
-      'Submitted via CBFX Hub — ShotGrid Access Request Wizard'
-    ].join('\n');
-  }
-
-  function sendRequest() {
-    const d = getData();
-    const subject = encodeURIComponent('[ShotGrid Access] ' + d.artistName + ' — ' + d.showAssignment);
-    const body = encodeURIComponent(buildEmailBody(d));
-    window.location.href = 'mailto:onboarding@chicken-bone.com?subject=' + subject + '&body=' + body;
-  }
-
-  function copyRequest() {
-    const d = getData();
-    const text = 'Subject: [ShotGrid Access] ' + d.artistName + ' — ' + d.showAssignment + '\n\n' + buildEmailBody(d);
-    navigator.clipboard.writeText(text).then(() => {
-      const fb = document.getElementById('copyFeedback');
-      fb.classList.add('show');
-      setTimeout(() => fb.classList.remove('show'), 2000);
-    }).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      const fb = document.getElementById('copyFeedback');
-      fb.classList.add('show');
-      setTimeout(() => fb.classList.remove('show'), 2000);
-    });
-  }
-</script>
-</body>
-</html>
+      'Show(s):              ' + d.showAssignment,
+      'Permission Group:     ' + d.permGroup,
+      'RV/Screening Room:    ' + d.rvAccess,
+      'Client Review Portal: ' + (d.pipeline !== 'None' ? d.pip
