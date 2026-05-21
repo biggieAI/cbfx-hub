@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBFX — Support Ticket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+  --blue-dark:#1e3a5a;
+}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
+
+.topbar{background:var(--nav);padding:14px 44px;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--white)}
+.topbar-sub{font-size:11px;color:rgba(244,247,250,.4);letter-spacing:.1em;text-transform:uppercase}
+
+.back-link-wrap{max-width:720px;margin:0 auto;padding:18px 24px 0}
+.back-link{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:color .15s}
+.back-link:hover{color:var(--text)}
+
+.wizard-wrap{max-width:720px;margin:0 auto;padding:28px 24px 80px}
+
+.step-bar{display:flex;align-items:flex-start;margin-bottom:40px}
+.step-col{display:flex;flex-direction:column;align-items:center}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border-dark);background:var(--surface2);color:var(--muted);flex-shrink:0;transition:all .2s}
+.step-dot.active{background:var(--nav);border-color:var(--nav);color:var(--white)}
+.step-dot.done{background:var(--border-dark);border-color:var(--border-dark);color:var(--white)}
+.step-dot.done .step-num{display:none}
+.step-dot.done::after{content:'✓';font-size:13px}
+.step-line-wrap{flex:1;padding-top:15px}
+.step-line{height:2px;background:var(--border);transition:background .2s}
+.step-line.done{background:var(--border-dark)}
+.step-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap}
+.step-label.active{color:var(--text)}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:none;animation:fadeIn .18s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-header{background:var(--nav);padding:20px 28px}
+.panel-eyebrow{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,247,250,.45);margin-bottom:4px}
+.panel-title{font-size:22px;font-weight:700;color:var(--white);letter-spacing:-.01em}
+
+.panel-body{padding:28px}
+
+.field-group{margin-bottom:22px}
+.field-group:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;display:block}
+.field-label .optional{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px}
+.field-hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+input[type=text],input[type=email],textarea{
+  width:100%;padding:11px 14px;font-family:'Figtree',sans-serif;font-size:15px;font-weight:400;
+  color:var(--text);background:var(--white);border:1px solid var(--border-dark);border-radius:5px;
+  outline:none;transition:border-color .15s
+}
+input[type=text]:focus,input[type=email]:focus,textarea:focus{border-color:var(--nav)}
+input::placeholder,textarea::placeholder{color:var(--muted);font-weight:400}
+textarea{resize:vertical;min-height:90px;line-height:1.55}
+textarea.tall{min-height:130px}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.radio-grid{display:grid;gap:10px}
+.radio-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.radio-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.radio-opt input{display:none}
+.radio-opt label{
+  display:block;padding:12px 16px;border:1px solid var(--border-dark);border-radius:5px;
+  font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;
+  background:var(--white);transition:all .15s;text-align:center;line-height:1.3
+}
+.radio-opt label .sublabel{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px}
+.radio-opt input:checked + label{background:var(--nav);border-color:var(--nav);color:var(--white)}
+.radio-opt input:checked + label .sublabel{color:rgba(244,247,250,.55)}
+.radio-opt label:hover{border-color:var(--nav)}
+
+.priority-high input:checked + label{background:#4a1c1c;border-color:#6b2c2c;color:var(--white)}
+.priority-high input:checked + label .sublabel{color:rgba(244,247,250,.55)}
+.priority-med input:checked + label{background:#3a2e10;border-color:#5c4a1a;color:var(--white)}
+.priority-med input:checked + label .sublabel{color:rgba(244,247,250,.55)}
+
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+
+.attachments-note{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:12px 16px;font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.attachments-note .note-icon{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:var(--border-dark);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-top:1px}
+
+.panel-footer{padding:20px 28px;border-top:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:space-between}
+.btn-back{padding:10px 22px;border:1px solid var(--border-dark);border-radius:5px;background:transparent;font-family:'Figtree',sans-serif;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
+.btn-back:hover{background:var(--surface);border-color:var(--nav)}
+.btn-next{padding:10px 28px;border:none;border-radius:5px;background:var(--nav);font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;color:var(--white);cursor:pointer;transition:background .15s;letter-spacing:.01em}
+.btn-next:hover{background:#2d3040}
+.spacer{flex:1}
+
+/* Review step */
+.review-section{margin-bottom:24px}
+.review-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.review-section-title::after{content:'';height:1px;background:var(--border);flex:1}
+
+.review-grid{display:grid;grid-template-columns:180px 1fr;row-gap:10px;align-items:baseline}
+.rv-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding-right:12px}
+.rv-value{font-size:14px;color:var(--text);line-height:1.5}
+.rv-value.preformat{white-space:pre-wrap;font-size:13px;color:var(--text2)}
+.rv-value.priority-low{color:var(--text2)}
+.rv-value.priority-med{color:#7a5a10;font-weight:600}
+.rv-value.priority-high{color:#7a1c1c;font-weight:600}
+
+.priority-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:3px}
+.pb-low{background:var(--surface2);color:var(--text2);border:1px solid var(--border-dark)}
+.pb-med{background:#f5e9c8;color:#7a5a10;border:1px solid #d4b870}
+.pb-high{background:#f5c8c8;color:#7a1c1c;border:1px solid #d48070}
+
+.action-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn-email{flex:1;min-width:200px;padding:14px 28px;border:none;border-radius:5px;background:var(--nav);font-family:'Figtree',sans-serif;font-size:15px;font-weight:700;color:var(--white);cursor:pointer;transition:background .15s;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-email:hover{background:#2d3040}
+.btn-copy{padding:14px 22px;border:1.5px solid var(--border-dark);border-radius:5px;background:var(--white);font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
+.btn-copy:hover{border-color:var(--nav);color:var(--text)}
+.btn-copy.copied{border-color:var(--border-dark);color:var(--muted)}
+
+.submit-note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
+
+/* Validation error */
+.field-error{font-size:12px;color:#a03030;margin-top:5px;display:none}
+.field-group.has-error input,
+.field-group.has-error textarea{border-color:#c04040}
+.field-group.has-error .field-error{display:block}
+.radio-error{font-size:12px;color:#a03030;margin-top:6px;display:none}
+.radio-group-wrap.has-error .radio-error{display:block}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">CBFX Hub</span>
+  <span class="topbar-sub">Support Ticket</span>
+</div>
+
+<div class="back-link-wrap">
+  <a class="back-link" href="../index.html">← Back to Hub</a>
+</div>
+
+<div class="wizard-wrap">
+
+  <!-- Step Progress Bar -->
+  <div class="step-bar">
+    <div class="step-col">
+      <div class="step-dot active" id="dot-1"><span class="step-num">1</span></div>
+      <div class="step-label active" id="lbl-1">Classification</div>
+    </div>
+    <div class="step-line-wrap"><div class="step-line" id="line-1"></div></div>
+    <div class="step-col">
+      <div class="step-dot" id="dot-2"><span class="step-num">2</span></div>
+      <div class="step-label" id="lbl-2">Detail</div>
+    </div>
+    <div class="step-line-wrap"><div class="step-line" id="line-2"></div></div>
+    <div class="step-col">
+      <div class="step-dot" id="dot-3"><span class="step-num">3</span></div>
+      <div class="step-label" id="lbl-3">Review & Submit</div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 1: Issue Classification ─── -->
+  <div class="panel active" id="step-1">
+    <div class="panel-header">
+      <div class="panel-eyebrow">Step 1 of 3</div>
+      <div class="panel-title">Issue Classification</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="two-col">
+        <div class="field-group" id="fg-name">
+          <label class="field-label" for="submitter-name">Submitter Name</label>
+          <input type="text" id="submitter-name" placeholder="e.g. Jordan Lee">
+          <div class="field-error">Name is required.</div>
+        </div>
+        <div class="field-group" id="fg-email">
+          <label class="field-label" for="submitter-email">Submitter Email</label>
+          <input type="email" id="submitter-email" placeholder="you@chicken-bone.com">
+          <div class="field-error">A valid email address is required.</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Issue Type</label>
+        <div class="radio-group-wrap" id="rg-issue-type">
+          <div class="radio-grid cols-3">
+            <div class="radio-opt"><input type="radio" name="issue-type" id="it-pipeline" value="Pipeline"><label for="it-pipeline">Pipeline</label></div>
+            <div class="radio-opt"><input type="radio" name="issue-type" id="it-workstation" value="Workstation"><label for="it-workstation">Workstation</label></div>
+            <div class="radio-opt"><input type="radio" name="issue-type" id="it-network" value="Network / VPN"><label for="it-network">Network / VPN</label></div>
+            <div class="radio-opt"><input type="radio" name="issue-type" id="it-shotgrid" value="ShotGrid"><label for="it-shotgrid">ShotGrid</label></div>
+            <div class="radio-opt"><input type="radio" name="issue-type" id="it-render" value="Render Farm"><label for="it-render">Render Farm</label></div>
+            <div class="radio-opt"><input type="radio" name="issue-type" id="it-other" value="Other"><label for="it-other">Other</label></div>
+          </div>
+          <div class="radio-error">Please select an issue type.</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Priority</label>
+        <div class="radio-group-wrap" id="rg-priority">
+          <div class="radio-grid cols-3">
+            <div class="radio-opt priority-low">
+              <input type="radio" name="priority" id="pr-low" value="Low">
+              <label for="pr-low">Low<span class="sublabel">Non-blocking</span></label>
+            </div>
+            <div class="radio-opt priority-med">
+              <input type="radio" name="priority" id="pr-med" value="Medium">
+              <label for="pr-med">Medium<span class="sublabel">Blocking work</span></label>
+            </div>
+            <div class="radio-opt priority-high">
+              <input type="radio" name="priority" id="pr-high" value="High">
+              <label for="pr-high">High<span class="sublabel">Production down</span></label>
+            </div>
+          </div>
+          <div class="radio-error">Please select a priority level.</div>
+        </div>
+      </div>
+
+      <div class="field-group" id="fg-affected">
+        <label class="field-label" for="affected-system">Affected System <span class="optional">— be specific</span></label>
+        <input type="text" id="affected-system" placeholder="e.g. EC2 i-0abc123, Nuke 16.0v8, ShotGrid Project X">
+        <div class="field-error">Please describe the affected system.</div>
+      </div>
+
+    </div>
+    <div class="panel-footer">
+      <span></span>
+      <button class="btn-next" onclick="goNext(1)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 2: Issue Detail ─── -->
+  <div class="panel" id="step-2">
+    <div class="panel-header">
+      <div class="panel-eyebrow">Step 2 of 3</div>
+      <div class="panel-title">Issue Detail</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="field-group" id="fg-title">
+        <label class="field-label" for="issue-title">Short Title <span class="optional">— becomes email subject</span></label>
+        <input type="text" id="issue-title" placeholder="e.g. Nuke script crashes on read node with EXR sequence">
+        <div class="field-error">A short title is required.</div>
+      </div>
+
+      <div class="field-group" id="fg-description">
+        <label class="field-label" for="issue-description">Description</label>
+        <textarea id="issue-description" class="tall" placeholder="Describe what's happening. Include software versions, project names, and any error messages you see."></textarea>
+        <div class="field-error">Please describe the issue.</div>
+      </div>
+
+      <div class="field-group" id="fg-steps">
+        <label class="field-label" for="issue-steps">Steps to Reproduce <span class="optional">— enter "N/A" if not applicable</span></label>
+        <textarea id="issue-steps" placeholder="1. Open Nuke 16.0v8&#10;2. Load script from ShotGrid&#10;3. Click Play in the viewer&#10;4. Application crashes"></textarea>
+        <div class="field-error">Please provide steps to reproduce, or enter N/A.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="field-group" id="fg-expected">
+          <label class="field-label" for="issue-expected">Expected Behavior</label>
+          <textarea id="issue-expected" placeholder="What should have happened?"></textarea>
+          <div class="field-error">Please describe the expected behavior.</div>
+        </div>
+        <div class="field-group" id="fg-actual">
+          <label class="field-label" for="issue-actual">Actual Behavior</label>
+          <textarea id="issue-actual" placeholder="What actually happened instead?"></textarea>
+          <div class="field-error">Please describe the actual behavior.</div>
+        </div>
+      </div>
+
+      <div class="attachments-note">
+        <div class="note-icon">i</div>
+        <span><strong>Attachments:</strong> Attach screenshots, logs, or screen recordings directly in your email client after clicking "Open Email Client" in the next step.</span>
+      </div>
+
+    </div>
+    <div class="panel-footer">
+      <button class="btn-back" onclick="goBack(2)">← Back</button>
+      <button class="btn-next" onclick="goNext(2)">Review →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 3: Review & Submit ─── -->
+  <div class="panel" id="step-3">
+    <div class="panel-header">
+      <div class="panel-eyebrow">Step 3 of 3</div>
+      <div class="panel-title">Review & Submit</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="review-section">
+        <div class="review-section-title">Submitter</div>
+        <div class="review-grid">
+          <div class="rv-label">Name</div><div class="rv-value" id="rv-name">—</div>
+          <div class="rv-label">Email</div><div class="rv-value" id="rv-email">—</div>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Classification</div>
+        <div class="review-grid">
+          <div class="rv-label">Issue Type</div><div class="rv-value" id="rv-issue-type">—</div>
+          <div class="rv-label">Priority</div><div class="rv-value" id="rv-priority">—</div>
+          <div class="rv-label">Affected System</div><div class="rv-value" id="rv-affected">—</div>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Issue Detail</div>
+        <div class="review-grid">
+          <div class="rv-label">Title</div><div class="rv-value" id="rv-title">—</div>
+          <div class="rv-label">Description</div><div class="rv-value preformat" id="rv-description">—</div>
+          <div class="rv-label">Steps to Reproduce</div><div class="rv-value preformat" id="rv-steps">—</div>
+          <div class="rv-label">Expected</div><div class="rv-value preformat" id="rv-expected">—</div>
+          <div class="rv-label">Actual</div><div class="rv-value preformat" id="rv-actual">—</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="action-row">
+        <button class="btn-email" onclick="openEmail()">✉ Open Email Client</button>
+        <button class="btn-copy" id="copy-btn" onclick="copyToClipboard()">⎘ Copy to Clipboard</button>
+      </div>
+      <div class="submit-note" id="submit-note">
+        This will open your default email client addressed to <strong>support@gpltech.com</strong>. If priority is <strong>High</strong>, please CC your supervisor before sending.
+      </div>
+
+    </div>
+    <div class="panel-footer">
+      <button class="btn-back" onclick="goBack(3)">← Back</button>
+      <span></span>
+    </div>
+  </div>
+
+</div><!-- end wizard-wrap -->
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentStep = 1;
+
+// ─── Navigation ──────────────────────────────────────────────────────────────
+function goNext(from) {
+  if (!validate(from)) return;
+  setStep(from + 1);
+}
+
+function goBack(from) {
+  setStep(from - 1);
+}
+
+function setStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  updateStepBar();
+  if (n === 3) populateReview();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function updateStepBar() {
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('dot-' + i);
+    const lbl = document.getElementById('lbl-' + i);
+    dot.classList.remove('active', 'done');
+    lbl.classList.remove('active');
+    if (i < currentStep) {
+      dot.classList.add('done');
+    } else if (i === currentStep) {
+      dot.classList.add('active');
+      lbl.classList.add('active');
+    }
+    if (i < 3) {
+      const line = document.getElementById('line-' + i);
+      line.classList.toggle('done', i < currentStep);
+    }
+  }
+}
+
+// ─── Validation ───────────────────────────────────────────────────────────────
+function validate(step) {
+  let ok = true;
+
+  if (step === 1) {
+    ok = requireText('fg-name', 'submitter-name') && ok;
+    ok = requireEmail('fg-email', 'submitter-email') && ok;
+    ok = requireRadio('rg-issue-type', 'issue-type') && ok;
+    ok = requireRadio('rg-priority', 'priority') && ok;
+    ok = requireText('fg-affected', 'affected-system') && ok;
+  }
+
+  if (step === 2) {
+    ok = requireText('fg-title', 'issue-title') && ok;
+    ok = requireText('fg-description', 'issue-description') && ok;
+    ok = requireText('fg-steps', 'issue-steps') && ok;
+    ok = requireText('fg-expected', 'issue-expected') && ok;
+    ok = requireText('fg-actual', 'issue-actual') && ok;
+  }
+
+  return ok;
+}
+
+function requireText(groupId, inputId) {
+  const group = document.getElementById(groupId);
+  const val = document.getElementById(inputId).value.trim();
+  if (!val) {
+    group.classList.add('has-error');
+    return false;
+  }
+  group.classList.remove('has-error');
+  return true;
+}
+
+function requireEmail(groupId, inputId) {
+  const group = document.getElementById(groupId);
+  const val = document.getElementById(inputId).value.trim();
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!val || !re.test(val)) {
+    group.classList.add('has-error');
+    return false;
+  }
+  group.classList.remove('has-error');
+  return true;
+}
+
+function requireRadio(groupId, radioName) {
+  const group = document.getElementById(groupId);
+  const selected = document.querySelector('input[name="' + radioName + '"]:checked');
+  if (!selected) {
+    group.classList.add('has-error');
+    return false;
+  }
+  group.classList.remove('has-error');
+  return true;
+}
+
+// Clear error on input
+['submitter-name','submitter-email','affected-system','issue-title','issue-description','issue-steps','issue-expected','issue-actual'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', function() {
+    var fg = el.closest('.field-group');
+    if (fg) fg.classList.remove('has-error');
+  });
+});
+
+document.querySelectorAll('input[type=radio]').forEach(function(r) {
+  r.addEventListener('change', function() {
+    var wrap = r.closest('.radio-group-wrap');
+    if (wrap) wrap.classList.remove('has-error');
+  });
+});
+
+// ─── Review population ────────────────────────────────────────────────────────
+function getField(id) {
+  return document.getElementById(id).value.trim();
+}
+function getRadio(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+
+function populateReview() {
+  const priority = getRadio('priority');
+  const issueType = getRadio('issue-type');
+
+  document.getElementById('rv-name').textContent = getField('submitter-name');
+  document.getElementById('rv-email').textContent = getField('submitter-email');
+  document.getElementById('rv-issue-type').textContent = issueType;
+
+  // Priority badge
+  var pbClass = priority === 'High' ? 'pb-high' : priority === 'Medium' ? 'pb-med' : 'pb-low';
+  document.getElementById('rv-priority').innerHTML =
+    '<span class="priority-badge ' + pbClass + '">' + priority + '</span>';
+
+  document.getElementById('rv-affected').textContent = getField('affected-system');
+  document.getElementById('rv-title').textContent = getField('issue-title');
+  document.getElementById('rv-description').textContent = getField('issue-description');
+  document.getElementById('rv-steps').textContent = getField('issue-steps');
+  document.getElementById('rv-expected').textContent = getField('issue-expected');
+  document.getElementById('rv-actual').textContent = getField('issue-actual');
+
+  // Update submit note based on priority
+  var note = document.getElementById('submit-note');
+  if (priority === 'High') {
+    note.innerHTML = 'This will open your default email client addressed to <strong>support@gpltech.com</strong>. Priority is <strong style="color:#7a1c1c">High</strong> — please CC your supervisor before sending.';
+  } else {
+    note.innerHTML = 'This will open your default email client addressed to <strong>support@gpltech.com</strong>. CC your supervisor if priority escalates to High.';
+  }
+}
+
+// ─── Email / Copy ─────────────────────────────────────────────────────────────
+function buildSubject() {
+  var priority = getRadio('priority');
+  var issueType = getRadio('issue-type');
+  var title = getField('issue-title');
+  return '[CBFX | ' + priority + ' | ' + issueType + '] ' + title;
+}
+
+function buildBody() {
+  var lines = [];
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('CBFX SUPPORT TICKET');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('');
+  lines.push('SUBMITTER');
+  lines.push('  Name:   ' + getField('submitter-name'));
+  lines.push('  Email:  ' + getField('submitter-email'));
+  lines.push('');
+  lines.push('PRIORITY');
+  lines.push('  ' + getRadio('priority'));
+  lines.push('');
+  lines.push('ISSUE TYPE');
+  lines.push('  ' + getRadio('issue-type'));
+  lines.push('');
+  lines.push('AFFECTED SYSTEM');
+  lines.push('  ' + getField('affected-system'));
+  lines.push('');
+  lines.push('─────────────────────────────────────────────────');
+  lines.push('');
+  lines.push('DESCRIPTION');
+  lines.push(indent(getField('issue-description')));
+  lines.push('');
+  lines.push('STEPS TO REPRODUCE');
+  lines.push(indent(getField('issue-steps')));
+  lines.push('');
+  lines.push('EXPECTED BEHAVIOR');
+  lines.push(indent(getField('issue-expected')));
+  lines.push('');
+  lines.push('ACTUAL BEHAVIOR');
+  lines.push(indent(getField('issue-actual')));
+  lines.push('');
+  lines.push('─────────────────────────────────────────────────');
+  lines.push('Submitted via CBFX Hub Support Ticket Wizard');
+  return lines.join('\n');
+}
+
+function indent(text) {
+  return text.split('\n').map(function(l){ return '  ' + l; }).join('\n');
+}
+
+function openEmail() {
+  var subject = encodeURIComponent(buildSubject());
+  var body = encodeURIComponent(buildBody());
+  window.location.href = 'mailto:support@gpltech.com?subject=' + subject + '&body=' + body;
+}
+
+function copyToClipboard() {
+  var text = 'Subject: ' + buildSubject() + '\n\n' + buildBody();
+  var btn = document.getElementById('copy-btn');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function() {
+      showCopied(btn);
+    }).catch(function() {
+      fallbackCopy(text, btn);
+    });
+  } else {
+    fallbackCopy(text, btn);
+  }
+}
+
+function fallbackCopy(text, btn) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); showCopied(btn); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function showCopied(btn) {
+  var orig = btn.innerHTML;
+  btn.innerHTML = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(function() {
+    btn.innerHTML = orig;
+    btn.classList.remove('copied');
+  }, 2200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShotGrid Access Request — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #dde4ed;
+    --surface: #eaeff5;
+    --surface2: #d5dce7;
+    --nav: #1a1c22;
+    --border: #c0c8d4;
+    --border-dark: #a8b2bf;
+    --text: #1a1c22;
+    --text2: #3d4452;
+    --muted: #6b7585;
+    --white: #f4f7fa;
+    --blue-dark: #1e3a5a;
+    --accent: #2d6be4;
+    --accent-light: #dbe8fd;
+    --success: #1a7f4b;
+    --error: #c0392b;
+    --error-light: #fdecea;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Figtree', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--nav);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-brand {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .topbar-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #8a95a8;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8a95a8;
+    text-decoration: none;
+    transition: color 0.15s;
+    margin-bottom: 20px;
+  }
+  .back-link:hover { color: var(--white); }
+
+  /* LAYOUT */
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 36px 24px 64px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    margin-bottom: 36px;
+  }
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 10px;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  .step-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border-dark);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .step-circle.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+  }
+  .step-circle.done {
+    border-color: var(--success);
+    background: var(--success);
+    color: #fff;
+  }
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .step-label.active { color: var(--accent); }
+  .step-label.done { color: var(--success); }
+  .step-connector {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    margin: 0 10px;
+    transition: background 0.2s;
+  }
+  .step-connector.done { background: var(--success); }
+
+  .progress-bar-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.35s ease;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  /* FORM ELEMENTS */
+  .field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .field-group.full { grid-template-columns: 1fr; }
+  .field-group.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  label .req {
+    color: var(--error);
+    margin-left: 2px;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  textarea {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 9px 12px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="date"]:focus,
+  textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,107,228,0.12);
+  }
+  input.invalid, textarea.invalid {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  .field-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: -2px;
+  }
+  .field-error {
+    font-size: 11px;
+    color: var(--error);
+    margin-top: -2px;
+    display: none;
+  }
+  .field-error.show { display: block; }
+
+  /* RADIO CARDS */
+  .radio-cards {
+    display: grid;
+    gap: 8px;
+  }
+  .radio-cards.cols2 { grid-template-columns: 1fr 1fr; }
+  .radio-cards.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .radio-card {
+    position: relative;
+    cursor: pointer;
+  }
+  .radio-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .radio-card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 11px 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    user-select: none;
+  }
+  .radio-card input:checked + .radio-card-inner {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: 0 0 0 2px rgba(45,107,228,0.12);
+  }
+  .radio-card:hover .radio-card-inner {
+    border-color: var(--border-dark);
+    background: var(--surface2);
+  }
+  .radio-card input:checked + .radio-card-inner:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+  .radio-card-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .radio-card-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* TOGGLE CHECKBOXES */
+  .toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .toggle-item:hover {
+    border-color: var(--border-dark);
+    background: var(--surface2);
+  }
+  .toggle-item input[type="checkbox"] {
+    display: none;
+  }
+  .toggle-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--border-dark);
+    background: var(--surface);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .toggle-item input:checked ~ .toggle-box {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .toggle-item input:checked ~ .toggle-box::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 9px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+  }
+  .toggle-item.checked {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .toggle-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* REVIEW STEP */
+  .review-section {
+    margin-bottom: 24px;
+  }
+  .review-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+  }
+  .review-grid.full { grid-template-columns: 1fr; }
+  .review-field { display: flex; flex-direction: column; gap: 2px; }
+  .review-field-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .review-field-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .review-field-value.empty {
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* NOTE BOX */
+  .note-box {
+    background: #edf4ff;
+    border: 1px solid #b6d0f7;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #1e3a5a;
+    line-height: 1.5;
+    margin-top: 20px;
+  }
+  .note-box strong { font-weight: 600; }
+
+  /* BUTTONS */
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .actions-right { display: flex; gap: 10px; align-items: center; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 22px;
+    border-radius: 7px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #2258c4; }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    padding: 10px 10px;
+  }
+  .btn-ghost:hover { color: var(--text); }
+  .btn-success {
+    background: #1a7f4b;
+    color: #fff;
+  }
+  .btn-success:hover { background: #15683d; }
+  .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+  }
+  .btn-outline:hover { background: var(--accent-light); }
+
+  .copy-feedback {
+    font-size: 12px;
+    color: var(--success);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .copy-feedback.show { opacity: 1; }
+
+  /* STEPS VISIBILITY */
+  .wizard-step { display: none; }
+  .wizard-step.active { display: block; }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a href="../index.html" class="topbar-brand">CBFX Hub</a>
+  <span class="topbar-title">ShotGrid Access Request</span>
+</nav>
+
+<div class="page">
+  <a href="../index.html" class="back-link">&#8592; Back to Hub</a>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-steps">
+      <div class="step-item">
+        <div class="step-circle active" id="sc1">1</div>
+        <span class="step-label active" id="sl1">Artist Info</span>
+      </div>
+      <div class="step-connector" id="con1"></div>
+      <div class="step-item">
+        <div class="step-circle" id="sc2">2</div>
+        <span class="step-label" id="sl2">Access Config</span>
+      </div>
+      <div class="step-connector" id="con2"></div>
+      <div class="step-item">
+        <div class="step-circle" id="sc3">3</div>
+        <span class="step-label" id="sl3">Review &amp; Submit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="wizard-step active" id="step1">
+    <div class="card">
+      <div class="card-title">Artist Information</div>
+      <div class="card-subtitle">Details about the artist being onboarded to ShotGrid.</div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Artist Full Name <span class="req">*</span></label>
+          <input type="text" id="artistName" placeholder="Jane Smith">
+          <span class="field-error" id="err-artistName">Full name is required.</span>
+        </div>
+        <div class="field">
+          <label>Artist Email <span class="req">*</span></label>
+          <input type="email" id="artistEmail" placeholder="jane@studio.com">
+          <span class="field-error" id="err-artistEmail">Valid email is required.</span>
+        </div>
+      </div>
+
+      <div class="field-group full">
+        <div class="field">
+          <label>Department <span class="req">*</span></label>
+          <span class="field-error" id="err-dept">Please select a department.</span>
+        </div>
+      </div>
+      <div class="radio-cards cols3" style="margin-bottom:16px;" id="dept-cards">
+        <label class="radio-card">
+          <input type="radio" name="department" value="Compositing">
+          <div class="radio-card-inner"><span class="radio-card-label">Compositing</span></div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="department" value="FX">
+          <div class="radio-card-inner"><span class="radio-card-label">FX</span></div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="department" value="CG">
+          <div class="radio-card-inner"><span class="radio-card-label">CG</span></div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="department" value="Roto/Paint">
+          <div class="radio-card-inner"><span class="radio-card-label">Roto/Paint</span></div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="department" value="Edit">
+          <div class="radio-card-inner"><span class="radio-card-label">Edit</span></div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="department" value="Production">
+          <div class="radio-card-inner"><span class="radio-card-label">Production</span></div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="department" value="Other">
+          <div class="radio-card-inner"><span class="radio-card-label">Other</span></div>
+        </label>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Role / Title <span class="req">*</span></label>
+          <input type="text" id="roleTitle" placeholder="e.g. Compositor, CG Generalist">
+          <span class="field-error" id="err-roleTitle">Role/Title is required.</span>
+        </div>
+        <div class="field">
+          <label>Start Date <span class="req">*</span></label>
+          <input type="date" id="startDate">
+          <span class="field-error" id="err-startDate">Start date is required.</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Requester Details</div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Requested By <span class="req">*</span></label>
+          <input type="text" id="requesterName" placeholder="Producer or Supervisor name">
+          <span class="field-error" id="err-requesterName">Requester name is required.</span>
+        </div>
+        <div class="field">
+          <label>Requester Email <span class="req">*</span></label>
+          <input type="email" id="requesterEmail" placeholder="supervisor@studio.com">
+          <span class="field-error" id="err-requesterEmail">Valid email is required.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <span></span>
+      <div class="actions-right">
+        <button class="btn btn-primary" onclick="goToStep(2)">Next: Access Config &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="wizard-step" id="step2">
+    <div class="card">
+      <div class="card-title">Access Configuration</div>
+      <div class="card-subtitle">Define the shows, permissions, and pipeline tools for this account.</div>
+
+      <div class="field-group full">
+        <div class="field">
+          <label>Show Assignment <span class="req">*</span></label>
+          <input type="text" id="showAssignment" placeholder="e.g. PROJECT_ALPHA, PROJECT_BETA">
+          <span class="field-hint">Multiple shows separated by commas.</span>
+          <span class="field-error" id="err-showAssignment">At least one show is required.</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">ShotGrid Permission Group <span style="color:var(--error)">*</span></div>
+      <span class="field-error" id="err-permGroup" style="display:none;margin-bottom:8px;">Please select a permission group.</span>
+      <div class="radio-cards" style="margin-bottom:16px;" id="perm-cards">
+        <label class="radio-card">
+          <input type="radio" name="permGroup" value="Artist">
+          <div class="radio-card-inner">
+            <span class="radio-card-label">Artist</span>
+            <span class="radio-card-sub">Read shots, submit versions</span>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="permGroup" value="Lead">
+          <div class="radio-card-inner">
+            <span class="radio-card-label">Lead</span>
+            <span class="radio-card-sub">Review, approve, comment</span>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="permGroup" value="Supervisor">
+          <div class="radio-card-inner">
+            <span class="radio-card-label">Supervisor</span>
+            <span class="radio-card-sub">Full shot control, publish</span>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="permGroup" value="Production">
+          <div class="radio-card-inner">
+            <span class="radio-card-label">Production</span>
+            <span class="radio-card-sub">Schedule, booking, no pipeline</span>
+          </div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="permGroup" value="Admin">
+          <div class="radio-card-inner">
+            <span class="radio-card-label">Admin</span>
+            <span class="radio-card-sub">Full access</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Pipeline Tools Access</div>
+      <p class="field-hint" style="margin-bottom:12px;">Check all that apply — leave unchecked if not needed.</p>
+      <div class="toggles" id="pipeline-toggles">
+        <label class="toggle-item" onclick="toggleCheck(this)">
+          <input type="checkbox" name="pipeline" value="Nuke Submit">
+          <div class="toggle-box"></div>
+          <span class="toggle-label">Nuke Submit</span>
+        </label>
+        <label class="toggle-item" onclick="toggleCheck(this)">
+          <input type="checkbox" name="pipeline" value="Deadline Submit">
+          <div class="toggle-box"></div>
+          <span class="toggle-label">Deadline Submit</span>
+        </label>
+        <label class="toggle-item" onclick="toggleCheck(this)">
+          <input type="checkbox" name="pipeline" value="RV/Screening Room">
+          <div class="toggle-box"></div>
+          <span class="toggle-label">RV / Screening Room</span>
+        </label>
+        <label class="toggle-item" onclick="toggleCheck(this)">
+          <input type="checkbox" name="pipeline" value="Client Review Portal">
+          <div class="toggle-box"></div>
+          <span class="toggle-label">Client Review Portal</span>
+        </label>
+        <label class="toggle-item" onclick="toggleCheck(this)">
+          <input type="checkbox" name="pipeline" value="ShotGrid Cuts">
+          <div class="toggle-box"></div>
+          <span class="toggle-label">ShotGrid Cuts</span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field-group full">
+        <div class="field">
+          <label>Additional Notes</label>
+          <textarea id="additionalNotes" placeholder="Any special access requirements or context..."></textarea>
+          <span class="field-hint">Optional — only include if relevant.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goToStep(1)">&#8592; Back</button>
+      <div class="actions-right">
+        <button class="btn btn-primary" onclick="goToStep(3)">Review &amp; Submit &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="wizard-step" id="step3">
+    <div class="card">
+      <div class="card-title">Review &amp; Submit</div>
+      <div class="card-subtitle">Confirm all details before sending the access request.</div>
+
+      <div class="review-section">
+        <div class="review-section-title">Artist Information</div>
+        <div class="review-grid">
+          <div class="review-field">
+            <span class="review-field-label">Artist Name</span>
+            <span class="review-field-value" id="r-artistName"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Artist Email</span>
+            <span class="review-field-value" id="r-artistEmail"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Department</span>
+            <span class="review-field-value" id="r-dept"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Role / Title</span>
+            <span class="review-field-value" id="r-roleTitle"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Start Date</span>
+            <span class="review-field-value" id="r-startDate"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Requester</div>
+        <div class="review-grid">
+          <div class="review-field">
+            <span class="review-field-label">Requested By</span>
+            <span class="review-field-value" id="r-requesterName"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Requester Email</span>
+            <span class="review-field-value" id="r-requesterEmail"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Access Configuration</div>
+        <div class="review-grid">
+          <div class="review-field">
+            <span class="review-field-label">Show Assignment</span>
+            <span class="review-field-value" id="r-showAssignment"></span>
+          </div>
+          <div class="review-field">
+            <span class="review-field-label">Permission Group</span>
+            <span class="review-field-value" id="r-permGroup"></span>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="review-field">
+            <span class="review-field-label">Pipeline Tools</span>
+            <span class="review-field-value" id="r-pipeline"></span>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="review-field">
+            <span class="review-field-label">Additional Notes</span>
+            <span class="review-field-value" id="r-notes"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note-box">
+        <strong>Note:</strong> ShotGrid accounts are provisioned within 1 business day. The artist will receive login instructions directly.
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goToStep(2)">&#8592; Back</button>
+      <div class="actions-right">
+        <span class="copy-feedback" id="copyFeedback">Copied!</span>
+        <button class="btn btn-outline" onclick="copyRequest()">&#x2398; Copy to Clipboard</button>
+        <button class="btn btn-success" onclick="sendRequest()">&#9993; Send Request</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+
+  function goToStep(target) {
+    if (target > currentStep && !validateStep(currentStep)) return;
+
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep = target;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateProgress();
+
+    if (currentStep === 3) buildReview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    for (let i = 1; i <= 3; i++) {
+      const circle = document.getElementById('sc' + i);
+      const label = document.getElementById('sl' + i);
+      circle.classList.remove('active', 'done');
+      label.classList.remove('active', 'done');
+      if (i < currentStep) {
+        circle.classList.add('done');
+        circle.innerHTML = '&#10003;';
+        label.classList.add('done');
+      } else if (i === currentStep) {
+        circle.classList.add('active');
+        circle.textContent = i;
+        label.classList.add('active');
+      } else {
+        circle.textContent = i;
+      }
+    }
+    for (let i = 1; i <= 2; i++) {
+      const con = document.getElementById('con' + i);
+      if (i < currentStep) {
+        con.classList.add('done');
+      } else {
+        con.classList.remove('done');
+      }
+    }
+  }
+
+  function validateStep(step) {
+    let valid = true;
+
+    function setError(id, show) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (show) { el.classList.add('show'); } else { el.classList.remove('show'); }
+    }
+    function markInput(id, invalid) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (invalid) { el.classList.add('invalid'); } else { el.classList.remove('invalid'); }
+    }
+    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    if (step === 1) {
+      const name = document.getElementById('artistName').value.trim();
+      const email = document.getElementById('artistEmail').value.trim();
+      const dept = document.querySelector('input[name="department"]:checked');
+      const role = document.getElementById('roleTitle').value.trim();
+      const startDate = document.getElementById('startDate').value;
+      const reqName = document.getElementById('requesterName').value.trim();
+      const reqEmail = document.getElementById('requesterEmail').value.trim();
+
+      if (!name) { markInput('artistName', true); setError('err-artistName', true); valid = false; }
+      else { markInput('artistName', false); setError('err-artistName', false); }
+
+      if (!email || !isEmail(email)) { markInput('artistEmail', true); setError('err-artistEmail', true); valid = false; }
+      else { markInput('artistEmail', false); setError('err-artistEmail', false); }
+
+      if (!dept) { setError('err-dept', true); valid = false; }
+      else { setError('err-dept', false); }
+
+      if (!role) { markInput('roleTitle', true); setError('err-roleTitle', true); valid = false; }
+      else { markInput('roleTitle', false); setError('err-roleTitle', false); }
+
+      if (!startDate) { markInput('startDate', true); setError('err-startDate', true); valid = false; }
+      else { markInput('startDate', false); setError('err-startDate', false); }
+
+      if (!reqName) { markInput('requesterName', true); setError('err-requesterName', true); valid = false; }
+      else { markInput('requesterName', false); setError('err-requesterName', false); }
+
+      if (!reqEmail || !isEmail(reqEmail)) { markInput('requesterEmail', true); setError('err-requesterEmail', true); valid = false; }
+      else { markInput('requesterEmail', false); setError('err-requesterEmail', false); }
+    }
+
+    if (step === 2) {
+      const show = document.getElementById('showAssignment').value.trim();
+      const perm = document.querySelector('input[name="permGroup"]:checked');
+
+      if (!show) { markInput('showAssignment', true); setError('err-showAssignment', true); valid = false; }
+      else { markInput('showAssignment', false); setError('err-showAssignment', false); }
+
+      const permErrEl = document.getElementById('err-permGroup');
+      if (!perm) { permErrEl.style.display = 'block'; valid = false; }
+      else { permErrEl.style.display = 'none'; }
+    }
+
+    return valid;
+  }
+
+  function toggleCheck(label) {
+    const cb = label.querySelector('input[type="checkbox"]');
+    label.classList.toggle('checked', cb.checked);
+  }
+
+  function getData() {
+    const pipelineChecked = [...document.querySelectorAll('input[name="pipeline"]:checked')].map(c => c.value);
+    const dept = document.querySelector('input[name="department"]:checked');
+    const perm = document.querySelector('input[name="permGroup"]:checked');
+    const startRaw = document.getElementById('startDate').value;
+    let startFormatted = startRaw;
+    if (startRaw) {
+      const d = new Date(startRaw + 'T00:00:00');
+      startFormatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    return {
+      artistName: document.getElementById('artistName').value.trim(),
+      artistEmail: document.getElementById('artistEmail').value.trim(),
+      dept: dept ? dept.value : '',
+      roleTitle: document.getElementById('roleTitle').value.trim(),
+      startDate: startFormatted,
+      requesterName: document.getElementById('requesterName').value.trim(),
+      requesterEmail: document.getElementById('requesterEmail').value.trim(),
+      showAssignment: document.getElementById('showAssignment').value.trim(),
+      permGroup: perm ? perm.value : '',
+      pipeline: pipelineChecked.length > 0 ? pipelineChecked.join(', ') : 'None',
+      notes: document.getElementById('additionalNotes').value.trim()
+    };
+  }
+
+  function buildReview() {
+    const d = getData();
+    function set(id, val) {
+      const el = document.getElementById(id);
+      if (!val) { el.textContent = '—'; el.classList.add('empty'); }
+      else { el.textContent = val; el.classList.remove('empty'); }
+    }
+    set('r-artistName', d.artistName);
+    set('r-artistEmail', d.artistEmail);
+    set('r-dept', d.dept);
+    set('r-roleTitle', d.roleTitle);
+    set('r-startDate', d.startDate);
+    set('r-requesterName', d.requesterName);
+    set('r-requesterEmail', d.requesterEmail);
+    set('r-showAssignment', d.showAssignment);
+    set('r-permGroup', d.permGroup);
+    set('r-pipeline', d.pipeline);
+    set('r-notes', d.notes || '');
+  }
+
+  function buildEmailBody(d) {
+    return [
+      'ShotGrid Access Request',
+      '=======================',
+      '',
+      'ARTIST INFORMATION',
+      '------------------',
+      'Name:        ' + d.artistName,
+      'Email:       ' + d.artistEmail,
+      'Department:  ' + d.dept,
+      'Role/Title:  ' + d.roleTitle,
+      'Start Date:  ' + d.startDate,
+      '',
+      'REQUESTER',
+      '---------',
+      'Requested By:     ' + d.requesterName,
+      'Requester Email:  ' + d.requesterEmail,
+      '',
+      'ACCESS CONFIGURATION',
+      '--------------------',
+      'Show(s):            ' + d.showAssignment,
+      'Permission Group:   ' + d.permGroup,
+      'Pipeline Tools:     ' + d.pipeline,
+      '',
+      'ADDITIONAL NOTES',
+      '----------------',
+      d.notes || 'None',
+      '',
+      '---',
+      'Submitted via CBFX Hub — ShotGrid Access Request Wizard'
+    ].join('\n');
+  }
+
+  function sendRequest() {
+    const d = getData();
+    const subject = encodeURIComponent('[ShotGrid Access] ' + d.artistName + ' — ' + d.showAssignment);
+    const body = encodeURIComponent(buildEmailBody(d));
+    window.location.href = 'mailto:onboarding@chicken-bone.com?subject=' + subject + '&body=' + body;
+  }
+
+  function copyRequest() {
+    const d = getData();
+    const text = 'Subject: [ShotGrid Access] ' + d.artistName + ' — ' + d.showAssignment + '\n\n' + buildEmailBody(d);
+    navigator.clipboard.writeText(text).then(() => {
+      const fb = document.getElementById('copyFeedback');
+      fb.classList.add('show');
+      setTimeout(() => fb.classList.remove('show'), 2000);
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const fb = document.getElementById('copyFeedback');
+      fb.classList.add('show');
+      setTimeout(() => fb.classList.remove('show'), 2000);
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Pipeline Reference — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+    --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Figtree', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+  /* Topbar */
+  .topbar {
+    background: var(--nav);
+    padding: 0 32px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-brand {
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .topbar-title {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  /* Layout */
+  .page-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 36px;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--nav);
+    padding: 16px 24px;
+  }
+  .card-header h2 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .card-body {
+    padding: 24px;
+  }
+  .card-body p {
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .card-body p:last-child { margin-bottom: 0; }
+  .card-body ul {
+    padding-left: 20px;
+    color: var(--text2);
+    line-height: 1.8;
+  }
+  .card-body ul li { margin-bottom: 4px; }
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    background: var(--nav);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(0,0,0,0.025); }
+  /* Code blocks */
+  .code-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-style: italic;
+  }
+  /* Red accent card */
+  .card-danger .card-body {
+    border-left: 4px solid var(--red);
+    padding-left: 20px;
+  }
+  .card-danger .card-body ul {
+    color: var(--text2);
+  }
+  /* Meta tags */
+  .meta-tag {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-right: 6px;
+  }
+  .meta-tag.green { border-color: var(--green); color: #1a7a40; background: #eaf9f0; }
+  /* Footer */
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a class="topbar-brand" href="../index.html">CBFX Hub</a>
+  <span class="topbar-title">Color Pipeline Reference</span>
+</nav>
+
+<div class="page-wrap">
+  <a class="back-link" href="../index.html">← Back to Hub</a>
+
+  <!-- Overview -->
+  <div class="card">
+    <div class="card-header"><h2>Overview</h2></div>
+    <div class="card-body">
+      <p>
+        <span class="meta-tag">Working Colorspace</span> <strong>ACEScg (ACES AP1)</strong>
+        &nbsp;&nbsp;
+        <span class="meta-tag">ACES Version</span> <strong>1.3</strong>
+        &nbsp;&nbsp;
+        <span class="meta-tag">OCIO Config</span> <strong>$OCIO</strong>
+      </p>
+      <p style="margin-top:16px;">
+        CBFX uses the Academy Color Encoding System (ACES) as its scene-linear, working colorspace. ACES provides a mathematically defined, device-independent color framework that preserves the full dynamic range captured on set, enables consistent looks across tools and artists, and maps cleanly to any delivery colorspace without round-trip errors. All VFX work — from CG renders to compositing to paint — must be performed in ACEScg unless an explicit exception is documented for the show.
+      </p>
+      <p>
+        The active OCIO configuration is resolved from the <code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:13px;">$OCIO</code> environment variable. Never hard-code config paths in Nuke scripts or render jobs.
+      </p>
+    </div>
+  </div>
+
+  <!-- Display Transforms -->
+  <div class="card">
+    <div class="card-header"><h2>Display Transforms (Output Transforms)</h2></div>
+    <div class="card-body" style="padding:0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Transform Name</th>
+            <th>Use Case</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>sRGB</strong></td>
+            <td>On-set monitor &amp; comp work</td>
+            <td>Default viewer transform for all comp work</td>
+          </tr>
+          <tr>
+            <td><strong>Rec.709</strong></td>
+            <td>Client review &amp; broadcast</td>
+            <td>Match to broadcast delivery; use for client dailies</td>
+          </tr>
+          <tr>
+            <td><strong>P3-D65</strong></td>
+            <td>DCI cinema</td>
+            <td>Use only when explicitly requested for cinema deliveries</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Input Transforms -->
+  <div class="card">
+    <div class="card-header"><h2>Input Transforms — Camera Log → ACES IDT</h2></div>
+    <div class="card-body" style="padding:0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Camera / Log Format</th>
+            <th>IDT to Apply</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ARRI LogC3</td>
+            <td>ARRI LogC3 EI800 IDT</td>
+          </tr>
+          <tr>
+            <td>RED Log3G10</td>
+            <td>RED Log3G10 REDWideGamutRGB</td>
+          </tr>
+          <tr>
+            <td>Sony SLog3</td>
+            <td>Sony SLog3 SGamut3.Cine</td>
+          </tr>
+          <tr>
+            <td>DaVinci Intermediate</td>
+            <td>DaVinci Wide Gamut IDT</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Nuke Setup -->
+  <div class="card">
+    <div class="card-header"><h2>Nuke Setup</h2></div>
+    <div class="card-body">
+      <ul>
+        <li>Use <strong>OCIOColorSpace</strong> node for all colorspace transforms within the script</li>
+        <li>Use <strong>OCIODisplay</strong> node for the viewer output — never a plain Grade or LUT node</li>
+        <li>Set viewer transform to <strong>sRGB</strong> for general comp work; switch to <strong>Rec.709</strong> when reviewing client deliverables</li>
+        <li>Never apply a display LUT to Read nodes — footage must enter the graph in its native log/camera colorspace and be converted via OCIOColorSpace</li>
+        <li>Confirm OCIO config version in <em>Help &gt; About</em> matches the show's $OCIO path before starting any script</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Environment Variable -->
+  <div class="card">
+    <div class="card-header"><h2>Environment Setup</h2></div>
+    <div class="card-body">
+      <div class="code-block">export OCIO=/path/to/cbfx_aces_1.3/config.ocio</div>
+      <p class="code-note">Add to your <strong>.bashrc</strong> / <strong>.zshrc</strong>, or set in the Nuke environment via <em>nuke.env</em>. Replace the path with the show-specific config location confirmed by the pipeline team.</p>
+    </div>
+  </div>
+
+  <!-- What NOT To Do -->
+  <div class="card card-danger">
+    <div class="card-header"><h2>What NOT To Do</h2></div>
+    <div class="card-body">
+      <ul>
+        <li>Setting the wrong colorspace on Read nodes (e.g., leaving footage as "raw" or "linear" when it is camera log)</li>
+        <li>Baking a display LUT (sRGB or Rec.709 output transform) into EXR or DPX deliveries — always deliver scene-linear unless otherwise specified</li>
+        <li>Mixing ACES and non-ACES nodes in the same Nuke script without explicit conversion nodes between them</li>
+        <li>Using Nuke's default (non-OCIO) viewer LUT — always verify OCIODisplay is active</li>
+        <li>Copying OCIO config paths from old shows — always source the current show config from the pipeline team</li>
+        <li>Ignoring per-shot ACES IDT exceptions provided by the DIT — these override the table above</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">CBFX &middot; Internal Use Only</div>
+</div>
+
+</body>
+</html>

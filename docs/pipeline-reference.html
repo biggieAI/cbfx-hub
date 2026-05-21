@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Reference — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+  --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh;line-height:1.6}
+a{color:var(--blue-dark);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Topbar */
+.topbar{background:var(--nav);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-brand{font-weight:700;font-size:14px;letter-spacing:0.12em;color:#fff;text-transform:uppercase}
+.topbar-title{font-size:11px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;font-weight:500}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:28px;font-weight:500;transition:color .15s}
+.back-link:hover{color:var(--text);text-decoration:none}
+
+/* Layout */
+.page-content{max-width:860px;margin:0 auto;padding:48px 24px 80px}
+
+/* Section label */
+.section-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:36px}
+.section-label:first-of-type{margin-top:0}
+
+/* Card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px}
+.card-header{background:var(--nav);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.card-header h2{color:#fff;font-size:15px;font-weight:600;letter-spacing:0.01em}
+.card-body{padding:24px}
+
+/* Code blocks */
+pre,code{font-family:'Courier New',Courier,monospace}
+.code-block{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;margin:12px 0;color:var(--text)}
+.code-block:first-child{margin-top:0}
+.code-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;margin-top:16px}
+.code-label:first-child{margin-top:0}
+
+/* Body text */
+.body-text{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:12px}
+.body-text:last-child{margin-bottom:0}
+
+/* Tables */
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--nav);color:#fff}
+th{padding:10px 14px;text-align:left;font-size:13px;font-weight:600;letter-spacing:0.03em}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+td.var-name{font-family:'Courier New',Courier,monospace;font-size:12.5px;font-weight:700;color:var(--blue-dark);white-space:nowrap}
+td.var-desc{color:var(--text2)}
+td.var-val{font-family:'Courier New',Courier,monospace;font-size:12px;color:var(--text);background:var(--surface2);border-radius:3px;padding:4px 8px;white-space:nowrap}
+td.issue{font-weight:600;color:var(--text)}
+td.cause{color:var(--text2);font-size:13px}
+td.fix{font-family:'Courier New',Courier,monospace;font-size:12px}
+
+/* Bullet lists */
+.ref-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.ref-list li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text2);line-height:1.5}
+.ref-list li::before{content:'›';color:var(--blue-dark);font-weight:700;font-size:16px;flex-shrink:0;margin-top:-1px}
+.ref-list li strong{color:var(--text);font-weight:600}
+.ref-list li code{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px;font-family:'Courier New',Courier,monospace;color:var(--text)}
+
+/* Numbered steps */
+.step-list{list-style:none;display:flex;flex-direction:column;gap:12px;counter-reset:steps}
+.step-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text2);counter-increment:steps}
+.step-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue-dark);color:#c8ddf0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px}
+.step-text{line-height:1.55}
+.step-text strong{color:var(--text);font-weight:600}
+
+/* Checklist */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:10px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text2);line-height:1.5}
+.check-box{flex-shrink:0;width:18px;height:18px;border:2px solid var(--border-dark);border-radius:3px;margin-top:2px;background:var(--surface2)}
+.checklist li .note{font-size:12px;color:var(--muted);margin-left:4px}
+
+/* Priority tags inline */
+.prio{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:700;margin-left:4px}
+.prio-normal{background:rgba(30,58,90,0.15);color:var(--blue-dark)}
+.prio-rush{background:rgba(232,199,74,0.25);color:#7a5e00}
+.prio-emergency{background:rgba(232,80,74,0.15);color:#a32020}
+
+/* Server address pill */
+.server-pill{display:inline-block;background:var(--nav);color:#c8ddf0;font-family:'Courier New',Courier,monospace;font-size:13px;padding:4px 12px;border-radius:4px;letter-spacing:0.04em;margin-bottom:14px}
+
+/* Footer */
+footer{text-align:center;font-size:12px;color:var(--muted);padding:24px;border-top:1px solid var(--border);background:var(--surface);letter-spacing:0.05em}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">CBFX Hub</span>
+  <span class="topbar-title">Pipeline Reference</span>
+</div>
+
+<div class="page-content">
+  <a href="../index.html" class="back-link">← Back to Hub</a>
+
+  <!-- 1. SGTK Bootstrap -->
+  <div class="section-label">Toolkit Bootstrap</div>
+  <div class="card">
+    <div class="card-header"><h2>SGTK Bootstrap</h2></div>
+    <div class="card-body">
+      <p class="body-text">Run from the show root directory. The <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px;font-family:'Courier New',Courier,monospace">tank</code> alias must be set up in your shell profile pointing to the show's <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px;font-family:'Courier New',Courier,monospace">tank</code> executable.</p>
+      <div class="code-label">Launch Nuke via SGTK</div>
+      <pre class="code-block">tank nuke_launch</pre>
+      <div class="code-label">Get ShotGrid context for current environment</div>
+      <pre class="code-block">tank shotgun_get_context</pre>
+      <p class="body-text" style="margin-top:14px">If the <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px;font-family:'Courier New',Courier,monospace">tank</code> alias is not configured, add the following to your shell profile, replacing <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px;font-family:'Courier New',Courier,monospace">&lt;SHOW_ROOT&gt;</code> with your project path:</p>
+      <pre class="code-block">alias tank="Y:/PROJ/tank"</pre>
+    </div>
+  </div>
+
+  <!-- 2. Environment Variables -->
+  <div class="section-label">Environment</div>
+  <div class="card">
+    <div class="card-header"><h2>Environment Variables</h2></div>
+    <div class="card-body" style="padding:0">
+      <table>
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Description</th>
+            <th>Example Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="var-name">OCIO</td>
+            <td class="var-desc">Path to OCIO config</td>
+            <td class="var-val">/studio/config/aces_1.3/config.ocio</td>
+          </tr>
+          <tr>
+            <td class="var-name">NUKE_PATH</td>
+            <td class="var-desc">Nuke plugin search path</td>
+            <td class="var-val">Y:/pipeline/nuke/plugins</td>
+          </tr>
+          <tr>
+            <td class="var-name">JOB</td>
+            <td class="var-desc">Root job directory</td>
+            <td class="var-val">Y:/PROJ</td>
+          </tr>
+          <tr>
+            <td class="var-name">SHOW</td>
+            <td class="var-desc">Show code</td>
+            <td class="var-val">PROJ</td>
+          </tr>
+          <tr>
+            <td class="var-name">SHOT</td>
+            <td class="var-desc">Shot code</td>
+            <td class="var-val">010_0100</td>
+          </tr>
+          <tr>
+            <td class="var-name">STEP</td>
+            <td class="var-desc">Pipeline step</td>
+            <td class="var-val">COMP</td>
+          </tr>
+          <tr>
+            <td class="var-name">RLM_LICENSE</td>
+            <td class="var-desc">RLM license server</td>
+            <td class="var-val">10.243.0.139:5053</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Nuke Paths -->
+  <div class="section-label">Nuke Configuration</div>
+  <div class="card">
+    <div class="card-header"><h2>Nuke Paths</h2></div>
+    <div class="card-body">
+      <ul class="ref-list">
+        <li><strong>Gizmos:</strong> <code>$NUKE_PATH/gizmos/</code> — custom gizmos loaded automatically on startup</li>
+        <li><strong>Plugin path:</strong> <code>Y:/pipeline/nuke/plugins</code> — set via <code>NUKE_PATH</code></li>
+        <li><strong>Script templates:</strong> <code>Y:/pipeline/nuke/templates/</code> — per-step starter scripts (COMP, ROTO, etc.)</li>
+        <li><strong>Default Read path:</strong> <code>$JOB/shots/$SHOT/plates/</code></li>
+        <li><strong>Default Write path:</strong> <code>$JOB/shots/$SHOT/$STEP/output/v###/&lt;name&gt;.####.exr</code></li>
+        <li><strong>LUTs:</strong> <code>$JOB/luts/</code> — project-specific LUTs, sourced from OCIO config</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4. ShotGrid Publish Workflow -->
+  <div class="section-label">Publish Workflow</div>
+  <div class="card">
+    <div class="card-header"><h2>ShotGrid Publish Workflow</h2></div>
+    <div class="card-body">
+      <ol class="step-list">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Complete comp in Nuke.</strong> Ensure all write nodes have correct output paths and the script is saved.</div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Run CompReview validation.</strong> All checks must pass before publish. Resolve any flagged errors.</div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Execute tk-nuke publish</strong> from the File menu (<em>File → ShotGrid → Publish…</em>).</div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-text"><strong>ShotGrid version created automatically.</strong> CompReview links the version to the active SG context without manual entry.</div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-text"><strong>Supervisor notified</strong> via ShotGrid notification. No manual ping required.</div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- 5. Deadline Submit Checklist -->
+  <div class="section-label">Render Submission</div>
+  <div class="card">
+    <div class="card-header"><h2>Deadline Submit Checklist</h2></div>
+    <div class="card-body">
+      <ul class="checklist">
+        <li>
+          <div class="check-box"></div>
+          <span><strong>Correct pool selected</strong> — use gpu-pool for GPU renders, cpu-pool for comp/cache tasks</span>
+        </li>
+        <li>
+          <div class="check-box"></div>
+          <span><strong>Frame range matches shot</strong> — verify against cut sheet or ShotGrid before submitting</span>
+        </li>
+        <li>
+          <div class="check-box"></div>
+          <span><strong>Output path uses $JOB tokens</strong> — avoid hardcoded drive letters; use environment variable paths</span>
+        </li>
+        <li>
+          <div class="check-box"></div>
+          <span><strong>Chunk size:</strong> 10 frames for comp jobs, 1 frame for simulation jobs</span>
+        </li>
+        <li>
+          <div class="check-box"></div>
+          <span><strong>Priority set appropriately:</strong>
+            <span class="prio prio-normal">50 = Normal</span>
+            <span class="prio prio-rush">75 = Rush</span>
+            <span class="prio prio-emergency">90 = Emergency</span>
+          </span>
+        </li>
+        <li>
+          <div class="check-box"></div>
+          <span><strong>LocalBurn v2.3.1+</strong> installed and selected as the submit plugin — ensures frame range override works correctly</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6. RLM License Server -->
+  <div class="section-label">Licensing</div>
+  <div class="card">
+    <div class="card-header"><h2>RLM License Server</h2></div>
+    <div class="card-body">
+      <p class="body-text">License server address:</p>
+      <div class="server-pill">10.243.0.139:5053</div>
+      <div class="code-label">Check available license seats</div>
+      <pre class="code-block">rlmutil rlmstat -a -c 10.243.0.139:5053</pre>
+      <div class="code-label">Borrow a license for remote / offline work</div>
+      <pre class="code-block">rlmutil rlmborrow</pre>
+      <p class="body-text" style="margin-top:6px">Contact GPL Tech via a Support Ticket if the license pool is consistently at capacity. Do not attempt to modify the RLM server configuration directly.</p>
+    </div>
+  </div>
+
+  <!-- 7. Troubleshooting -->
+  <div class="section-label">Troubleshooting</div>
+  <div class="card">
+    <div class="card-header"><h2>Common Issues</h2></div>
+    <div class="card-body" style="padding:0">
+      <table>
+        <thead>
+          <tr>
+            <th>Issue</th>
+            <th>Cause</th>
+            <th>Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="issue">NAS not mounting</td>
+            <td class="cause">Drive remount needed after session restart</td>
+            <td class="fix"><pre style="background:transparent;border:none;padding:0;font-size:12px">net use Y: \\192.168.100.187\SYSXS</pre></td>
+          </tr>
+          <tr>
+            <td class="issue">Nuke license error</td>
+            <td class="cause">RLM server unreachable</td>
+            <td class="cause">Check VPN is connected, verify <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px;font-family:'Courier New',Courier,monospace">10.243.0.139:5053</code> is reachable</td>
+          </tr>
+          <tr>
+            <td class="issue">ShotGrid login failure</td>
+            <td class="cause">Cached credentials stale</td>
+            <td class="cause">Clear <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px;font-family:'Courier New',Courier,monospace">.shotgun</code> cache folder and re-login</td>
+          </tr>
+          <tr>
+            <td class="issue">OCIO not found</td>
+            <td class="cause"><code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px;font-family:'Courier New',Courier,monospace">$OCIO</code> env var not set</td>
+            <td class="cause">Verify with <code style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:12px;font-family:'Courier New',Courier,monospace">echo $OCIO</code> in terminal; re-source env setup script</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>CBFX · Internal Use Only</footer>
+
+</body>
+</html>

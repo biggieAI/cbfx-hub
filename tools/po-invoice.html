@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PO & Invoice Submission — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+    --blue-dark:#1e3a5a;--accent:#2a6dd9;--accent-light:#e8f0fc;
+    --error:#c0392b;--success:#1e7e34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
+
+  /* TOPBAR */
+  .topbar{
+    background:var(--nav);color:var(--white);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 28px;height:54px;position:sticky;top:0;z-index:100;
+  }
+  .topbar-brand{font-weight:700;font-size:16px;letter-spacing:.04em;color:var(--white)}
+  .topbar-sub{font-size:13px;color:#8a96a8;font-weight:500}
+  .topbar-back{font-size:13px;color:#8a96a8;text-decoration:none;transition:color .15s}
+  .topbar-back:hover{color:var(--white)}
+  .topbar-left{display:flex;align-items:center;gap:20px}
+
+  /* LAYOUT */
+  .page{max-width:720px;margin:0 auto;padding:36px 20px 60px}
+
+  /* PROGRESS */
+  .progress-bar{display:flex;gap:0;margin-bottom:36px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+  .progress-step{
+    flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:600;
+    background:var(--surface);color:var(--muted);border-right:1px solid var(--border);
+    transition:all .2s;cursor:default;
+  }
+  .progress-step:last-child{border-right:none}
+  .progress-step.active{background:var(--blue-dark);color:var(--white)}
+  .progress-step.done{background:var(--surface2);color:var(--text2)}
+  .progress-step .step-num{display:block;font-size:11px;font-weight:700;opacity:.7;margin-bottom:2px}
+
+  /* CARD */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px}
+  .card-title{font-size:19px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .card-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+  /* FORM */
+  .form-row{margin-bottom:20px}
+  .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
+  label .opt{font-weight:400;color:var(--muted);font-size:12px}
+  input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;
+    background:var(--white);color:var(--text);font-family:'Figtree',sans-serif;font-size:14px;
+    outline:none;transition:border-color .15s;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+  input.error,textarea.error,select.error{border-color:var(--error)}
+  textarea{resize:vertical;min-height:90px}
+  .input-prefix{position:relative}
+  .input-prefix span.pre{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    color:var(--muted);font-size:14px;font-weight:600;pointer-events:none;
+  }
+  .input-prefix input{padding-left:26px}
+
+  /* RADIO CARDS */
+  .radio-cards{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .radio-cards input[type=radio]{display:none}
+  .radio-cards label{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;
+    background:var(--white);color:var(--text2);font-size:13px;font-weight:600;
+    cursor:pointer;transition:all .15s;margin-bottom:0;
+  }
+  .radio-cards input[type=radio]:checked + label{
+    border-color:var(--accent);background:var(--accent-light);color:var(--accent);
+  }
+  .radio-cards label:hover{border-color:var(--border-dark);background:var(--surface2)}
+  .radio-cards input[type=radio]:checked + label:hover{background:var(--accent-light)}
+
+  /* Submission type — large cards */
+  .type-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+  .type-cards input[type=radio]{display:none}
+  .type-cards label{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:22px 16px;border:2px solid var(--border);border-radius:10px;
+    background:var(--white);color:var(--text2);font-size:15px;font-weight:700;
+    cursor:pointer;transition:all .18s;text-align:center;gap:6px;margin-bottom:0;
+  }
+  .type-cards label .type-icon{font-size:26px;line-height:1}
+  .type-cards label .type-desc{font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
+  .type-cards input[type=radio]:checked + label{
+    border-color:var(--accent);background:var(--accent-light);color:var(--accent);
+  }
+  .type-cards input[type=radio]:checked + label .type-desc{color:var(--accent)}
+  .type-cards label:hover{border-color:var(--border-dark);background:var(--surface2)}
+
+  /* NAV BUTTONS */
+  .btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px}
+  .btn{
+    padding:11px 26px;border-radius:7px;font-family:'Figtree',sans-serif;
+    font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;
+  }
+  .btn-primary{background:var(--blue-dark);color:var(--white)}
+  .btn-primary:hover{background:#162d47}
+  .btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+  .btn-secondary:hover{background:var(--border)}
+  .btn-accent{background:var(--accent);color:#fff}
+  .btn-accent:hover{background:#2060c0}
+
+  /* SUMMARY BOX */
+  .memo-box{
+    background:var(--white);border:1px solid var(--border);border-radius:8px;
+    padding:28px 32px;font-size:14px;line-height:1.7;
+  }
+  .memo-header{border-bottom:2px solid var(--blue-dark);padding-bottom:14px;margin-bottom:20px}
+  .memo-title{font-size:18px;font-weight:700;color:var(--blue-dark);letter-spacing:.02em}
+  .memo-date{font-size:12px;color:var(--muted);margin-top:3px}
+  .memo-section{margin-bottom:18px}
+  .memo-section-title{
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);
+  }
+  .memo-row{display:grid;grid-template-columns:180px 1fr;gap:8px;margin-bottom:5px}
+  .memo-key{font-weight:600;color:var(--text2);font-size:13px}
+  .memo-val{color:var(--text);font-size:13px}
+  .memo-note{
+    margin-top:20px;padding:12px 14px;background:#fff8e1;border:1px solid #ffe082;
+    border-radius:6px;font-size:12px;color:#6d5000;
+  }
+
+  /* ACTIONS */
+  .actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+  /* TOAST */
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--nav);color:var(--white);padding:10px 22px;
+    border-radius:8px;font-size:13px;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;
+  }
+  .toast.show{opacity:1}
+
+  .err-msg{font-size:12px;color:var(--error);margin-top:4px}
+
+  .hidden{display:none!important}
+
+  @media(max-width:540px){
+    .type-cards{grid-template-columns:1fr}
+    .form-row-2{grid-template-columns:1fr}
+    .memo-row{grid-template-columns:1fr;gap:2px}
+    .memo-key{font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-brand">CBFX Hub</span>
+    <a href="../index.html" class="topbar-back">← Back to Hub</a>
+  </div>
+  <span class="topbar-sub">PO & Invoice Submission</span>
+</div>
+
+<div class="page">
+  <div class="progress-bar">
+    <div class="progress-step active" id="prog-1"><span class="step-num">STEP 1</span>Type & Project</div>
+    <div class="progress-step" id="prog-2"><span class="step-num">STEP 2</span>Financial Details</div>
+    <div class="progress-step" id="prog-3"><span class="step-num">STEP 3</span>Review & Submit</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step-1">
+    <div class="card">
+      <div class="card-title">Submission Type & Project</div>
+      <div class="card-sub">What are you submitting, and for which project?</div>
+
+      <div class="form-row">
+        <label>Submission Type</label>
+        <div class="type-cards">
+          <input type="radio" name="subType" id="type-po" value="Purchase Order">
+          <label for="type-po">
+            <span class="type-icon">📋</span>
+            Purchase Order (PO)
+            <span class="type-desc">Requesting approval to spend</span>
+          </label>
+          <input type="radio" name="subType" id="type-inv" value="Invoice">
+          <label for="type-inv">
+            <span class="type-icon">🧾</span>
+            Invoice
+            <span class="type-desc">Submitting for payment</span>
+          </label>
+        </div>
+        <div class="err-msg" id="err-subType"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Show / Project</label>
+        <input type="text" id="show" placeholder="e.g. Project Nighthawk">
+        <div class="err-msg" id="err-show"></div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Vendor / Payee Name</label>
+          <input type="text" id="vendor" placeholder="Company or individual name">
+          <div class="err-msg" id="err-vendor"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Vendor Email <span class="opt">(optional)</span></label>
+          <input type="email" id="vendorEmail" placeholder="vendor@example.com">
+        </div>
+      </div>
+
+      <div class="form-row-2" style="margin-top:20px">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Submitted By</label>
+          <input type="text" id="submitter" placeholder="Your name (internal)">
+          <div class="err-msg" id="err-submitter"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Submitter Email</label>
+          <input type="email" id="submitterEmail" placeholder="you@chicken-bone.com">
+          <div class="err-msg" id="err-submitterEmail"></div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:20px">
+        <label>Date of Submission</label>
+        <input type="date" id="subDate">
+        <div class="err-msg" id="err-subDate"></div>
+      </div>
+
+      <div class="btn-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goStep2()">Next: Financial Details →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step-2" style="display:none">
+    <div class="card">
+      <div class="card-title">Financial Details</div>
+      <div class="card-sub">Amount, codes, and approval.</div>
+
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label id="poNumLabel">PO Number</label>
+          <input type="text" id="poNumber" placeholder="e.g. PO-2026-042">
+          <div class="err-msg" id="err-poNumber"></div>
+        </div>
+        <div class="form-row" id="invNumRow" style="margin-bottom:0">
+          <label>Invoice Number</label>
+          <input type="text" id="invNumber" placeholder="e.g. INV-0197">
+          <div class="err-msg" id="err-invNumber"></div>
+        </div>
+      </div>
+
+      <div class="form-row-2" style="margin-top:20px">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Amount</label>
+          <div class="input-prefix">
+            <span class="pre">$</span>
+            <input type="number" id="amount" placeholder="0.00" min="0" step="0.01">
+          </div>
+          <div class="err-msg" id="err-amount"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Currency</label>
+          <select id="currency">
+            <option value="USD">USD — US Dollar</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="EUR">EUR — Euro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:20px">
+        <label>Description of Services / Goods</label>
+        <textarea id="description" placeholder="What is this PO/invoice for? Be specific."></textarea>
+        <div class="err-msg" id="err-description"></div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Due Date</label>
+          <input type="date" id="dueDate">
+          <div class="err-msg" id="err-dueDate"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Approval Required From</label>
+          <input type="text" id="approver" placeholder="Supervisor or EP name">
+          <div class="err-msg" id="err-approver"></div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:20px">
+        <label>Budget Line / Cost Code <span class="opt">(optional)</span></label>
+        <input type="text" id="costCode" placeholder="e.g. 6200-VFX-POST or EP07">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goBack(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goStep3()">Next: Review →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step-3" style="display:none">
+    <div class="card">
+      <div class="card-title">Review & Submit</div>
+      <div class="card-sub">Confirm before sending to accounting.</div>
+
+      <div class="memo-box" id="memoBox"></div>
+
+      <div class="memo-note">
+        Attach the physical PO or invoice document directly in your email client after sending.
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-primary" onclick="sendToAccounting()">Send to Accounting</button>
+        <button class="btn btn-accent" onclick="copySummary()">Copy Summary</button>
+        <button class="btn btn-secondary" onclick="goBack(2)">← Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+  // Auto-fill today's date
+  (function() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth()+1).padStart(2,'0');
+    const dd = String(today.getDate()).padStart(2,'0');
+    document.getElementById('subDate').value = `${yyyy}-${mm}-${dd}`;
+  })();
+
+  // Show/hide invoice number based on type
+  document.querySelectorAll('input[name="subType"]').forEach(r => {
+    r.addEventListener('change', updateTypeUI);
+  });
+
+  function updateTypeUI() {
+    const type = radio('subType');
+    const invRow = document.getElementById('invNumRow');
+    const poLabel = document.getElementById('poNumLabel');
+    if (type === 'Invoice') {
+      invRow.classList.remove('hidden');
+      poLabel.textContent = 'PO Number (this invoice is against)';
+    } else {
+      invRow.classList.add('hidden');
+      poLabel.textContent = 'PO Number';
+    }
+  }
+
+  function val(id) { return (document.getElementById(id) || {}).value?.trim() || ''; }
+  function radio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  function setErr(id, msg) {
+    const el = document.getElementById('err-' + id);
+    if (el) el.textContent = msg;
+    const input = document.getElementById(id);
+    if (input) input.classList.toggle('error', !!msg);
+  }
+  function clearErrs(ids) { ids.forEach(id => setErr(id, '')); }
+
+  function goStep2() {
+    const fields = ['show','vendor','submitter','submitterEmail','subDate'];
+    clearErrs([...fields,'subType']);
+    let ok = true;
+
+    if (!radio('subType')) { setErr('subType', 'Select a submission type'); ok = false; }
+    fields.forEach(f => {
+      if (!val(f)) { setErr(f, 'Required'); ok = false; }
+    });
+
+    if (!ok) return;
+
+    updateTypeUI();
+    showStep(2);
+  }
+
+  function goStep3() {
+    const type = radio('subType');
+    const fields = ['poNumber','amount','description','dueDate','approver'];
+    clearErrs([...fields,'invNumber']);
+    let ok = true;
+
+    fields.forEach(f => {
+      if (!val(f)) { setErr(f, 'Required'); ok = false; }
+    });
+    if (val('amount') && parseFloat(val('amount')) <= 0) {
+      setErr('amount', 'Enter a valid amount'); ok = false;
+    }
+    if (type === 'Invoice' && !val('invNumber')) {
+      setErr('invNumber', 'Required for invoices'); ok = false;
+    }
+
+    if (!ok) return;
+
+    buildSummary();
+    showStep(3);
+  }
+
+  function goBack(step) { showStep(step); }
+
+  function showStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById('step-' + i).style.display = i === n ? '' : 'none';
+      const prog = document.getElementById('prog-' + i);
+      prog.classList.remove('active','done');
+      if (i === n) prog.classList.add('active');
+      else if (i < n) prog.classList.add('done');
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function fmt(num) {
+    const n = parseFloat(num);
+    return isNaN(n) ? '' : n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+
+  function fmtDate(d) {
+    if (!d) return '';
+    const [y,m,day] = d.split('-');
+    return `${m}/${day}/${y}`;
+  }
+
+  function memoRow(key, v) {
+    if (!v) return '';
+    return `<div class="memo-row"><div class="memo-key">${key}</div><div class="memo-val">${v}</div></div>`;
+  }
+
+  function getTypeLabel() {
+    const t = radio('subType');
+    return t === 'Purchase Order' ? 'PO' : 'Invoice';
+  }
+
+  function buildSummary() {
+    const type = radio('subType');
+    const typeLabel = getTypeLabel();
+    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+    document.getElementById('memoBox').innerHTML = `
+      <div class="memo-header">
+        <div class="memo-title">${typeLabel} SUBMISSION — CBFX / Chicken Bone FX</div>
+        <div class="memo-date">Submitted ${today}</div>
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Submission</div>
+        ${memoRow('Type', type)}
+        ${memoRow('Show / Project', val('show'))}
+        ${memoRow('Submitted By', val('submitter'))}
+        ${memoRow('Submitter Email', val('submitterEmail'))}
+        ${memoRow('Date', fmtDate(val('subDate')))}
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Vendor</div>
+        ${memoRow('Vendor / Payee', val('vendor'))}
+        ${val('vendorEmail') ? memoRow('Vendor Email', val('vendorEmail')) : ''}
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Financial</div>
+        ${memoRow('PO Number', val('poNumber'))}
+        ${type === 'Invoice' ? memoRow('Invoice Number', val('invNumber')) : ''}
+        ${memoRow('Amount', amtStr)}
+        ${memoRow('Due Date', fmtDate(val('dueDate')))}
+        ${memoRow('Description', val('description'))}
+        ${memoRow('Approval From', val('approver'))}
+        ${val('costCode') ? memoRow('Budget Line / Code', val('costCode')) : ''}
+      </div>
+    `;
+  }
+
+  function getSummaryText() {
+    const type = radio('subType');
+    const typeLabel = getTypeLabel();
+    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+    const lines = [
+      `${typeLabel} SUBMISSION — CBFX / Chicken Bone FX`,
+      `Submitted ${today}`,
+      '',
+      '--- SUBMISSION ---',
+      `Type:             ${type}`,
+      `Show / Project:   ${val('show')}`,
+      `Submitted By:     ${val('submitter')}`,
+      `Submitter Email:  ${val('submitterEmail')}`,
+      `Date:             ${fmtDate(val('subDate'))}`,
+      '',
+      '--- VENDOR ---',
+      `Vendor / Payee:   ${val('vendor')}`,
+    ];
+    if (val('vendorEmail')) lines.push(`Vendor Email:     ${val('vendorEmail')}`);
+    lines.push(
+      '',
+      '--- FINANCIAL ---',
+      `PO Number:        ${val('poNumber')}`,
+    );
+    if (type === 'Invoice') lines.push(`Invoice Number:   ${val('invNumber')}`);
+    lines.push(
+      `Amount:           ${amtStr}`,
+      `Due Date:         ${fmtDate(val('dueDate'))}`,
+      `Description:      ${val('description')}`,
+      `Approval From:    ${val('approver')}`,
+    );
+    if (val('costCode')) lines.push(`Budget Line/Code: ${val('costCode')}`);
+    lines.push('','---','Attach the physical PO or invoice document directly in your email client after sending.');
+    return lines.join('\n');
+  }
+
+  function sendToAccounting() {
+    const typeLabel = getTypeLabel();
+    const amtRaw = fmt(val('amount'));
+    const subject = encodeURIComponent(`[${typeLabel}] ${val('vendor')} — ${val('show')} — $${amtRaw}`);
+    const body = encodeURIComponent(getSummaryText());
+    window.location.href = `mailto:accounting@chicken-bone.com?subject=${subject}&body=${body}`;
+  }
+
+  function copySummary() {
+    navigator.clipboard.writeText(getSummaryText()).then(() => showToast('Summary copied'));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>

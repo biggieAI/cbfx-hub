@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chain of Authority — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+  --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh;line-height:1.6}
+a{color:var(--blue-dark);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Topbar */
+.topbar{background:var(--nav);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-brand{font-weight:700;font-size:14px;letter-spacing:0.12em;color:#fff;text-transform:uppercase}
+.topbar-title{font-size:11px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;font-weight:500}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:28px;font-weight:500;transition:color .15s}
+.back-link:hover{color:var(--text);text-decoration:none}
+
+/* Layout */
+.page-content{max-width:860px;margin:0 auto;padding:48px 24px 80px}
+
+/* Section label */
+.section-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:40px}
+.section-label:first-child{margin-top:0}
+
+/* Card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px}
+.card-header{background:var(--nav);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.card-header h2{color:#fff;font-size:15px;font-weight:600;letter-spacing:0.01em}
+.card-body{padding:24px}
+
+/* Org chart */
+.org-tracks{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.track-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:16px}
+.track-col{display:flex;flex-direction:column;align-items:center}
+.org-box{padding:10px 16px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);text-align:center;font-size:13px;width:100%;max-width:200px}
+.org-box.top-role{font-weight:700;font-size:14px;background:var(--nav);color:#fff;border-color:var(--nav)}
+.org-box.lead-role{font-weight:600}
+.org-connector{width:2px;height:20px;background:var(--border-dark);margin:0 auto}
+.org-level-pair{display:flex;gap:12px;justify-content:center;width:100%}
+.org-level-pair .org-box{flex:1}
+
+/* Approval matrix table */
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--nav);color:#fff}
+th{padding:10px 14px;text-align:left;font-size:13px;font-weight:600;letter-spacing:0.03em}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+td.decision{font-weight:600}
+td.approver{color:var(--blue-dark);font-weight:500}
+td.escalate{color:var(--muted)}
+td.notes{font-size:13px;color:var(--text2)}
+
+/* Escalation path card */
+.escalation-steps{list-style:none;display:flex;flex-direction:column;gap:12px}
+.escalation-steps li{display:flex;gap:12px;align-items:flex-start}
+.step-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--nav);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px}
+.step-text{font-size:14px;color:var(--text2);line-height:1.5}
+.step-text strong{color:var(--text);font-weight:600}
+
+/* GPL Tech warning */
+.card.accent-yellow .card-body{border-left:4px solid var(--yellow);padding-left:20px}
+.gpl-note{font-size:14px;color:var(--text2);line-height:1.65}
+.gpl-note strong{color:var(--text);font-weight:600}
+.gpl-note .highlight{background:rgba(232,199,74,0.18);border-radius:3px;padding:2px 6px;font-weight:600;color:var(--text)}
+
+/* Footer */
+footer{text-align:center;font-size:12px;color:var(--muted);padding:24px;border-top:1px solid var(--border);background:var(--surface);letter-spacing:0.05em}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">CBFX Hub</span>
+  <span class="topbar-title">Chain of Authority</span>
+</div>
+
+<div class="page-content">
+  <a href="../index.html" class="back-link">← Back to Hub</a>
+
+  <!-- 1. Org Chart -->
+  <div class="section-label">Organization Structure</div>
+  <div class="card">
+    <div class="card-header"><h2>Visual Org Chart</h2></div>
+    <div class="card-body">
+      <div class="org-tracks">
+
+        <!-- Creative Track -->
+        <div>
+          <div class="track-label">Creative Track</div>
+          <div class="track-col">
+            <div class="org-box top-role">VFX Supervisor</div>
+            <div class="org-connector"></div>
+            <div class="org-level-pair">
+              <div class="org-box lead-role">Comp Supervisor</div>
+              <div class="org-box lead-role">CG Supervisor</div>
+            </div>
+            <div class="org-connector"></div>
+            <div class="org-level-pair">
+              <div class="org-box">Lead Compositor</div>
+              <div class="org-box">Lead CG</div>
+            </div>
+            <div class="org-connector"></div>
+            <div class="org-box">Artist</div>
+          </div>
+        </div>
+
+        <!-- Production Track -->
+        <div>
+          <div class="track-label">Production Track</div>
+          <div class="track-col">
+            <div class="org-box top-role">Executive Producer</div>
+            <div class="org-connector"></div>
+            <div class="org-box lead-role">Producer</div>
+            <div class="org-connector"></div>
+            <div class="org-box">Production Manager</div>
+            <div class="org-connector"></div>
+            <div class="org-box">Production Coordinator</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Approval Matrix -->
+  <div class="section-label">Decision Authority</div>
+  <div class="card">
+    <div class="card-header"><h2>Approval Matrix</h2></div>
+    <div class="card-body" style="padding:0">
+      <table>
+        <thead>
+          <tr>
+            <th>Decision</th>
+            <th>Approver</th>
+            <th>Escalate To</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="decision">Shot approval</td>
+            <td class="approver">Comp or CG Supervisor</td>
+            <td class="escalate">VFX Supervisor</td>
+            <td class="notes">Client review if flagged</td>
+          </tr>
+          <tr>
+            <td class="decision">Final delivery sign-off</td>
+            <td class="approver">VFX Supervisor</td>
+            <td class="escalate">Executive Producer</td>
+            <td class="notes">Required before any client delivery</td>
+          </tr>
+          <tr>
+            <td class="decision">Bid submission</td>
+            <td class="approver">Producer + VFX Supervisor</td>
+            <td class="escalate">EP</td>
+            <td class="notes">EP signature required for bids over threshold</td>
+          </tr>
+          <tr>
+            <td class="decision">New hire / booking</td>
+            <td class="approver">Producer</td>
+            <td class="escalate">EP</td>
+            <td class="notes">EP approval for rates above standard</td>
+          </tr>
+          <tr>
+            <td class="decision">IT / infra change</td>
+            <td class="approver">VFX Supervisor or Producer</td>
+            <td class="escalate">EP</td>
+            <td class="notes">GPL Tech requires internal authorization first</td>
+          </tr>
+          <tr>
+            <td class="decision">Tool deployment</td>
+            <td class="approver">VFX Supervisor</td>
+            <td class="escalate">—</td>
+            <td class="notes">Coordinate with pipeline team</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Escalation Path -->
+  <div class="section-label">Escalation Protocol</div>
+  <div class="card">
+    <div class="card-header"><h2>Escalation Path</h2></div>
+    <div class="card-body">
+      <ul class="escalation-steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-text">If your direct supervisor is unavailable, <strong>go one level up</strong> in the relevant track (Creative or Production).</div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-text">For <strong>production-critical issues</strong> — delivery at risk, pipeline down — contact the <strong>VFX Supervisor AND Producer simultaneously</strong>. Do not wait for one to respond before reaching the other.</div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-text">For <strong>IT emergencies</strong>, submit a Support Ticket with <strong>High</strong> priority via the Hub before or alongside any other contact.</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4. GPL Tech Authorization -->
+  <div class="section-label">External Vendor Protocol</div>
+  <div class="card accent-yellow">
+    <div class="card-header"><h2>GPL Tech Authorization</h2></div>
+    <div class="card-body">
+      <p class="gpl-note">
+        All requests to <strong>GPL Tech</strong> (our IT provider) must be <span class="highlight">initiated by or approved by a VFX Supervisor or Producer</span>. Do not contact GPL Tech directly for infrastructure changes without internal authorization.
+      </p>
+      <p class="gpl-note" style="margin-top:14px">
+        Submit your request via a <strong>Support Ticket</strong> at the Hub. The ticket will be routed to GPL Tech once internal authorization is confirmed. Unauthorized direct contact may result in requests being rejected or delayed.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<footer>CBFX · Internal Use Only</footer>
+
+</body>
+</html>

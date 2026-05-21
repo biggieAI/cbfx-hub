@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artist Booking Request — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+  --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;
+  --green-dim:rgba(62,207,110,0.12);--yellow-dim:rgba(232,199,74,0.15);
+  --red:#e85a4a;--red-dim:rgba(232,90,74,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
+
+/* TOPBAR */
+.topbar{
+  background:var(--nav);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:52px;
+  position:sticky;top:0;z-index:100;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.topbar-brand{
+  font-size:13px;font-weight:700;letter-spacing:0.12em;
+  color:#fff;text-transform:uppercase;text-decoration:none;
+}
+.topbar-title{
+  font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);
+  letter-spacing:0.02em;
+}
+.topbar-back{
+  font-size:12.5px;font-weight:500;color:rgba(255,255,255,0.45);
+  text-decoration:none;transition:color 0.15s;letter-spacing:0.01em;
+}
+.topbar-back:hover{color:rgba(255,255,255,0.8)}
+.topbar-left{display:flex;align-items:center;gap:20px}
+
+/* PROGRESS BAR */
+.progress-wrap{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 28px 0;
+}
+.progress-steps{
+  display:flex;gap:0;max-width:700px;margin:0 auto;
+}
+.progress-step{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  position:relative;cursor:default;
+}
+.progress-step:not(:last-child)::after{
+  content:'';
+  position:absolute;
+  top:14px;left:50%;
+  width:100%;height:2px;
+  background:var(--border);
+  z-index:0;
+}
+.progress-step.done:not(:last-child)::after,
+.progress-step.active:not(:last-child)::after{
+  background:var(--blue-dark);
+}
+.step-circle{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;
+  border:2px solid var(--border);
+  background:var(--surface);color:var(--muted);
+  position:relative;z-index:1;transition:all 0.2s;
+}
+.progress-step.done .step-circle{
+  background:var(--blue-dark);border-color:var(--blue-dark);color:#fff;
+}
+.progress-step.active .step-circle{
+  background:var(--text);border-color:var(--text);color:#fff;
+}
+.step-label{
+  font-size:11px;font-weight:600;margin-top:6px;margin-bottom:14px;
+  color:var(--muted);letter-spacing:0.03em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.progress-step.active .step-label{color:var(--text)}
+.progress-step.done .step-label{color:var(--blue-dark)}
+
+/* CONTENT */
+.content{max-width:700px;margin:0 auto;padding:36px 28px 80px;}
+
+.step-heading{
+  font-size:22px;font-weight:700;margin-bottom:4px;color:var(--text);
+}
+.step-sub{font-size:14px;color:var(--muted);margin-bottom:28px;}
+
+/* FORM ELEMENTS */
+.field{margin-bottom:20px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label.field-label{
+  display:block;font-size:12.5px;font-weight:600;
+  letter-spacing:0.04em;text-transform:uppercase;
+  color:var(--text2);margin-bottom:6px;
+}
+label.field-label span.opt{
+  font-weight:400;color:var(--muted);text-transform:none;
+  font-size:11.5px;letter-spacing:0;
+}
+input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
+  width:100%;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:10px 13px;
+  font-family:'Figtree',sans-serif;
+  font-size:14.5px;
+  color:var(--text);
+  outline:none;
+  transition:border-color 0.15s,box-shadow 0.15s;
+  appearance:none;
+}
+input[type=text]:focus,input[type=email]:focus,input[type=number]:focus,input[type=date]:focus,textarea:focus{
+  border-color:var(--blue-dark);
+  box-shadow:0 0 0 3px rgba(30,58,90,0.12);
+}
+input.error,textarea.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-dim);}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+.field-hint{font-size:12px;color:var(--muted);margin-top:5px;}
+.field-error{font-size:12px;color:var(--red);margin-top:5px;display:none;}
+.field-error.show{display:block;}
+
+/* PREFIX INPUT */
+.input-prefix{position:relative;}
+.input-prefix span{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:14.5px;color:var(--muted);font-weight:600;pointer-events:none;
+}
+.input-prefix input{padding-left:26px;}
+
+/* RADIO CARDS */
+.radio-cards{display:flex;flex-wrap:wrap;gap:10px;}
+.radio-cards.two .radio-card{flex:1;min-width:200px;}
+.radio-card{
+  position:relative;cursor:pointer;
+}
+.radio-card input[type=radio]{
+  position:absolute;opacity:0;width:0;height:0;
+}
+.radio-card-inner{
+  border:1.5px solid var(--border);
+  border-radius:9px;
+  padding:11px 15px;
+  background:var(--surface);
+  transition:all 0.15s;
+  user-select:none;
+}
+.radio-card:hover .radio-card-inner{border-color:var(--border-dark);background:var(--surface2);}
+.radio-card input:checked + .radio-card-inner{
+  border-color:var(--blue-dark);
+  background:rgba(30,58,90,0.07);
+  box-shadow:0 0 0 3px rgba(30,58,90,0.1);
+}
+/* Booking type cards */
+.radio-card.hold input:checked + .radio-card-inner{
+  border-color:var(--yellow);
+  background:var(--yellow-dim);
+  box-shadow:0 0 0 3px rgba(232,199,74,0.18);
+}
+.radio-card.confirm input:checked + .radio-card-inner{
+  border-color:var(--green);
+  background:var(--green-dim);
+  box-shadow:0 0 0 3px rgba(62,207,110,0.18);
+}
+.radio-card-title{font-size:13.5px;font-weight:700;color:var(--text);}
+.radio-card-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.booking-badge{
+  display:inline-block;
+  font-size:11px;font-weight:700;letter-spacing:0.08em;
+  padding:2px 8px;border-radius:4px;margin-bottom:6px;
+  text-transform:uppercase;
+}
+.badge-hold{background:var(--yellow-dim);color:#7a6400;border:1px solid rgba(232,199,74,0.5);}
+.badge-confirm{background:var(--green-dim);color:#1a7a3e;border:1px solid rgba(62,207,110,0.5);}
+
+/* RATE TOGGLE */
+.rate-toggle{
+  display:flex;gap:0;margin-bottom:10px;
+  border:1.5px solid var(--border);border-radius:7px;
+  width:fit-content;overflow:hidden;
+}
+.rate-toggle-btn{
+  padding:7px 18px;font-size:13px;font-weight:600;
+  background:var(--surface);color:var(--muted);
+  cursor:pointer;border:none;font-family:'Figtree',sans-serif;
+  transition:all 0.15s;
+}
+.rate-toggle-btn.active{
+  background:var(--blue-dark);color:#fff;
+}
+
+/* DIVIDER */
+.section-divider{
+  border:none;border-top:1px solid var(--border);
+  margin:28px 0;
+}
+
+/* REVIEW SECTION */
+.review-section{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-bottom:16px;
+  overflow:hidden;
+}
+.review-section-head{
+  background:var(--surface2);
+  padding:10px 16px;
+  font-size:11.5px;font-weight:700;letter-spacing:0.07em;
+  text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--border);
+}
+.review-rows{padding:4px 0;}
+.review-row{
+  display:flex;padding:9px 16px;gap:12px;
+  border-bottom:1px solid var(--border);
+  align-items:baseline;
+}
+.review-row:last-child{border-bottom:none;}
+.review-key{
+  flex:0 0 160px;font-size:12px;font-weight:600;
+  color:var(--muted);letter-spacing:0.03em;text-transform:uppercase;
+}
+.review-val{
+  flex:1;font-size:14px;font-weight:500;color:var(--text);
+  word-break:break-word;
+}
+.review-val.muted{color:var(--muted);font-style:italic;font-weight:400;}
+.review-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;letter-spacing:0.07em;
+  padding:3px 12px;border-radius:5px;text-transform:uppercase;
+}
+.review-badge.hold{background:var(--yellow-dim);color:#7a6400;border:1.5px solid rgba(232,199,74,0.6);}
+.review-badge.confirm{background:var(--green-dim);color:#1a7a3e;border:1.5px solid rgba(62,207,110,0.6);}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:7px;
+  padding:11px 22px;
+  border-radius:8px;
+  font-family:'Figtree',sans-serif;
+  font-size:14px;font-weight:600;
+  cursor:pointer;border:none;
+  transition:all 0.15s;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.btn-primary{
+  background:var(--blue-dark);color:#fff;
+}
+.btn-primary:hover{background:#162d47;box-shadow:0 2px 8px rgba(30,58,90,0.25);}
+.btn-ghost{
+  background:var(--surface2);color:var(--text2);
+  border:1.5px solid var(--border);
+}
+.btn-ghost:hover{background:var(--border);color:var(--text);}
+.btn-green{background:var(--green);color:#0d3d1f;}
+.btn-green:hover{background:#35bd60;}
+.btn-yellow{background:var(--yellow);color:#3d2e00;}
+.btn-yellow:hover{background:#d4b43e;}
+.btn-outline{
+  background:transparent;color:var(--text2);
+  border:1.5px solid var(--border-dark);
+}
+.btn-outline:hover{background:var(--surface2);}
+.btn svg{width:15px;height:15px;flex-shrink:0;}
+
+.nav-buttons{display:flex;justify-content:space-between;margin-top:32px;align-items:center;}
+.nav-buttons-left,.nav-buttons-right{display:flex;gap:10px;}
+
+/* NOTICE */
+.notice{
+  font-size:12.5px;color:var(--muted);
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:10px 14px;
+  margin-top:14px;
+  line-height:1.5;
+}
+.notice strong{color:var(--text2);}
+
+/* COPY TOAST */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--nav);color:#fff;
+  font-size:13.5px;font-weight:500;
+  padding:10px 22px;border-radius:8px;
+  opacity:0;transition:all 0.25s;
+  pointer-events:none;z-index:999;
+  white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* STEP VISIBILITY */
+.step{display:none;}
+.step.active{display:block;}
+
+/* Responsive */
+@media(max-width:560px){
+  .field-row{grid-template-columns:1fr;}
+  .topbar-title{display:none;}
+  .review-key{flex:0 0 120px;}
+  .radio-cards.two .radio-card{min-width:140px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <a href="../index.html" class="topbar-brand">CBFX Hub</a>
+    <span class="topbar-title">Artist Booking Request</span>
+  </div>
+  <a href="../index.html" class="topbar-back">← Back to Hub</a>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="progress-step active" id="ps1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Artist</div>
+    </div>
+    <div class="progress-step" id="ps2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Booking</div>
+    </div>
+    <div class="progress-step" id="ps3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Show & Notes</div>
+    </div>
+    <div class="progress-step" id="ps4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Review</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- STEP 1 -->
+<div class="step active" id="step1">
+  <h1 class="step-heading">Artist Details</h1>
+  <p class="step-sub">Who is being booked, and who is making the request?</p>
+
+  <div class="field-row">
+    <div class="field">
+      <label class="field-label" for="artistName">Artist Full Name</label>
+      <input type="text" id="artistName" placeholder="e.g. Jordan Lee">
+      <div class="field-error" id="err-artistName">Required</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="artistEmail">Artist Email</label>
+      <input type="email" id="artistEmail" placeholder="artist@example.com">
+      <div class="field-error" id="err-artistEmail">Valid email required</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Department</label>
+    <div class="radio-cards" id="department-cards">
+      <label class="radio-card"><input type="radio" name="department" value="Compositing"><div class="radio-card-inner"><div class="radio-card-title">Compositing</div></div></label>
+      <label class="radio-card"><input type="radio" name="department" value="FX"><div class="radio-card-inner"><div class="radio-card-title">FX</div></div></label>
+      <label class="radio-card"><input type="radio" name="department" value="CG"><div class="radio-card-inner"><div class="radio-card-title">CG</div></div></label>
+      <label class="radio-card"><input type="radio" name="department" value="Roto/Paint"><div class="radio-card-inner"><div class="radio-card-title">Roto / Paint</div></div></label>
+      <label class="radio-card"><input type="radio" name="department" value="Edit"><div class="radio-card-inner"><div class="radio-card-title">Edit</div></div></label>
+      <label class="radio-card"><input type="radio" name="department" value="Other"><div class="radio-card-inner"><div class="radio-card-title">Other</div></div></label>
+    </div>
+    <div class="field-error" id="err-department">Please select a department</div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label class="field-label" for="roleTitle">Role / Title</label>
+      <input type="text" id="roleTitle" placeholder="e.g. Senior Compositor">
+      <div class="field-error" id="err-roleTitle">Required</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="requestedBy">Requested By</label>
+      <input type="text" id="requestedBy" placeholder="Producer name">
+      <div class="field-error" id="err-requestedBy">Required</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="requesterEmail">Requester Email</label>
+    <input type="email" id="requesterEmail" placeholder="producer@example.com">
+    <div class="field-error" id="err-requesterEmail">Valid email required</div>
+  </div>
+
+  <div class="nav-buttons">
+    <div class="nav-buttons-left"></div>
+    <div class="nav-buttons-right">
+      <button class="btn btn-primary" onclick="goNext(1)">Next: Booking Details →</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="step2">
+  <h1 class="step-heading">Booking Details</h1>
+  <p class="step-sub">Define the engagement, dates, and rate.</p>
+
+  <div class="field">
+    <label class="field-label" for="showProject">Show / Project</label>
+    <input type="text" id="showProject" placeholder="e.g. Project Nightfall S02">
+    <div class="field-error" id="err-showProject">Required</div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Booking Type</label>
+    <div class="radio-cards two">
+      <label class="radio-card hold">
+        <input type="radio" name="bookingType" value="HOLD">
+        <div class="radio-card-inner">
+          <div class="booking-badge badge-hold">Hold</div>
+          <div class="radio-card-title">Tentative Hold</div>
+          <div class="radio-card-desc">Artist aware but not confirmed. Pending final approval.</div>
+        </div>
+      </label>
+      <label class="radio-card confirm">
+        <input type="radio" name="bookingType" value="CONFIRM">
+        <div class="radio-card-inner">
+          <div class="booking-badge badge-confirm">Confirm</div>
+          <div class="radio-card-title">Confirmed Booking</div>
+          <div class="radio-card-desc">Artist is locked in. Engagement is approved and active.</div>
+        </div>
+      </label>
+    </div>
+    <div class="field-error" id="err-bookingType">Please select a booking type</div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label class="field-label" for="startDate">Start Date</label>
+      <input type="date" id="startDate" onchange="calcDays()">
+      <div class="field-error" id="err-startDate">Required</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="endDate">End Date</label>
+      <input type="date" id="endDate" onchange="calcDays()">
+      <div class="field-error" id="err-endDate">Required</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="estDays">Estimated Days</label>
+    <input type="number" id="estDays" min="1" placeholder="Auto-calculated from dates">
+    <div class="field-hint" id="estDaysHint">Fill in start and end dates to auto-calculate, or enter manually.</div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Work Location</label>
+    <div class="radio-cards">
+      <label class="radio-card"><input type="radio" name="workLocation" value="Remote"><div class="radio-card-inner"><div class="radio-card-title">Remote</div></div></label>
+      <label class="radio-card"><input type="radio" name="workLocation" value="On-site"><div class="radio-card-inner"><div class="radio-card-title">On-site</div></div></label>
+      <label class="radio-card"><input type="radio" name="workLocation" value="Hybrid"><div class="radio-card-inner"><div class="radio-card-title">Hybrid</div></div></label>
+    </div>
+    <div class="field-error" id="err-workLocation">Please select a work location</div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Rate</label>
+    <div class="rate-toggle" id="rateToggle">
+      <button class="rate-toggle-btn active" onclick="setRateType('daily',this)" type="button">Daily</button>
+      <button class="rate-toggle-btn" onclick="setRateType('weekly',this)" type="button">Weekly</button>
+    </div>
+    <div class="input-prefix">
+      <span>$</span>
+      <input type="number" id="rateAmount" min="0" placeholder="Leave blank if TBD">
+    </div>
+    <div class="field-hint">Leave blank if rate is TBD or on deal memo.</div>
+  </div>
+
+  <div class="nav-buttons">
+    <div class="nav-buttons-left">
+      <button class="btn btn-ghost" onclick="goBack(2)">← Back</button>
+    </div>
+    <div class="nav-buttons-right">
+      <button class="btn btn-primary" onclick="goNext(2)">Next: Show & Notes →</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="step3">
+  <h1 class="step-heading">Show & Notes</h1>
+  <p class="step-sub">Additional details about the project and any special requirements.</p>
+
+  <div class="field-row">
+    <div class="field">
+      <label class="field-label" for="clientBroadcaster">Client / Broadcaster <span class="opt">optional</span></label>
+      <input type="text" id="clientBroadcaster" placeholder="e.g. Netflix, HBO, Apple TV+">
+    </div>
+    <div class="field">
+      <label class="field-label" for="episodeSegment">Episode / Segment <span class="opt">optional</span></label>
+      <input type="text" id="episodeSegment" placeholder="e.g. Ep 3–6, S02E01">
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="shotCount">Shot Count Estimate <span class="opt">optional</span></label>
+    <input type="number" id="shotCount" min="0" placeholder="e.g. 45">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Turnaround</label>
+    <div class="radio-cards">
+      <label class="radio-card"><input type="radio" name="turnaround" value="Standard"><div class="radio-card-inner"><div class="radio-card-title">Standard</div></div></label>
+      <label class="radio-card"><input type="radio" name="turnaround" value="Rush (48h)"><div class="radio-card-inner"><div class="radio-card-title">Rush <span style="color:var(--muted);font-weight:400">48h</span></div></div></label>
+      <label class="radio-card"><input type="radio" name="turnaround" value="Emergency (24h)"><div class="radio-card-inner"><div class="radio-card-title">Emergency <span style="color:var(--muted);font-weight:400">24h</span></div></div></label>
+    </div>
+    <div class="field-error" id="err-turnaround">Please select a turnaround</div>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="specialReqs">Special Requirements <span class="opt">optional</span></label>
+    <textarea id="specialReqs" placeholder="e.g. Must have Nuke 16 license. Remote only, no on-site required."></textarea>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="internalNotes">Internal Notes <span class="opt">optional — not sent to artist</span></label>
+    <textarea id="internalNotes" placeholder="Notes for production only. Not included in artist communication."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <div class="nav-buttons-left">
+      <button class="btn btn-ghost" onclick="goBack(3)">← Back</button>
+    </div>
+    <div class="nav-buttons-right">
+      <button class="btn btn-primary" onclick="goNext(3)">Review & Submit →</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="step4">
+  <h1 class="step-heading">Review & Submit</h1>
+  <p class="step-sub">Confirm all details before sending.</p>
+
+  <div id="reviewContent"></div>
+
+  <div class="notice">
+    <strong>Hold policy:</strong> Hold bookings must be confirmed or released within <strong>5 business days</strong> of this request.
+  </div>
+
+  <div class="btn-row" id="actionButtons">
+    <!-- Injected by JS -->
+  </div>
+
+  <div class="nav-buttons" style="margin-top:20px;">
+    <div class="nav-buttons-left">
+      <button class="btn btn-ghost" onclick="goBack(4)">← Back</button>
+    </div>
+    <div class="nav-buttons-right"></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let rateType = 'daily';
+let currentStep = 1;
+
+// ─── Rate toggle ─────────────────────────────────────────────────────────────
+function setRateType(type, btn) {
+  rateType = type;
+  document.querySelectorAll('.rate-toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ─── Day calc ─────────────────────────────────────────────────────────────────
+function calcDays() {
+  const s = document.getElementById('startDate').value;
+  const e = document.getElementById('endDate').value;
+  if (s && e) {
+    const start = new Date(s), end = new Date(e);
+    if (end >= start) {
+      const diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+      document.getElementById('estDays').value = diff;
+      document.getElementById('estDaysHint').textContent = `Auto-calculated: ${diff} day${diff !== 1 ? 's' : ''} inclusive.`;
+    }
+  }
+}
+
+// ─── Validation ───────────────────────────────────────────────────────────────
+function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function setErr(id, show, msg) {
+  const el = document.getElementById('err-' + id);
+  const inp = document.getElementById(id);
+  if (!el) return;
+  if (show) {
+    el.textContent = msg || el.textContent;
+    el.classList.add('show');
+    if (inp) inp.classList.add('error');
+  } else {
+    el.classList.remove('show');
+    if (inp) inp.classList.remove('error');
+  }
+}
+
+function clearErrs() {
+  document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.error').forEach(e => e.classList.remove('error'));
+}
+
+function validateStep(n) {
+  clearErrs();
+  let ok = true;
+
+  if (n === 1) {
+    const name = v('artistName'), email = v('artistEmail');
+    const dept = vRadio('department'), role = v('roleTitle');
+    const reqBy = v('requestedBy'), reqEmail = v('requesterEmail');
+    if (!name) { setErr('artistName', true, 'Required'); ok = false; }
+    if (!email || !isEmail(email)) { setErr('artistEmail', true, 'Valid email required'); ok = false; }
+    if (!dept) { setErr('department', true, 'Please select a department'); ok = false; }
+    if (!role) { setErr('roleTitle', true, 'Required'); ok = false; }
+    if (!reqBy) { setErr('requestedBy', true, 'Required'); ok = false; }
+    if (!reqEmail || !isEmail(reqEmail)) { setErr('requesterEmail', true, 'Valid email required'); ok = false; }
+  }
+
+  if (n === 2) {
+    const show = v('showProject'), bType = vRadio('bookingType');
+    const start = v('startDate'), end = v('endDate');
+    const loc = vRadio('workLocation');
+    if (!show) { setErr('showProject', true, 'Required'); ok = false; }
+    if (!bType) { setErr('bookingType', true, 'Please select a booking type'); ok = false; }
+    if (!start) { setErr('startDate', true, 'Required'); ok = false; }
+    if (!end) { setErr('endDate', true, 'Required'); ok = false; }
+    if (start && end && new Date(end) < new Date(start)) {
+      setErr('endDate', true, 'End date must be after start date'); ok = false;
+    }
+    if (!loc) { setErr('workLocation', true, 'Please select a work location'); ok = false; }
+  }
+
+  if (n === 3) {
+    const ta = vRadio('turnaround');
+    if (!ta) { setErr('turnaround', true, 'Please select a turnaround'); ok = false; }
+  }
+
+  return ok;
+}
+
+function v(id) { return (document.getElementById(id)?.value || '').trim(); }
+function vRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function goNext(from) {
+  if (!validateStep(from)) return;
+  setStep(from + 1);
+}
+function goBack(from) { setStep(from - 1); }
+
+function setStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.toggle('active', i + 1 === n);
+  });
+  for (let i = 1; i <= 4; i++) {
+    const ps = document.getElementById('ps' + i);
+    ps.classList.remove('active', 'done');
+    if (i < n) ps.classList.add('done');
+    if (i === n) ps.classList.add('active');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 4) buildReview();
+}
+
+// ─── Format helpers ──────────────────────────────────────────────────────────
+function fmtDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function fmtRate() {
+  const amt = v('rateAmount');
+  if (!amt) return 'TBD / On deal memo';
+  return `$${Number(amt).toLocaleString()} / ${rateType === 'daily' ? 'day' : 'week'}`;
+}
+
+// ─── Build review ─────────────────────────────────────────────────────────────
+function buildReview() {
+  const bType = vRadio('bookingType');
+  const badgeClass = bType === 'HOLD' ? 'hold' : 'confirm';
+  const bLabel = bType === 'HOLD' ? 'Hold' : 'Confirm';
+
+  const sections = [
+    {
+      title: 'Artist',
+      rows: [
+        ['Name', v('artistName')],
+        ['Email', v('artistEmail')],
+        ['Department', vRadio('department')],
+        ['Role / Title', v('roleTitle')],
+      ]
+    },
+    {
+      title: 'Request',
+      rows: [
+        ['Requested By', v('requestedBy')],
+        ['Requester Email', v('requesterEmail')],
+      ]
+    },
+    {
+      title: 'Booking',
+      rows: [
+        ['Show / Project', v('showProject')],
+        ['Booking Type', `<span class="review-badge ${badgeClass}">${bLabel}</span>`],
+        ['Start Date', fmtDate(v('startDate'))],
+        ['End Date', fmtDate(v('endDate'))],
+        ['Estimated Days', v('estDays') || '—'],
+        ['Work Location', vRadio('workLocation')],
+        ['Rate', fmtRate()],
+      ]
+    },
+    {
+      title: 'Show Details',
+      rows: [
+        ['Client / Broadcaster', v('clientBroadcaster') || '<span class="muted">—</span>'],
+        ['Episode / Segment', v('episodeSegment') || '<span class="muted">—</span>'],
+        ['Shot Count', v('shotCount') || '<span class="muted">—</span>'],
+        ['Turnaround', vRadio('turnaround')],
+        ['Special Requirements', v('specialReqs') || '<span class="muted">None</span>'],
+      ]
+    },
+    {
+      title: 'Internal Notes (not sent to artist)',
+      rows: [
+        ['Notes', v('internalNotes') || '<span class="muted">None</span>'],
+      ]
+    }
+  ];
+
+  let html = '';
+  sections.forEach(sec => {
+    html += `<div class="review-section">
+      <div class="review-section-head">${sec.title}</div>
+      <div class="review-rows">`;
+    sec.rows.forEach(([k, val]) => {
+      html += `<div class="review-row">
+        <div class="review-key">${k}</div>
+        <div class="review-val">${val}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  document.getElementById('reviewContent').innerHTML = html;
+
+  // Build action buttons
+  document.getElementById('actionButtons').innerHTML = `
+    <button class="btn btn-green" onclick="sendToArtist()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l14-7-5 14-3-5-6-2z"/></svg>
+      Send to Artist
+    </button>
+    <button class="btn btn-yellow" onclick="sendToProduction()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l14-7-5 14-3-5-6-2z"/></svg>
+      Send to Production
+    </button>
+    <button class="btn btn-outline" onclick="copySummary()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="10" height="12" rx="2"/><path d="M13 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2"/></svg>
+      Copy Summary
+    </button>
+  `;
+}
+
+// ─── Email body builders ──────────────────────────────────────────────────────
+function artistEmailBody() {
+  const bType = vRadio('bookingType');
+  const bLabel = bType === 'HOLD' ? 'HOLD' : 'CONFIRMED';
+  const name = v('artistName').split(' ')[0] || v('artistName');
+
+  let body = `Hi ${name},\n\n`;
+  body += bType === 'HOLD'
+    ? `We'd like to place a tentative hold on your availability for the following project. This is not a confirmed booking — we'll follow up with confirmation or release within 5 business days.\n\n`
+    : `We're excited to confirm your booking for the following project. Please review the details below.\n\n`;
+
+  body += `──────────────────────────────\n`;
+  body += `BOOKING STATUS: ${bLabel}\n`;
+  body += `──────────────────────────────\n\n`;
+  body += `Project: ${v('showProject')}\n`;
+  if (v('clientBroadcaster')) body += `Client: ${v('clientBroadcaster')}\n`;
+  if (v('episodeSegment')) body += `Episode / Segment: ${v('episodeSegment')}\n`;
+  body += `Department: ${vRadio('department')}\n`;
+  body += `Role: ${v('roleTitle')}\n`;
+  body += `Start Date: ${fmtDate(v('startDate'))}\n`;
+  body += `End Date: ${fmtDate(v('endDate'))}\n`;
+  if (v('estDays')) body += `Estimated Days: ${v('estDays')}\n`;
+  body += `Work Location: ${vRadio('workLocation')}\n`;
+  body += `Rate: ${fmtRate()}\n`;
+  body += `Turnaround: ${vRadio('turnaround')}\n`;
+  if (v('specialReqs')) body += `\nSpecial Requirements:\n${v('specialReqs')}\n`;
+  body += `\n──────────────────────────────\n\n`;
+  body += `Please confirm receipt of this ${bType === 'HOLD' ? 'hold' : 'booking'}. If you have any questions, don't hesitate to reach out.\n\n`;
+  body += `Best,\n${v('requestedBy')}\nCBFX`;
+
+  return body;
+}
+
+function productionEmailBody() {
+  const bType = vRadio('bookingType');
+  let body = `CBFX INTERNAL BOOKING SUMMARY\n`;
+  body += `Generated: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}\n`;
+  body += `═══════════════════════════════════════\n\n`;
+  body += `BOOKING STATUS: ${bType}\n\n`;
+  body += `ARTIST\n`;
+  body += `  Name:          ${v('artistName')}\n`;
+  body += `  Email:         ${v('artistEmail')}\n`;
+  body += `  Department:    ${vRadio('department')}\n`;
+  body += `  Role:          ${v('roleTitle')}\n\n`;
+  body += `REQUEST\n`;
+  body += `  Requested By:  ${v('requestedBy')}\n`;
+  body += `  Email:         ${v('requesterEmail')}\n\n`;
+  body += `BOOKING\n`;
+  body += `  Show:          ${v('showProject')}\n`;
+  if (v('clientBroadcaster')) body += `  Client:        ${v('clientBroadcaster')}\n`;
+  if (v('episodeSegment')) body += `  Episode:       ${v('episodeSegment')}\n`;
+  body += `  Start Date:    ${fmtDate(v('startDate'))}\n`;
+  body += `  End Date:      ${fmtDate(v('endDate'))}\n`;
+  if (v('estDays')) body += `  Est. Days:     ${v('estDays')}\n`;
+  body += `  Work Location: ${vRadio('workLocation')}\n`;
+  body += `  Rate:          ${fmtRate()}\n`;
+  body += `  Turnaround:    ${vRadio('turnaround')}\n`;
+  if (v('shotCount')) body += `  Shot Count:    ${v('shotCount')}\n`;
+  if (v('specialReqs')) { body += `\nSPECIAL REQUIREMENTS\n  ${v('specialReqs')}\n`; }
+  if (v('internalNotes')) { body += `\nINTERNAL NOTES\n  ${v('internalNotes')}\n`; }
+  body += `\n═══════════════════════════════════════\n`;
+  body += `Hold bookings must be confirmed or released within 5 business days.\n`;
+  return body;
+}
+
+// ─── Actions ─────────────────────────────────────────────────────────────────
+function sendToArtist() {
+  const bType = vRadio('bookingType');
+  const show = v('showProject');
+  const start = fmtDate(v('startDate'));
+  const end = fmtDate(v('endDate'));
+  const subject = encodeURIComponent(`[CBFX Booking | ${bType}] ${show} — ${start} to ${end}`);
+  const body = encodeURIComponent(artistEmailBody());
+  const to = encodeURIComponent(v('artistEmail'));
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+}
+
+function sendToProduction() {
+  const bType = vRadio('bookingType');
+  const show = v('showProject');
+  const start = fmtDate(v('startDate'));
+  const end = fmtDate(v('endDate'));
+  const subject = encodeURIComponent(`[CBFX Internal | ${bType}] ${show} — ${v('artistName')} | ${start} to ${end}`);
+  const body = encodeURIComponent(productionEmailBody());
+  window.location.href = `mailto:production@chicken-bone.com?subject=${subject}&body=${body}`;
+}
+
+function copySummary() {
+  const text = productionEmailBody();
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  });
+}
+</script>
+</body>
+</html>

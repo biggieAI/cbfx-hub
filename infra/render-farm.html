@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Render Farm Status — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+    --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh;display:flex;flex-direction:column}
+
+  /* TOPBAR */
+  .topbar{background:var(--nav);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0}
+  .topbar-brand{color:#fff;font-weight:700;font-size:16px;letter-spacing:.04em}
+  .topbar-brand span{color:var(--muted);font-weight:400;font-size:13px;margin-left:14px;letter-spacing:.01em}
+  .topbar-right{font-size:13px;color:#a0a8b8;font-weight:500}
+
+  /* NAV STRIP */
+  .nav-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:20px}
+  .back-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .15s}
+  .back-link:hover{color:var(--text)}
+
+  /* CONTENT */
+  main{flex:1;padding:32px 20px 48px}
+  .inner{max-width:900px;margin:0 auto}
+
+  /* BANNER */
+  .banner{background:#fef3cd;border:1px solid #e8c74a;border-radius:8px;padding:12px 18px;margin-bottom:28px;display:flex;align-items:center;gap:12px}
+  .banner-icon{font-size:18px;flex-shrink:0}
+  .banner-text{font-size:13px;color:#5a4a00;font-weight:500;line-height:1.4}
+  .banner-text strong{font-weight:700}
+
+  /* PAGE HEADER */
+  .page-header{margin-bottom:24px}
+  .page-header h1{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+
+  /* STAT CARDS */
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+  @media(max-width:640px){.stat-row{grid-template-columns:repeat(2,1fr)}}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 18px 18px;text-align:center}
+  .stat-card .stat-num{font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:6px}
+  .stat-card .stat-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .stat-card.stat-green .stat-num{color:#1fa84f}
+  .stat-card.stat-yellow .stat-num{color:#a68800}
+  .stat-card.stat-red .stat-num{color:#c43c37}
+
+  /* SECTION HEADERS */
+  .section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;margin-top:32px}
+  .section-label:first-of-type{margin-top:0}
+
+  /* TABLE */
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+  table{width:100%;border-collapse:collapse}
+  thead tr{background:var(--surface2);border-bottom:1px solid var(--border)}
+  th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+  td{padding:11px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--surface2)}
+
+  /* STATUS BADGES */
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+  .badge-running{background:#d6f5e3;color:#1a7a40}
+  .badge-pending{background:#fef3cd;color:#7a5a00}
+  .badge-failed{background:#fde8e8;color:#a03333}
+  .badge-idle{background:var(--surface2);color:var(--muted)}
+  .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+
+  /* PROGRESS BAR */
+  .progress-wrap{display:flex;align-items:center;gap:8px}
+  .progress-bar-bg{flex:1;background:var(--surface2);border-radius:4px;height:7px;overflow:hidden;min-width:80px}
+  .progress-bar-fill{height:100%;border-radius:4px;background:var(--green);transition:width .3s}
+  .progress-bar-fill.fill-pending{background:var(--yellow)}
+  .progress-bar-fill.fill-failed{background:var(--red)}
+  .progress-pct{font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap;min-width:30px}
+
+  /* MONOSPACE */
+  .mono{font-family:monospace;font-size:12px;background:var(--surface2);padding:2px 7px;border-radius:4px;border:1px solid var(--border);color:var(--text2)}
+  .job-name{font-weight:600;color:var(--text)}
+  .timestamp{font-size:12px;color:var(--muted)}
+
+  /* FAILED TASKS */
+  .failed-list{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+  .failed-item{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border)}
+  .failed-item:last-child{border-bottom:none}
+  .failed-item:hover{background:var(--surface2)}
+  .failed-icon{color:var(--red);font-size:16px;margin-top:1px;flex-shrink:0}
+  .failed-content{flex:1}
+  .failed-name{font-weight:600;font-size:13.5px;color:var(--text);margin-bottom:2px}
+  .failed-meta{font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-top:3px}
+  .failed-meta span{display:flex;align-items:center;gap:4px}
+  .failed-error{color:var(--red);font-weight:600}
+
+  /* FOOTER NOTE */
+  .page-note{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:28px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+  .page-note a{color:var(--blue-dark);text-decoration:none;font-weight:600}
+  .page-note a:hover{text-decoration:underline}
+
+  /* PAGE FOOTER */
+  footer{background:var(--nav);text-align:center;padding:14px;font-size:12px;color:#6b7585;letter-spacing:.04em;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">CBFX Hub <span>Infrastructure</span></div>
+  <div class="topbar-right">Render Farm Status</div>
+</div>
+
+<div class="nav-strip">
+  <a class="back-link" href="../index.html">&#8592; Back to Hub</a>
+</div>
+
+<main>
+  <div class="inner">
+
+    <div class="banner">
+      <span class="banner-icon">&#9888;</span>
+      <div class="banner-text"><strong>Live data coming soon.</strong> This dashboard shows representative placeholder data. Real-time Deadline Cloud integration is in development. Check the Deadline Cloud console directly for current farm status.</div>
+    </div>
+
+    <div class="page-header">
+      <h1>Render Farm Status</h1>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">24</div>
+        <div class="stat-label">Total Workers</div>
+      </div>
+      <div class="stat-card stat-green">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Active Jobs</div>
+      </div>
+      <div class="stat-card stat-yellow">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Queued Jobs</div>
+      </div>
+      <div class="stat-card stat-red">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Failed Tasks</div>
+      </div>
+    </div>
+
+    <!-- ACTIVE JOBS -->
+    <div class="section-label">Active Jobs</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Job Name</th>
+            <th>Show</th>
+            <th>Artist</th>
+            <th>Frame Range</th>
+            <th>Progress</th>
+            <th>Status</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="job-name">SHD_0240_v012_BEAUTY</span></td>
+            <td>Shadows & Dust</td>
+            <td>Maya Chen</td>
+            <td><span class="mono">1001–1124</span></td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:72%"></div></div>
+                <span class="progress-pct">72%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="timestamp">Today 08:14</td>
+          </tr>
+          <tr>
+            <td><span class="job-name">NVR_0055_v003_COMP</span></td>
+            <td>Never Look Back</td>
+            <td>Priya Nair</td>
+            <td><span class="mono">1001–1048</span></td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:41%"></div></div>
+                <span class="progress-pct">41%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="timestamp">Today 09:02</td>
+          </tr>
+          <tr>
+            <td><span class="job-name">EXP_0310_FX_PYRO_v007</span></td>
+            <td>Expedition Zero</td>
+            <td>Jordan Blake</td>
+            <td><span class="mono">1001–1200</span></td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:18%"></div></div>
+                <span class="progress-pct">18%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="timestamp">Today 10:30</td>
+          </tr>
+          <tr>
+            <td><span class="job-name">SHD_0188_LIGHT_v009</span></td>
+            <td>Shadows & Dust</td>
+            <td>Maya Chen</td>
+            <td><span class="mono">1001–1080</span></td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill fill-pending" style="width:0%"></div></div>
+                <span class="progress-pct">0%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-pending"><span class="badge-dot"></span>Pending</span></td>
+            <td class="timestamp">Today 11:05</td>
+          </tr>
+          <tr>
+            <td><span class="job-name">KNF_0071_v002_BEAUTY</span></td>
+            <td>Knife's Edge</td>
+            <td>Daisuke Mori</td>
+            <td><span class="mono">1001–1060</span></td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar-bg"><div class="progress-bar-fill fill-failed" style="width:63%"></div></div>
+                <span class="progress-pct">63%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-failed"><span class="badge-dot"></span>Failed</span></td>
+            <td class="timestamp">Today 07:50</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- WORKER POOL -->
+    <div class="section-label">Worker Pool</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Worker ID</th>
+            <th>Pool</th>
+            <th>Status</th>
+            <th>Current Job</th>
+            <th>Last Heartbeat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">wkr-001</span></td>
+            <td>gpu-primary</td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="job-name" style="font-size:12.5px">SHD_0240_v012_BEAUTY</td>
+            <td class="timestamp">2s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-002</span></td>
+            <td>gpu-primary</td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="job-name" style="font-size:12.5px">SHD_0240_v012_BEAUTY</td>
+            <td class="timestamp">4s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-003</span></td>
+            <td>gpu-primary</td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="job-name" style="font-size:12.5px">NVR_0055_v003_COMP</td>
+            <td class="timestamp">1s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-004</span></td>
+            <td>gpu-burst</td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="job-name" style="font-size:12.5px">EXP_0310_FX_PYRO_v007</td>
+            <td class="timestamp">8s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-005</span></td>
+            <td>gpu-burst</td>
+            <td><span class="badge badge-idle"><span class="badge-dot"></span>Idle</span></td>
+            <td style="color:var(--muted);font-size:13px">—</td>
+            <td class="timestamp">12s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-006</span></td>
+            <td>cpu-pool</td>
+            <td><span class="badge badge-idle"><span class="badge-dot"></span>Idle</span></td>
+            <td style="color:var(--muted);font-size:13px">—</td>
+            <td class="timestamp">5s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-007</span></td>
+            <td>cpu-pool</td>
+            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
+            <td class="job-name" style="font-size:12.5px">EXP_0310_FX_PYRO_v007</td>
+            <td class="timestamp">3s ago</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wkr-008</span></td>
+            <td>gpu-primary</td>
+            <td><span class="badge badge-failed"><span class="badge-dot"></span>Error</span></td>
+            <td style="color:var(--muted);font-size:13px">—</td>
+            <td class="timestamp">4m ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FAILED TASKS -->
+    <div class="section-label">Failed Tasks</div>
+    <div class="failed-list">
+      <div class="failed-item">
+        <div class="failed-icon">&#9711;</div>
+        <div class="failed-content">
+          <div class="failed-name">KNF_0071_v002_BEAUTY — Frame 1038</div>
+          <div class="failed-meta">
+            <span class="failed-error">&#9888; RenderError: Out of GPU memory (CUDA OOM)</span>
+            <span>Worker: wkr-008</span>
+            <span>Today 07:51</span>
+          </div>
+        </div>
+      </div>
+      <div class="failed-item">
+        <div class="failed-icon">&#9711;</div>
+        <div class="failed-content">
+          <div class="failed-name">SHD_0091_v004_LIGHT — Frame 1014</div>
+          <div class="failed-meta">
+            <span class="failed-error">&#9888; TimeoutError: Frame exceeded 2h render limit</span>
+            <span>Worker: wkr-003</span>
+            <span>Yesterday 22:18</span>
+          </div>
+        </div>
+      </div>
+      <div class="failed-item">
+        <div class="failed-icon">&#9711;</div>
+        <div class="failed-content">
+          <div class="failed-name">EXP_0204_FX_v001_BEAUTY — Frames 1022–1027</div>
+          <div class="failed-meta">
+            <span class="failed-error">&#9888; AssetNotFound: Missing texture /proj/EXP/tex/grd_crk_v003.exr</span>
+            <span>Worker: wkr-005</span>
+            <span>Yesterday 18:44</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-note">
+      Deadline Cloud console: <a href="https://deadline.aws/" target="_blank" rel="noopener">https://deadline.aws/</a> — Contact GPL Tech for admin access. For job submission issues, open a <a href="../tools/support-ticket.html">Support Ticket</a>.
+    </div>
+
+  </div>
+</main>
+
+<footer>CBFX &middot; Internal Use Only</footer>
+
+</body>
+</html>

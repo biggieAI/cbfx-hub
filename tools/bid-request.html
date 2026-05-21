@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bid Request — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #dde4ed;
+    --surface: #eaeff5;
+    --surface2: #d5dce7;
+    --nav: #1a1c22;
+    --border: #c0c8d4;
+    --border-dark: #a8b2bf;
+    --text: #1a1c22;
+    --text2: #3d4452;
+    --muted: #6b7585;
+    --white: #f4f7fa;
+    --blue-dark: #1e3a5a;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --success: #16a34a;
+    --error: #dc2626;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Figtree', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--nav);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 54px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-brand {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .topbar-title {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: #8d97a8;
+    text-transform: uppercase;
+  }
+
+  .topbar-back {
+    font-size: 13px;
+    color: #8d97a8;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .topbar-back:hover { color: var(--white); }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+  }
+
+  .progress-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .step-tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 14px 0;
+    flex: 1;
+    position: relative;
+    cursor: default;
+  }
+
+  .step-tab + .step-tab {
+    padding-left: 20px;
+  }
+
+  .step-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .step-tab.active::after { background: var(--accent); }
+  .step-tab.done::after { background: var(--success); }
+
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .step-tab.active .step-num {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .step-tab.done .step-num {
+    background: var(--success);
+    color: #fff;
+  }
+
+  .step-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .step-tab.active .step-label { color: var(--text); }
+  .step-tab.done .step-label { color: var(--success); }
+
+  /* MAIN CONTENT */
+  .main {
+    max-width: 720px;
+    margin: 36px auto 80px;
+    padding: 0 20px;
+  }
+
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  .panel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 20px;
+  }
+
+  .panel-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+  }
+
+  .panel-card .panel-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin: 28px 0 18px;
+  }
+
+  .section-header:first-of-type { margin-top: 0; }
+
+  /* FORM FIELDS */
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+
+  .field label .opt {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 12px;
+    margin-left: 4px;
+  }
+
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="date"],
+  .field input[type="number"],
+  .field select {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1px solid var(--border-dark);
+    border-radius: 7px;
+    background: var(--white);
+    color: var(--text);
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+
+  .field input.error,
+  .field select.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+  }
+
+  .field-error {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 5px;
+    display: none;
+  }
+
+  .field-error.visible { display: block; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* RADIO CARDS */
+  .radio-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .radio-cards input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .radio-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--border-dark);
+    border-radius: 7px;
+    background: var(--white);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    user-select: none;
+  }
+
+  .radio-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .radio-cards input[type="radio"]:checked + .radio-card {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--blue-dark);
+    font-weight: 600;
+  }
+
+  .radio-card-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-dark);
+    background: var(--white);
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+
+  .radio-cards input[type="radio"]:checked + .radio-card .radio-card-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .radio-cards input[type="radio"]:checked + .radio-card .radio-card-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  /* SHOT TABLE */
+  .shot-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+  }
+
+  .shot-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    padding: 0 12px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .shot-table th:last-child { text-align: right; }
+
+  .shot-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .shot-table tr:last-child td { border-bottom: none; }
+
+  .tier-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+
+  .tier-a { background: #fef3c7; color: #92400e; }
+  .tier-b { background: #dbeafe; color: #1e40af; }
+  .tier-c { background: #dcfce7; color: #166534; }
+  .tier-d { background: #f3e8ff; color: #6b21a8; }
+
+  .tier-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .tier-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .shot-table input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-dark);
+    border-radius: 6px;
+    background: var(--white);
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .shot-table input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+
+  .shot-total-row td {
+    background: var(--surface2);
+    border-top: 2px solid var(--border-dark) !important;
+    border-bottom: none !important;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .total-count {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--blue-dark);
+    text-align: right;
+  }
+
+  /* REVIEW STEP */
+  .review-section {
+    margin-bottom: 24px;
+  }
+
+  .review-section h3 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+  }
+
+  .review-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .review-field .rv-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+
+  .review-field .rv-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .review-field .rv-value.empty {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .shot-review-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .shot-review-table th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    text-align: left;
+    padding: 0 10px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .shot-review-table th:last-child { text-align: right; }
+
+  .shot-review-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  .shot-review-table tr:last-child td { border-bottom: none; }
+
+  .complexity-bar {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .complexity-pip {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+
+  .complexity-pip.filled-a { background: #d97706; }
+  .complexity-pip.filled-b { background: #2563eb; }
+  .complexity-pip.filled-c { background: #16a34a; }
+  .complexity-pip.filled-d { background: #9333ea; }
+
+  .total-highlight {
+    background: var(--blue-dark);
+    color: #fff;
+    border-radius: 10px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .total-highlight .th-label {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.8;
+  }
+
+  .total-highlight .th-number {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .total-highlight .th-sub {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+
+  /* ACTION BUTTONS */
+  .action-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: 7px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: background 0.15s, box-shadow 0.15s, opacity 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #1d4ed8; }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border-dark);
+  }
+
+  .btn-secondary:hover { background: var(--border); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text2);
+    border: 1.5px solid var(--border-dark);
+  }
+
+  .btn-outline:hover { background: var(--surface2); }
+
+  .btn-success {
+    background: var(--success);
+    color: #fff;
+  }
+
+  .btn-success:hover { background: #15803d; }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  /* NOTICE */
+  .notice {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #92400e;
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .notice-icon { flex-shrink: 0; margin-top: 1px; }
+
+  /* COPY FEEDBACK */
+  .copy-feedback {
+    font-size: 12px;
+    color: var(--success);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .copy-feedback.show { opacity: 1; }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  /* SELECT ARROW */
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .select-wrap select { padding-right: 32px; }
+
+  @media (max-width: 600px) {
+    .panel-card { padding: 22px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .review-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 0 16px; }
+    .main { margin-top: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a href="../index.html" class="topbar-brand">CBFX Hub</a>
+  <span class="topbar-title">Bid Request</span>
+  <a href="../index.html" class="topbar-back">← Back to Hub</a>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="step-tab active" id="tab-1">
+      <span class="step-num">1</span>
+      <span class="step-label">Project Info</span>
+    </div>
+    <div class="step-tab" id="tab-2">
+      <span class="step-num">2</span>
+      <span class="step-label">Scope &amp; Complexity</span>
+    </div>
+    <div class="step-tab" id="tab-3">
+      <span class="step-num">3</span>
+      <span class="step-label">Review &amp; Submit</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ========== STEP 1 ========== -->
+  <div class="step-panel active" id="step-1">
+    <div class="panel-card">
+      <h2>Project Info</h2>
+      <p class="panel-desc">Basic details about the project and who's requesting the bid.</p>
+
+      <div class="section-header">Project Details</div>
+
+      <div class="field">
+        <label for="show-title">Show / Project Title <span style="color:var(--error)">*</span></label>
+        <input type="text" id="show-title" placeholder="e.g. Dark Matter S2">
+        <div class="field-error" id="err-show-title">Required</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="client">Client / Broadcaster <span style="color:var(--error)">*</span></label>
+          <input type="text" id="client" placeholder="e.g. Apple TV+">
+          <div class="field-error" id="err-client">Required</div>
+        </div>
+        <div class="field">
+          <label for="contact-client">Contact at Client <span class="opt">(optional)</span></label>
+          <input type="text" id="contact-client" placeholder="Client-side producer name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="bid-due">Bid Due Date <span style="color:var(--error)">*</span></label>
+        <input type="date" id="bid-due">
+        <div class="field-error" id="err-bid-due">Required</div>
+      </div>
+
+      <div class="section-header">Work Type</div>
+
+      <div class="field">
+        <label>Work Type <span style="color:var(--error)">*</span></label>
+        <div class="radio-cards" id="work-type-group">
+          <input type="radio" name="work-type" id="wt-series" value="Series/Episodic">
+          <label class="radio-card" for="wt-series"><span class="radio-card-dot"></span>Series / Episodic</label>
+
+          <input type="radio" name="work-type" id="wt-feature" value="Feature Film">
+          <label class="radio-card" for="wt-feature"><span class="radio-card-dot"></span>Feature Film</label>
+
+          <input type="radio" name="work-type" id="wt-commercial" value="Commercial">
+          <label class="radio-card" for="wt-commercial"><span class="radio-card-dot"></span>Commercial</label>
+
+          <input type="radio" name="work-type" id="wt-short" value="Short Form">
+          <label class="radio-card" for="wt-short"><span class="radio-card-dot"></span>Short Form</label>
+
+          <input type="radio" name="work-type" id="wt-other" value="Other">
+          <label class="radio-card" for="wt-other"><span class="radio-card-dot"></span>Other</label>
+        </div>
+        <div class="field-error" id="err-work-type">Please select a work type</div>
+      </div>
+
+      <div class="section-header">Requester</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="req-name">Requester Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="req-name" placeholder="Internal producer">
+          <div class="field-error" id="err-req-name">Required</div>
+        </div>
+        <div class="field">
+          <label for="req-email">Requester Email <span style="color:var(--error)">*</span></label>
+          <input type="email" id="req-email" placeholder="producer@studio.com">
+          <div class="field-error" id="err-req-email">Valid email required</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="goStep(2)">Next: Scope &amp; Complexity →</button>
+    </div>
+  </div>
+
+  <!-- ========== STEP 2 ========== -->
+  <div class="step-panel" id="step-2">
+    <div class="panel-card">
+      <h2>Scope &amp; Complexity</h2>
+      <p class="panel-desc">Shot breakdown, deliverable specs, and turnaround requirements.</p>
+
+      <div class="section-header">Shot Breakdown</div>
+
+      <table class="shot-table">
+        <thead>
+          <tr>
+            <th style="width:50%">Tier</th>
+            <th style="width:30%">Shot Count</th>
+            <th style="width:20%; text-align:right;">—</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;">
+                <span class="tier-badge tier-a">A</span>
+                <div>
+                  <div class="tier-name">Hero / Photoreal</div>
+                  <div class="tier-desc">Full CG, complex sims, photoreal integration</div>
+                </div>
+              </div>
+            </td>
+            <td><input type="number" id="tier-a" min="0" value="0" class="tier-input" data-tier="a"></td>
+            <td class="total-count" style="font-size:14px;color:var(--muted);"></td>
+          </tr>
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;">
+                <span class="tier-badge tier-b">B</span>
+                <div>
+                  <div class="tier-name">Standard Comp</div>
+                  <div class="tier-desc">Multi-element compositing, grade, tracking</div>
+                </div>
+              </div>
+            </td>
+            <td><input type="number" id="tier-b" min="0" value="0" class="tier-input" data-tier="b"></td>
+            <td class="total-count" style="font-size:14px;color:var(--muted);"></td>
+          </tr>
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;">
+                <span class="tier-badge tier-c">C</span>
+                <div>
+                  <div class="tier-name">Simple / Cleanup</div>
+                  <div class="tier-desc">Wire removal, basic fixes, simple grade</div>
+                </div>
+              </div>
+            </td>
+            <td><input type="number" id="tier-c" min="0" value="0" class="tier-input" data-tier="c"></td>
+            <td class="total-count" style="font-size:14px;color:var(--muted);"></td>
+          </tr>
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;">
+                <span class="tier-badge tier-d">D</span>
+                <div>
+                  <div class="tier-name">Roto / Paint Only</div>
+                  <div class="tier-desc">Isolation, paint-out, no comp output</div>
+                </div>
+              </div>
+            </td>
+            <td><input type="number" id="tier-d" min="0" value="0" class="tier-input" data-tier="d"></td>
+            <td class="total-count" style="font-size:14px;color:var(--muted);"></td>
+          </tr>
+          <tr class="shot-total-row">
+            <td style="color:var(--blue-dark);">
+              <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Total Shots</span>
+            </td>
+            <td>
+              <div class="total-count" id="total-shots-display">0</div>
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="field" style="margin-top:16px;">
+        <label for="frame-handles">Frame Handles per Shot</label>
+        <input type="number" id="frame-handles" value="8" min="0" style="max-width:120px;">
+      </div>
+
+      <div class="section-header">Deliverable Specs</div>
+
+      <div class="field">
+        <label>Deliverable Format <span style="color:var(--error)">*</span></label>
+        <div class="radio-cards">
+          <input type="radio" name="deliv-format" id="df-dpx" value="DPX">
+          <label class="radio-card" for="df-dpx"><span class="radio-card-dot"></span>DPX</label>
+
+          <input type="radio" name="deliv-format" id="df-exr" value="EXR">
+          <label class="radio-card" for="df-exr"><span class="radio-card-dot"></span>EXR</label>
+
+          <input type="radio" name="deliv-format" id="df-prores" value="ProRes">
+          <label class="radio-card" for="df-prores"><span class="radio-card-dot"></span>ProRes</label>
+
+          <input type="radio" name="deliv-format" id="df-h264" value="H.264/MP4">
+          <label class="radio-card" for="df-h264"><span class="radio-card-dot"></span>H.264 / MP4</label>
+
+          <input type="radio" name="deliv-format" id="df-mix" value="Per-Shot Mix">
+          <label class="radio-card" for="df-mix"><span class="radio-card-dot"></span>Per-Shot Mix</label>
+        </div>
+        <div class="field-error" id="err-deliv-format">Required</div>
+      </div>
+
+      <div class="field">
+        <label>Resolution <span style="color:var(--error)">*</span></label>
+        <div class="radio-cards">
+          <input type="radio" name="resolution" id="res-2k" value="2K">
+          <label class="radio-card" for="res-2k"><span class="radio-card-dot"></span>2K</label>
+
+          <input type="radio" name="resolution" id="res-4k" value="4K">
+          <label class="radio-card" for="res-4k"><span class="radio-card-dot"></span>4K</label>
+
+          <input type="radio" name="resolution" id="res-hd" value="HD 1080">
+          <label class="radio-card" for="res-hd"><span class="radio-card-dot"></span>HD 1080</label>
+
+          <input type="radio" name="resolution" id="res-mixed" value="Mixed">
+          <label class="radio-card" for="res-mixed"><span class="radio-card-dot"></span>Mixed</label>
+        </div>
+        <div class="field-error" id="err-resolution">Required</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="frame-rate">Frame Rate <span style="color:var(--error)">*</span></label>
+          <div class="select-wrap">
+            <select id="frame-rate">
+              <option value="">— Select —</option>
+              <option value="23.976">23.976 fps</option>
+              <option value="24">24 fps</option>
+              <option value="25">25 fps</option>
+              <option value="29.97">29.97 fps</option>
+              <option value="30">30 fps</option>
+              <option value="60">60 fps</option>
+            </select>
+          </div>
+          <div class="field-error" id="err-frame-rate">Required</div>
+        </div>
+        <div class="field">
+          <label for="colorspace">Colorspace / Standard</label>
+          <input type="text" id="colorspace" placeholder="ACES 1.3 / ACEScg">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Turnaround <span style="color:var(--error)">*</span></label>
+        <div class="radio-cards">
+          <input type="radio" name="turnaround" id="ta-standard" value="Standard (4+ weeks)">
+          <label class="radio-card" for="ta-standard"><span class="radio-card-dot"></span>Standard <span style="color:var(--muted);font-weight:400;font-size:12px;margin-left:4px;">4+ weeks</span></label>
+
+          <input type="radio" name="turnaround" id="ta-rush" value="Rush (2–3 weeks)">
+          <label class="radio-card" for="ta-rush"><span class="radio-card-dot"></span>Rush <span style="color:var(--muted);font-weight:400;font-size:12px;margin-left:4px;">2–3 weeks</span></label>
+
+          <input type="radio" name="turnaround" id="ta-emergency" value="Emergency (under 2 weeks)">
+          <label class="radio-card" for="ta-emergency"><span class="radio-card-dot"></span>Emergency <span style="color:var(--muted);font-weight:400;font-size:12px;margin-left:4px;">&lt;2 weeks</span></label>
+        </div>
+        <div class="field-error" id="err-turnaround">Required</div>
+      </div>
+
+      <div class="section-header">Crew</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="vfx-sup">VFX Supervisor on this Bid <span style="color:var(--error)">*</span></label>
+          <input type="text" id="vfx-sup" placeholder="Supervisor name">
+          <div class="field-error" id="err-vfx-sup">Required</div>
+        </div>
+        <div class="field">
+          <label for="crew-size">Estimated Crew Size <span class="opt">(optional)</span></label>
+          <input type="number" id="crew-size" min="1" placeholder="e.g. 12">
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goStep(3)">Next: Review &amp; Submit →</button>
+    </div>
+  </div>
+
+  <!-- ========== STEP 3 ========== -->
+  <div class="step-panel" id="step-3">
+    <div class="panel-card">
+      <h2>Review &amp; Submit</h2>
+      <p class="panel-desc">Confirm everything looks right before sending the bid request.</p>
+
+      <!-- Total highlight -->
+      <div class="total-highlight" id="review-total-block">
+        <div>
+          <div class="th-label">Total Shots</div>
+          <div class="th-sub" id="review-shot-breakdown-summary">—</div>
+        </div>
+        <div class="th-number" id="review-total-shots">0</div>
+      </div>
+
+      <!-- Shot table -->
+      <div class="review-section">
+        <h3>Shot Breakdown</h3>
+        <table class="shot-review-table">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Description</th>
+              <th style="text-align:center">Complexity</th>
+              <th style="text-align:right">Shots</th>
+            </tr>
+          </thead>
+          <tbody id="review-shot-table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Project Info summary -->
+      <div class="review-section">
+        <h3>Project Info</h3>
+        <div class="review-grid" id="review-project-grid"></div>
+      </div>
+
+      <!-- Scope summary -->
+      <div class="review-section">
+        <h3>Scope &amp; Deliverables</h3>
+        <div class="review-grid" id="review-scope-grid"></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="panel-card" style="padding:24px 36px;">
+      <div class="action-row">
+        <a id="mailto-link" href="#" class="btn btn-success">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h11A1.5 1.5 0 0 1 15 3.5v9A1.5 1.5 0 0 1 13.5 14h-11A1.5 1.5 0 0 1 1 12.5v-9zm1.5-.5a.5.5 0 0 0-.5.5v.691l6 3.6 6-3.6V3.5a.5.5 0 0 0-.5-.5H2.5zm12 2.309-5.57 3.341a.75.75 0 0 1-.76 0L2.5 5.309V12.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V5.309z" fill="currentColor"/></svg>
+          Send Bid Request
+        </a>
+        <button class="btn btn-secondary" onclick="copyToClipboard()">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" fill="currentColor"/><path d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" fill="currentColor"/></svg>
+          Copy to Clipboard
+        </button>
+        <span class="copy-feedback" id="copy-feedback">Copied!</span>
+      </div>
+
+      <div class="notice" style="margin-top:16px;">
+        <svg class="notice-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1zm0 1a6 6 0 1 0 0 12A6 6 0 0 0 8 2zm0 2.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5zm0 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V8a.5.5 0 0 1 .5-.5z" fill="#92400e"/></svg>
+        <span>Bid packages should be accompanied by client reference materials sent separately to <strong>bids@chicken-bone.com</strong>.</span>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="goStep(2)">← Back</button>
+      <span></span>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // ============================================================
+  // STATE
+  // ============================================================
+  let currentStep = 1;
+
+  // ============================================================
+  // SHOT TOTAL AUTO-SUM
+  // ============================================================
+  document.querySelectorAll('.tier-input').forEach(input => {
+    input.addEventListener('input', updateTotalShots);
+  });
+
+  function getTierValues() {
+    return {
+      a: parseInt(document.getElementById('tier-a').value) || 0,
+      b: parseInt(document.getElementById('tier-b').value) || 0,
+      c: parseInt(document.getElementById('tier-c').value) || 0,
+      d: parseInt(document.getElementById('tier-d').value) || 0,
+    };
+  }
+
+  function updateTotalShots() {
+    const t = getTierValues();
+    const total = t.a + t.b + t.c + t.d;
+    document.getElementById('total-shots-display').textContent = total;
+  }
+
+  // ============================================================
+  // VALIDATION
+  // ============================================================
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = msg || el.textContent;
+      el.classList.add('visible');
+    }
+  }
+
+  function clearError(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('visible');
+  }
+
+  function markField(inputId, valid) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    if (valid) el.classList.remove('error');
+    else el.classList.add('error');
+  }
+
+  function validateStep1() {
+    let ok = true;
+
+    const showTitle = document.getElementById('show-title').value.trim();
+    if (!showTitle) { showError('err-show-title'); markField('show-title', false); ok = false; }
+    else { clearError('err-show-title'); markField('show-title', true); }
+
+    const client = document.getElementById('client').value.trim();
+    if (!client) { showError('err-client'); markField('client', false); ok = false; }
+    else { clearError('err-client'); markField('client', true); }
+
+    const bidDue = document.getElementById('bid-due').value;
+    if (!bidDue) { showError('err-bid-due'); markField('bid-due', false); ok = false; }
+    else { clearError('err-bid-due'); markField('bid-due', true); }
+
+    const workType = document.querySelector('input[name="work-type"]:checked');
+    if (!workType) { showError('err-work-type'); ok = false; }
+    else clearError('err-work-type');
+
+    const reqName = document.getElementById('req-name').value.trim();
+    if (!reqName) { showError('err-req-name'); markField('req-name', false); ok = false; }
+    else { clearError('err-req-name'); markField('req-name', true); }
+
+    const reqEmail = document.getElementById('req-email').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reqEmail);
+    if (!reqEmail || !emailOk) { showError('err-req-email'); markField('req-email', false); ok = false; }
+    else { clearError('err-req-email'); markField('req-email', true); }
+
+    return ok;
+  }
+
+  function validateStep2() {
+    let ok = true;
+
+    const delivFormat = document.querySelector('input[name="deliv-format"]:checked');
+    if (!delivFormat) { showError('err-deliv-format'); ok = false; }
+    else clearError('err-deliv-format');
+
+    const resolution = document.querySelector('input[name="resolution"]:checked');
+    if (!resolution) { showError('err-resolution'); ok = false; }
+    else clearError('err-resolution');
+
+    const frameRate = document.getElementById('frame-rate').value;
+    if (!frameRate) { showError('err-frame-rate'); markField('frame-rate', false); ok = false; }
+    else { clearError('err-frame-rate'); markField('frame-rate', true); }
+
+    const turnaround = document.querySelector('input[name="turnaround"]:checked');
+    if (!turnaround) { showError('err-turnaround'); ok = false; }
+    else clearError('err-turnaround');
+
+    const vfxSup = document.getElementById('vfx-sup').value.trim();
+    if (!vfxSup) { showError('err-vfx-sup'); markField('vfx-sup', false); ok = false; }
+    else { clearError('err-vfx-sup'); markField('vfx-sup', true); }
+
+    return ok;
+  }
+
+  // ============================================================
+  // STEP NAVIGATION
+  // ============================================================
+  function goStep(n) {
+    if (n > currentStep) {
+      if (currentStep === 1 && !validateStep1()) return;
+      if (currentStep === 2 && !validateStep2()) return;
+    }
+
+    // Update tabs
+    for (let i = 1; i <= 3; i++) {
+      const tab = document.getElementById('tab-' + i);
+      tab.classList.remove('active', 'done');
+      if (i < n) tab.classList.add('done');
+      else if (i === n) tab.classList.add('active');
+    }
+
+    // Update panels
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+
+    currentStep = n;
+
+    if (n === 3) buildReview();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ============================================================
+  // REVIEW BUILD
+  // ============================================================
+  function getVal(id) {
+    return document.getElementById(id).value.trim();
+  }
+
+  function getRadio(name) {
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '—';
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const [y, m, d] = dateStr.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[parseInt(m)-1] + ' ' + parseInt(d) + ', ' + y;
+  }
+
+  function buildReview() {
+    const tiers = getTierValues();
+    const total = tiers.a + tiers.b + tiers.c + tiers.d;
+
+    // Total block
+    document.getElementById('review-total-shots').textContent = total;
+    const parts = [];
+    if (tiers.a) parts.push(tiers.a + 'A');
+    if (tiers.b) parts.push(tiers.b + 'B');
+    if (tiers.c) parts.push(tiers.c + 'C');
+    if (tiers.d) parts.push(tiers.d + 'D');
+    document.getElementById('review-shot-breakdown-summary').textContent = parts.length ? parts.join(' · ') : 'No shots entered';
+
+    // Shot table
+    const tierDefs = [
+      { key: 'a', label: 'Tier A', desc: 'Hero / Photoreal', pips: 4, cls: 'filled-a' },
+      { key: 'b', label: 'Tier B', desc: 'Standard Comp', pips: 3, cls: 'filled-b' },
+      { key: 'c', label: 'Tier C', desc: 'Simple / Cleanup', pips: 2, cls: 'filled-c' },
+      { key: 'd', label: 'Tier D', desc: 'Roto / Paint Only', pips: 1, cls: 'filled-d' },
+    ];
+
+    const tbody = document.getElementById('review-shot-table-body');
+    tbody.innerHTML = tierDefs.map(t => {
+      const count = tiers[t.key];
+      if (count === 0) return '';
+      let pipsHtml = '';
+      for (let i = 0; i < 4; i++) {
+        pipsHtml += `<span class="complexity-pip${i < t.pips ? ' ' + t.cls : ''}"></span>`;
+      }
+      return `<tr>
+        <td style="font-weight:700;color:var(--text2)">${t.label}</td>
+        <td style="color:var(--muted)">${t.desc}</td>
+        <td style="text-align:center"><div class="complexity-bar" style="justify-content:center">${pipsHtml}</div></td>
+        <td style="text-align:right;font-weight:700;font-size:15px">${count}</td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="4" style="color:var(--muted);font-style:italic;text-align:center;padding:16px">No shots entered</td></tr>`;
+
+    // Project grid
+    const show = getVal('show-title');
+    const client = getVal('client');
+    const contactClient = getVal('contact-client');
+    const bidDue = document.getElementById('bid-due').value;
+    const workType = getRadio('work-type');
+    const reqName = getVal('req-name');
+    const reqEmail = getVal('req-email');
+
+    const projectFields = [
+      { label: 'Show / Project', value: show },
+      { label: 'Client / Broadcaster', value: client },
+      { label: 'Contact at Client', value: contactClient || null },
+      { label: 'Bid Due Date', value: formatDate(bidDue) },
+      { label: 'Work Type', value: workType },
+      { label: 'Requester', value: reqName },
+      { label: 'Requester Email', value: reqEmail },
+    ];
+
+    document.getElementById('review-project-grid').innerHTML = projectFields.map(f => {
+      const val = f.value || '—';
+      const isEmpty = !f.value;
+      return `<div class="review-field">
+        <span class="rv-label">${f.label}</span>
+        <span class="rv-value${isEmpty ? ' empty' : ''}">${val}</span>
+      </div>`;
+    }).join('');
+
+    // Scope grid
+    const handles = getVal('frame-handles') || '8';
+    const delivFormat = getRadio('deliv-format');
+    const resolution = getRadio('resolution');
+    const frameRate = getVal('frame-rate') ? getVal('frame-rate') + ' fps' : '—';
+    const colorspace = getVal('colorspace') || '—';
+    const turnaround = getRadio('turnaround');
+    const vfxSup = getVal('vfx-sup');
+    const crewSize = getVal('crew-size') || null;
+
+    const scopeFields = [
+      { label: 'Total Shots', value: total + ' shots' },
+      { label: 'Frame Handles', value: handles + ' frames' },
+      { label: 'Deliverable Format', value: delivFormat },
+      { label: 'Resolution', value: resolution },
+      { label: 'Frame Rate', value: frameRate },
+      { label: 'Colorspace / Standard', value: colorspace },
+      { label: 'Turnaround', value: turnaround },
+      { label: 'VFX Supervisor', value: vfxSup },
+      { label: 'Est. Crew Size', value: crewSize || null },
+    ];
+
+    document.getElementById('review-scope-grid').innerHTML = scopeFields.map(f => {
+      const val = f.value || '—';
+      const isEmpty = !f.value;
+      return `<div class="review-field">
+        <span class="rv-label">${f.label}</span>
+        <span class="rv-value${isEmpty ? ' empty' : ''}">${val}</span>
+      </div>`;
+    }).join('');
+
+    // Build mailto
+    buildMailto();
+  }
+
+  // ============================================================
+  // EMAIL BODY BUILD
+  // ============================================================
+  function buildEmailBody() {
+    const tiers = getTierValues();
+    const total = tiers.a + tiers.b + tiers.c + tiers.d;
+    const show = getVal('show-title');
+    const client = getVal('client');
+    const contactClient = getVal('contact-client');
+    const bidDue = document.getElementById('bid-due').value;
+    const workType = getRadio('work-type');
+    const reqName = getVal('req-name');
+    const reqEmail = getVal('req-email');
+    const handles = getVal('frame-handles') || '8';
+    const delivFormat = getRadio('deliv-format');
+    const resolution = getRadio('resolution');
+    const frameRate = getVal('frame-rate') ? getVal('frame-rate') + ' fps' : '—';
+    const colorspace = getVal('colorspace') || 'ACES 1.3 / ACEScg';
+    const turnaround = getRadio('turnaround');
+    const vfxSup = getVal('vfx-sup');
+    const crewSize = getVal('crew-size');
+
+    const lines = [
+      '=== BID REQUEST ===',
+      '',
+      'PROJECT INFO',
+      '------------',
+      'Show / Project Title : ' + show,
+      'Client / Broadcaster : ' + client,
+      'Contact at Client    : ' + (contactClient || '(not provided)'),
+      'Bid Due Date         : ' + formatDate(bidDue),
+      'Work Type            : ' + workType,
+      '',
+      'REQUESTER',
+      '---------',
+      'Name  : ' + reqName,
+      'Email : ' + reqEmail,
+      '',
+      'SHOT BREAKDOWN',
+      '--------------',
+      'Tier A — Hero / Photoreal  : ' + tiers.a,
+      'Tier B — Standard Comp     : ' + tiers.b,
+      'Tier C — Simple / Cleanup  : ' + tiers.c,
+      'Tier D — Roto / Paint Only : ' + tiers.d,
+      'TOTAL                      : ' + total,
+      '',
+      'SCOPE & DELIVERABLES',
+      '--------------------',
+      'Frame Handles       : ' + handles + ' frames/shot',
+      'Deliverable Format  : ' + delivFormat,
+      'Resolution          : ' + resolution,
+      'Frame Rate          : ' + (getVal('frame-rate') ? getVal('frame-rate') + ' fps' : '—'),
+      'Colorspace          : ' + colorspace,
+      'Turnaround          : ' + turnaround,
+      'VFX Supervisor      : ' + vfxSup,
+      'Est. Crew Size      : ' + (crewSize || '(not provided)'),
+      '',
+      '---',
+      'Note: Bid packages should be accompanied by client reference materials',
+      'sent separately to bids@chicken-bone.com.',
+      '',
+      'Generated via CBFX Hub Bid Request Wizard',
+    ];
+
+    return lines.join('\n');
+  }
+
+  function buildMailto() {
+    const show = getVal('show-title');
+    const client = getVal('client');
+    const bidDue = document.getElementById('bid-due').value;
+    const subject = '[Bid Request] ' + show + ' — ' + client + ' — Due ' + formatDate(bidDue);
+    const body = buildEmailBody();
+    const href = 'mailto:bids@chicken-bone.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    document.getElementById('mailto-link').href = href;
+  }
+
+  // ============================================================
+  // COPY TO CLIPBOARD
+  // ============================================================
+  function copyToClipboard() {
+    const show = getVal('show-title');
+    const client = getVal('client');
+    const bidDue = document.getElementById('bid-due').value;
+    const subject = '[Bid Request] ' + show + ' — ' + client + ' — Due ' + formatDate(bidDue);
+    const text = 'To: bids@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildEmailBody();
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(showCopied);
+    } else {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); showCopied(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  }
+
+  function showCopied() {
+    const el = document.getElementById('copy-feedback');
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>

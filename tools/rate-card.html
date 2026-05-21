@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate Card & Deal Memo — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
+    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
+    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
+    --blue-dark:#1e3a5a;--accent:#2a6dd9;--accent-light:#e8f0fc;
+    --error:#c0392b;--success:#1e7e34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
+
+  /* TOPBAR */
+  .topbar{
+    background:var(--nav);color:var(--white);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 28px;height:54px;position:sticky;top:0;z-index:100;
+  }
+  .topbar-brand{font-weight:700;font-size:16px;letter-spacing:.04em;color:var(--white)}
+  .topbar-sub{font-size:13px;color:#8a96a8;font-weight:500}
+  .topbar-back{font-size:13px;color:#8a96a8;text-decoration:none;transition:color .15s}
+  .topbar-back:hover{color:var(--white)}
+  .topbar-left{display:flex;align-items:center;gap:20px}
+
+  /* LAYOUT */
+  .page{max-width:720px;margin:0 auto;padding:36px 20px 60px}
+
+  /* PROGRESS */
+  .progress-bar{display:flex;gap:0;margin-bottom:36px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+  .progress-step{
+    flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:600;
+    background:var(--surface);color:var(--muted);border-right:1px solid var(--border);
+    transition:all .2s;position:relative;cursor:default;
+  }
+  .progress-step:last-child{border-right:none}
+  .progress-step.active{background:var(--blue-dark);color:var(--white)}
+  .progress-step.done{background:var(--surface2);color:var(--text2)}
+  .progress-step .step-num{display:block;font-size:11px;font-weight:700;opacity:.7;margin-bottom:2px}
+
+  /* CARD */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px}
+  .card-title{font-size:19px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .card-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+  /* FORM */
+  .form-row{margin-bottom:20px}
+  .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
+  label .opt{font-weight:400;color:var(--muted);font-size:12px}
+  input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;
+    background:var(--white);color:var(--text);font-family:'Figtree',sans-serif;font-size:14px;
+    outline:none;transition:border-color .15s;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+  input.error,textarea.error{border-color:var(--error)}
+  textarea{resize:vertical;min-height:90px}
+  .input-prefix{position:relative}
+  .input-prefix span{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    color:var(--muted);font-size:14px;font-weight:600;pointer-events:none;
+  }
+  .input-prefix input{padding-left:26px}
+
+  /* RADIO CARDS */
+  .radio-cards{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .radio-cards input[type=radio]{display:none}
+  .radio-cards label{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;
+    background:var(--white);color:var(--text2);font-size:13px;font-weight:600;
+    cursor:pointer;transition:all .15s;margin-bottom:0;
+  }
+  .radio-cards input[type=radio]:checked + label{
+    border-color:var(--accent);background:var(--accent-light);color:var(--accent);
+  }
+  .radio-cards label:hover{border-color:var(--border-dark);background:var(--surface2)}
+  .radio-cards input[type=radio]:checked + label:hover{background:var(--accent-light)}
+
+  /* RATE PERIOD HINT */
+  .rate-hint{
+    display:inline-block;margin-left:8px;font-size:12px;font-weight:500;
+    color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:4px;
+  }
+
+  /* NAV BUTTONS */
+  .btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px}
+  .btn{
+    padding:11px 26px;border-radius:7px;font-family:'Figtree',sans-serif;
+    font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;
+  }
+  .btn-primary{background:var(--blue-dark);color:var(--white)}
+  .btn-primary:hover{background:#162d47}
+  .btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+  .btn-secondary:hover{background:var(--border)}
+  .btn-accent{background:var(--accent);color:#fff}
+  .btn-accent:hover{background:#2060c0}
+  .btn-ghost{background:transparent;color:var(--muted);font-size:13px;font-weight:500;padding:8px 0}
+  .btn-ghost:hover{color:var(--text)}
+
+  /* DEAL MEMO */
+  .memo-box{
+    background:var(--white);border:1px solid var(--border);border-radius:8px;
+    padding:28px 32px;font-size:14px;line-height:1.7;
+  }
+  .memo-header{border-bottom:2px solid var(--blue-dark);padding-bottom:14px;margin-bottom:20px}
+  .memo-title{font-size:18px;font-weight:700;color:var(--blue-dark);letter-spacing:.02em}
+  .memo-date{font-size:12px;color:var(--muted);margin-top:3px}
+  .memo-section{margin-bottom:18px}
+  .memo-section-title{
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);
+  }
+  .memo-row{display:grid;grid-template-columns:180px 1fr;gap:8px;margin-bottom:5px}
+  .memo-key{font-weight:600;color:var(--text2);font-size:13px}
+  .memo-val{color:var(--text);font-size:13px}
+  .memo-note{
+    margin-top:20px;padding:12px 14px;background:#fff8e1;border:1px solid #ffe082;
+    border-radius:6px;font-size:12px;color:#6d5000;
+  }
+
+  /* COPY TOAST */
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--nav);color:var(--white);padding:10px 22px;
+    border-radius:8px;font-size:13px;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;
+  }
+  .toast.show{opacity:1}
+
+  /* ACTIONS ROW */
+  .actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+  .err-msg{font-size:12px;color:var(--error);margin-top:4px}
+
+  @media(max-width:540px){
+    .form-row-2{grid-template-columns:1fr}
+    .memo-row{grid-template-columns:1fr;gap:2px}
+    .memo-key{font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-brand">CBFX Hub</span>
+    <a href="../index.html" class="topbar-back">← Back to Hub</a>
+  </div>
+  <span class="topbar-sub">Rate Card & Deal Memo</span>
+</div>
+
+<div class="page">
+  <div class="progress-bar">
+    <div class="progress-step active" id="prog-1"><span class="step-num">STEP 1</span>Crew Info</div>
+    <div class="progress-step" id="prog-2"><span class="step-num">STEP 2</span>Rate Details</div>
+    <div class="progress-step" id="prog-3"><span class="step-num">STEP 3</span>Review & Submit</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step-1">
+    <div class="card">
+      <div class="card-title">Crew Info</div>
+      <div class="card-sub">Basic information about the crew member and engagement.</div>
+
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Artist Full Name</label>
+          <input type="text" id="artistName" placeholder="e.g. Jordan Lee">
+          <div class="err-msg" id="err-artistName"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Artist Email</label>
+          <input type="email" id="artistEmail" placeholder="artist@example.com">
+          <div class="err-msg" id="err-artistEmail"></div>
+        </div>
+      </div>
+
+      <div class="form-row-2" style="margin-top:20px">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Role / Title</label>
+          <input type="text" id="role" placeholder="e.g. Lead Compositor">
+          <div class="err-msg" id="err-role"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Show / Project</label>
+          <input type="text" id="show" placeholder="e.g. Project Nighthawk">
+          <div class="err-msg" id="err-show"></div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:20px">
+        <label>Department</label>
+        <div class="radio-cards" id="dept-cards">
+          <input type="radio" name="dept" id="dept-comp" value="Compositing">
+          <label for="dept-comp">Compositing</label>
+          <input type="radio" name="dept" id="dept-fx" value="FX">
+          <label for="dept-fx">FX</label>
+          <input type="radio" name="dept" id="dept-cg" value="CG">
+          <label for="dept-cg">CG</label>
+          <input type="radio" name="dept" id="dept-roto" value="Roto/Paint">
+          <label for="dept-roto">Roto/Paint</label>
+          <input type="radio" name="dept" id="dept-edit" value="Edit">
+          <label for="dept-edit">Edit</label>
+          <input type="radio" name="dept" id="dept-prod" value="Production">
+          <label for="dept-prod">Production</label>
+        </div>
+        <div class="err-msg" id="err-dept"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Engagement Type</label>
+        <div class="radio-cards" id="engage-cards">
+          <input type="radio" name="engage" id="eng-day" value="Day Rate">
+          <label for="eng-day">Day Rate</label>
+          <input type="radio" name="engage" id="eng-week" value="Weekly Rate">
+          <label for="eng-week">Weekly Rate</label>
+          <input type="radio" name="engage" id="eng-flat" value="Flat Deal">
+          <label for="eng-flat">Flat Deal</label>
+          <input type="radio" name="engage" id="eng-hourly" value="Hourly">
+          <label for="eng-hourly">Hourly</label>
+        </div>
+        <div class="err-msg" id="err-engage"></div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Start Date</label>
+          <input type="date" id="startDate">
+          <div class="err-msg" id="err-startDate"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>End Date <span class="opt">(optional)</span></label>
+          <input type="date" id="endDate">
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:20px">
+        <label>Requested By</label>
+        <input type="text" id="requestedBy" placeholder="Supervising producer, coordinator, etc.">
+        <div class="err-msg" id="err-requestedBy"></div>
+      </div>
+
+      <div class="btn-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goStep2()">Next: Rate Details →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step-2" style="display:none">
+    <div class="card">
+      <div class="card-title">Rate Details</div>
+      <div class="card-sub">Compensation, billing, and deal terms.</div>
+
+      <div class="form-row">
+        <label>Rate Amount <span id="ratePeriodHint" class="rate-hint"></span></label>
+        <div class="input-prefix">
+          <span>$</span>
+          <input type="number" id="rateAmount" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="err-msg" id="err-rateAmount"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Overtime Applicable</label>
+        <div class="radio-cards">
+          <input type="radio" name="ot" id="ot-yes" value="Yes — 1.5x after 10hrs">
+          <label for="ot-yes">Yes — 1.5× after 10hrs</label>
+          <input type="radio" name="ot" id="ot-no" value="No — flat regardless">
+          <label for="ot-no">No — flat regardless</label>
+          <input type="radio" name="ot" id="ot-contract" value="Per contract">
+          <label for="ot-contract">Per contract</label>
+        </div>
+        <div class="err-msg" id="err-ot"></div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label>Kit / Equipment Fee <span class="opt">(optional)</span></label>
+          <div class="input-prefix">
+            <span>$</span>
+            <input type="number" id="kitFee" placeholder="0.00" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label>Box Rental <span class="opt">(optional)</span></label>
+          <div class="input-prefix">
+            <span>$</span>
+            <input type="number" id="boxRental" placeholder="0.00" min="0" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:20px">
+        <label>Billing Entity</label>
+        <input type="text" id="billingEntity" placeholder="Who do we make checks/POs out to? e.g. artist's loan-out company">
+        <div class="err-msg" id="err-billingEntity"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Payment Terms</label>
+        <div class="radio-cards">
+          <input type="radio" name="terms" id="terms-15" value="Net 15">
+          <label for="terms-15">Net 15</label>
+          <input type="radio" name="terms" id="terms-30" value="Net 30">
+          <label for="terms-30">Net 30</label>
+          <input type="radio" name="terms" id="terms-45" value="Net 45">
+          <label for="terms-45">Net 45</label>
+          <input type="radio" name="terms" id="terms-del" value="Upon Delivery">
+          <label for="terms-del">Upon Delivery</label>
+        </div>
+        <div class="err-msg" id="err-terms"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Additional Terms <span class="opt">(optional)</span></label>
+        <textarea id="addlTerms" placeholder="Special deal points, exclusions, credits, etc."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goBack(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goStep3()">Next: Review →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step-3" style="display:none">
+    <div class="card">
+      <div class="card-title">Review & Submit</div>
+      <div class="card-sub">Confirm details before sending to production.</div>
+
+      <div class="memo-box" id="memoBox">
+        <!-- generated -->
+      </div>
+
+      <div class="memo-note">
+        This is an internal record. Official deal memos require countersignature from the supervising producer.
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-primary" onclick="sendToProduction()">Send to Production</button>
+        <button class="btn btn-accent" onclick="copyMemo()">Copy Deal Memo</button>
+        <button class="btn btn-secondary" onclick="goBack(2)">← Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+  const RATE_PERIOD = {
+    'Day Rate': 'per day',
+    'Weekly Rate': 'per week',
+    'Flat Deal': 'flat',
+    'Hourly': 'per hour'
+  };
+
+  // Update rate period hint when engagement type changes
+  document.querySelectorAll('input[name="engage"]').forEach(r => {
+    r.addEventListener('change', () => {
+      const hint = document.getElementById('ratePeriodHint');
+      hint.textContent = RATE_PERIOD[r.value] || '';
+    });
+  });
+
+  function val(id) { return (document.getElementById(id) || {}).value?.trim() || ''; }
+  function radio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  function setErr(id, msg) {
+    const el = document.getElementById('err-' + id);
+    if (el) el.textContent = msg;
+    const input = document.getElementById(id);
+    if (input) input.classList.toggle('error', !!msg);
+  }
+  function clearErrs(ids) { ids.forEach(id => setErr(id, '')); }
+
+  function goStep2() {
+    const fields = ['artistName','artistEmail','role','show','startDate','requestedBy'];
+    clearErrs([...fields, 'dept', 'engage']);
+    let ok = true;
+
+    fields.forEach(f => {
+      if (!val(f)) { setErr(f, 'Required'); ok = false; }
+    });
+    if (!radio('dept')) { setErr('dept', 'Select a department'); ok = false; }
+    if (!radio('engage')) { setErr('engage', 'Select an engagement type'); ok = false; }
+
+    if (!ok) return;
+
+    // Set rate period hint
+    const hint = document.getElementById('ratePeriodHint');
+    hint.textContent = RATE_PERIOD[radio('engage')] || '';
+
+    showStep(2);
+  }
+
+  function goStep3() {
+    clearErrs(['rateAmount','ot','billingEntity','terms']);
+    let ok = true;
+
+    if (!val('rateAmount') || parseFloat(val('rateAmount')) <= 0) {
+      setErr('rateAmount', 'Enter a valid rate amount'); ok = false;
+    }
+    if (!radio('ot')) { setErr('ot', 'Select overtime terms'); ok = false; }
+    if (!val('billingEntity')) { setErr('billingEntity', 'Required'); ok = false; }
+    if (!radio('terms')) { setErr('terms', 'Select payment terms'); ok = false; }
+
+    if (!ok) return;
+
+    buildMemo();
+    showStep(3);
+  }
+
+  function goBack(step) { showStep(step); }
+
+  function showStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById('step-' + i).style.display = i === n ? '' : 'none';
+      const prog = document.getElementById('prog-' + i);
+      prog.classList.remove('active','done');
+      if (i === n) prog.classList.add('active');
+      else if (i < n) prog.classList.add('done');
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function fmt(num) {
+    const n = parseFloat(num);
+    return isNaN(n) || n === 0 ? null : '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function fmtDate(d) {
+    if (!d) return null;
+    const [y,m,day] = d.split('-');
+    return `${m}/${day}/${y}`;
+  }
+
+  function memoRow(key, val) {
+    if (!val) return '';
+    return `<div class="memo-row"><div class="memo-key">${key}</div><div class="memo-val">${val}</div></div>`;
+  }
+
+  function buildMemo() {
+    const engage = radio('engage');
+    const period = RATE_PERIOD[engage] || '';
+    const rateStr = fmt(val('rateAmount'));
+    const rateDisplay = rateStr ? `${rateStr} ${period}` : '';
+
+    const extras = [
+      val('kitFee') && parseFloat(val('kitFee')) > 0 ? `Kit/Equipment Fee: ${fmt(val('kitFee'))}` : null,
+      val('boxRental') && parseFloat(val('boxRental')) > 0 ? `Box Rental: ${fmt(val('boxRental'))}` : null,
+    ].filter(Boolean).join(' | ') || null;
+
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+    document.getElementById('memoBox').innerHTML = `
+      <div class="memo-header">
+        <div class="memo-title">DEAL MEMO — CBFX / Chicken Bone FX</div>
+        <div class="memo-date">Prepared ${today}</div>
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Crew</div>
+        ${memoRow('Artist Name', val('artistName'))}
+        ${memoRow('Artist Email', val('artistEmail'))}
+        ${memoRow('Role / Title', val('role'))}
+        ${memoRow('Department', radio('dept'))}
+        ${memoRow('Requested By', val('requestedBy'))}
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Project</div>
+        ${memoRow('Show / Project', val('show'))}
+        ${memoRow('Start Date', fmtDate(val('startDate')))}
+        ${val('endDate') ? memoRow('End Date', fmtDate(val('endDate'))) : ''}
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Compensation</div>
+        ${memoRow('Engagement Type', engage)}
+        ${memoRow('Rate', rateDisplay)}
+        ${memoRow('Overtime', radio('ot'))}
+        ${extras ? memoRow('Additional Fees', extras) : ''}
+      </div>
+
+      <div class="memo-section">
+        <div class="memo-section-title">Billing & Payment</div>
+        ${memoRow('Billing Entity', val('billingEntity'))}
+        ${memoRow('Payment Terms', radio('terms'))}
+        ${val('addlTerms') ? memoRow('Additional Terms', val('addlTerms')) : ''}
+      </div>
+    `;
+  }
+
+  function getMemoText() {
+    const engage = radio('engage');
+    const period = RATE_PERIOD[engage] || '';
+    const rateStr = fmt(val('rateAmount'));
+    const rateDisplay = rateStr ? `${rateStr} ${period}` : '';
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+    const lines = [
+      'DEAL MEMO — CBFX / Chicken Bone FX',
+      `Prepared ${today}`,
+      '',
+      '--- CREW ---',
+      `Artist Name:    ${val('artistName')}`,
+      `Artist Email:   ${val('artistEmail')}`,
+      `Role / Title:   ${val('role')}`,
+      `Department:     ${radio('dept')}`,
+      `Requested By:   ${val('requestedBy')}`,
+      '',
+      '--- PROJECT ---',
+      `Show / Project: ${val('show')}`,
+      `Start Date:     ${fmtDate(val('startDate'))}`,
+    ];
+    if (val('endDate')) lines.push(`End Date:       ${fmtDate(val('endDate'))}`);
+    lines.push(
+      '',
+      '--- COMPENSATION ---',
+      `Engagement Type: ${engage}`,
+      `Rate:            ${rateDisplay}`,
+      `Overtime:        ${radio('ot')}`,
+    );
+    if (val('kitFee') && parseFloat(val('kitFee')) > 0) lines.push(`Kit/Equipment Fee: ${fmt(val('kitFee'))}`);
+    if (val('boxRental') && parseFloat(val('boxRental')) > 0) lines.push(`Box Rental:      ${fmt(val('boxRental'))}`);
+    lines.push(
+      '',
+      '--- BILLING & PAYMENT ---',
+      `Billing Entity:  ${val('billingEntity')}`,
+      `Payment Terms:   ${radio('terms')}`,
+    );
+    if (val('addlTerms')) lines.push(`Additional Terms: ${val('addlTerms')}`);
+    lines.push('','---','This is an internal record. Official deal memos require countersignature from the supervising producer.');
+    return lines.join('\n');
+  }
+
+  function sendToProduction() {
+    const subject = encodeURIComponent(`[Deal Memo] ${val('artistName')} — ${val('show')}`);
+    const body = encodeURIComponent(getMemoText());
+    window.location.href = `mailto:production@chicken-bone.com?subject=${subject}&body=${body}`;
+  }
+
+  function copyMemo() {
+    navigator.clipboard.writeText(getMemoText()).then(() => showToast('Deal memo copied'));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>
