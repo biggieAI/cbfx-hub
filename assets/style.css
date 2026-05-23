@@ -93,7 +93,7 @@ body{
   font-size:11px;font-weight:700;color:var(--ink-4);
   letter-spacing:.10em;text-transform:uppercase;
   line-height:1;
-  position:relative;top:-2px;
+  position:relative;top:-1px;
 }
 
 /* ── Main content ───────────────────────────────────────── */
