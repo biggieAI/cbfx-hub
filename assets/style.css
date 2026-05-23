@@ -94,61 +94,78 @@ body{
   display:none;
 }
 
-/* ── Energy cube (top right) ────────────────────────────── */
+/* ── Gyroscope rings (top right) ────────────────────────── */
 .cube-scene{
   width:44px;height:44px;
   flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
+  perspective:160px;
 }
-.cube-scene svg{
-  width:100%;height:100%;
-  overflow:visible;
-  animation:cube-spin 18s linear infinite;
-  transform-origin:50% 50%;
+.gyro{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  animation:gyro-tilt 22s linear infinite;
 }
-.cube-scene .edge{
+.gyro-ring{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
+}
+.gyro-ring svg{
+  width:100%;height:100%;overflow:visible;display:block;
+}
+.gyro-ring circle{
   fill:none;
-  stroke:var(--ink);
   stroke-width:1.4;
   stroke-linecap:round;
   stroke-dasharray:3 5;
-  stroke-dashoffset:0;
-  animation:edge-pulse 2.4s linear infinite;
-}
-.cube-scene .edge.accent{
-  stroke:var(--blue);
-  stroke-width:1.6;
-}
-/* stagger so each edge fires at a different phase */
-.cube-scene .edge:nth-child(1)  {animation-delay:-0.0s}
-.cube-scene .edge:nth-child(2)  {animation-delay:-0.18s}
-.cube-scene .edge:nth-child(3)  {animation-delay:-0.36s}
-.cube-scene .edge:nth-child(4)  {animation-delay:-0.54s}
-.cube-scene .edge:nth-child(5)  {animation-delay:-0.72s}
-.cube-scene .edge:nth-child(6)  {animation-delay:-0.90s}
-.cube-scene .edge:nth-child(7)  {animation-delay:-1.08s}
-.cube-scene .edge:nth-child(8)  {animation-delay:-1.26s}
-.cube-scene .edge:nth-child(9)  {animation-delay:-1.44s}
-.cube-scene .edge:nth-child(10) {animation-delay:-1.62s}
-.cube-scene .edge:nth-child(11) {animation-delay:-1.80s}
-.cube-scene .edge:nth-child(12) {animation-delay:-1.98s}
-.cube-scene .vertex{
-  fill:var(--ink);
-  opacity:.18;
+  animation:ring-pulse 2.4s linear infinite;
 }
 
-@keyframes edge-pulse{
+/* ring 1 — flat (XY plane), ink */
+.gyro-r1{animation:r1-spin 9s linear infinite}
+.gyro-r1 circle{stroke:var(--ink);animation-delay:0s}
+
+/* ring 2 — vertical (YZ plane), tilted 90° on Y, ink */
+.gyro-r2{transform:rotateY(70deg);animation:r2-spin 11s linear infinite reverse}
+.gyro-r2 circle{stroke:var(--ink);animation-delay:-0.6s}
+
+/* ring 3 — horizontal (XZ plane), tilted 90° on X, blue accent */
+.gyro-r3{transform:rotateX(70deg);animation:r3-spin 13s linear infinite}
+.gyro-r3 circle{stroke:var(--blue);stroke-width:1.5;animation-delay:-1.2s}
+
+/* tiny center dot */
+.gyro-core{
+  position:absolute;top:50%;left:50%;
+  width:3px;height:3px;border-radius:99px;
+  background:var(--ink);opacity:.4;
+  transform:translate(-50%,-50%);
+}
+
+@keyframes ring-pulse{
   0%   {stroke-dashoffset:0}
   100% {stroke-dashoffset:-16}
 }
-@keyframes cube-spin{
-  0%   {transform:rotate(0deg)}
-  100% {transform:rotate(360deg)}
+@keyframes r1-spin{
+  0%   {transform:rotateZ(0deg)}
+  100% {transform:rotateZ(360deg)}
+}
+@keyframes r2-spin{
+  0%   {transform:rotateY(70deg) rotateZ(0deg)}
+  100% {transform:rotateY(70deg) rotateZ(360deg)}
+}
+@keyframes r3-spin{
+  0%   {transform:rotateX(70deg) rotateZ(0deg)}
+  100% {transform:rotateX(70deg) rotateZ(360deg)}
+}
+@keyframes gyro-tilt{
+  0%   {transform:rotateX(-10deg) rotateY(0deg)}
+  50%  {transform:rotateX(-10deg) rotateY(180deg)}
+  100% {transform:rotateX(-10deg) rotateY(360deg)}
 }
 
 @media (prefers-reduced-motion: reduce){
-  .cube-scene svg{animation:none}
-  .cube-scene .edge{animation:none;stroke-dasharray:none}
+  .gyro,.gyro-r1,.gyro-r2,.gyro-r3,.gyro-ring circle{animation:none}
+  .gyro-ring circle{stroke-dasharray:none}
 }
 
 /* ── Main content ───────────────────────────────────────── */

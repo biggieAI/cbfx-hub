@@ -18,36 +18,18 @@
     <!-- text-transform:uppercase handles caps via CSS -->
   </div>
   <div class="cube-scene" aria-hidden="true">
-    <svg viewBox="-50 -50 100 100">
-      <!-- 12 edges of a cube. Front face = bigger inner square, back face = offset.
-           Vertices (front: a-d, back: e-h):
-             a(-18,-18) b(18,-18) c(18,18) d(-18,18)
-             e(-8,-28)  f(28,-28) g(28,8)  h(-8,8)         -->
-      <!-- Front face 4 edges -->
-      <line class="edge" x1="-18" y1="-18" x2="18"  y2="-18"/>
-      <line class="edge" x1="18"  y1="-18" x2="18"  y2="18"/>
-      <line class="edge" x1="18"  y1="18"  x2="-18" y2="18"/>
-      <line class="edge" x1="-18" y1="18"  x2="-18" y2="-18"/>
-      <!-- Back face 4 edges -->
-      <line class="edge" x1="-8"  y1="-28" x2="28"  y2="-28"/>
-      <line class="edge accent" x1="28"  y1="-28" x2="28"  y2="8"/>
-      <line class="edge" x1="28"  y1="8"   x2="-8"  y2="8"/>
-      <line class="edge" x1="-8"  y1="8"   x2="-8"  y2="-28"/>
-      <!-- 4 connecting edges -->
-      <line class="edge" x1="-18" y1="-18" x2="-8"  y2="-28"/>
-      <line class="edge accent" x1="18"  y1="-18" x2="28"  y2="-28"/>
-      <line class="edge" x1="18"  y1="18"  x2="28"  y2="8"/>
-      <line class="edge" x1="-18" y1="18"  x2="-8"  y2="8"/>
-      <!-- 8 vertex dots -->
-      <circle class="vertex" cx="-18" cy="-18" r="1.4"/>
-      <circle class="vertex" cx="18"  cy="-18" r="1.4"/>
-      <circle class="vertex" cx="18"  cy="18"  r="1.4"/>
-      <circle class="vertex" cx="-18" cy="18"  r="1.4"/>
-      <circle class="vertex" cx="-8"  cy="-28" r="1.4"/>
-      <circle class="vertex" cx="28"  cy="-28" r="1.4"/>
-      <circle class="vertex" cx="28"  cy="8"   r="1.4"/>
-      <circle class="vertex" cx="-8"  cy="8"   r="1.4"/>
-    </svg>
+    <div class="gyro">
+      <div class="gyro-ring gyro-r1">
+        <svg viewBox="-25 -25 50 50"><circle cx="0" cy="0" r="20"/></svg>
+      </div>
+      <div class="gyro-ring gyro-r2">
+        <svg viewBox="-25 -25 50 50"><circle cx="0" cy="0" r="20"/></svg>
+      </div>
+      <div class="gyro-ring gyro-r3">
+        <svg viewBox="-25 -25 50 50"><circle cx="0" cy="0" r="20"/></svg>
+      </div>
+      <span class="gyro-core"></span>
+    </div>
   </div>
 </div>
 
