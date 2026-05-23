@@ -18,49 +18,39 @@
     <!-- text-transform:uppercase handles caps via CSS -->
   </div>
   <div class="cube-scene" aria-hidden="true">
-    <div class="gyro">
-      <div class="gyro-ring gyro-r1">
-        <svg viewBox="-25 -25 50 50">
-          <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
-        </svg>
-      </div>
-      <div class="gyro-ring gyro-r2">
-        <svg viewBox="-25 -25 50 50">
-          <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
-        </svg>
-      </div>
-      <div class="gyro-ring gyro-r3">
-        <svg viewBox="-25 -25 50 50">
-          <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
-        </svg>
-      </div>
-      <div class="gyro-ring gyro-r4">
-        <svg viewBox="-25 -25 50 50">
-          <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
-          <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
-        </svg>
-      </div>
-      <span class="gyro-core"></span>
-    </div>
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none">
+      <defs>
+        <!-- ink gradient: bright head right, fading tail to the left -->
+        <linearGradient id="g-ink" x1="0" y1="0" x2="60" y2="-28" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#0b1220" stop-opacity="0"/>
+          <stop offset="70%"  stop-color="#0b1220" stop-opacity=".55"/>
+          <stop offset="92%"  stop-color="#0b1220" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="g-ink-soft" x1="0" y1="0" x2="60" y2="-28" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#5b6478" stop-opacity="0"/>
+          <stop offset="78%"  stop-color="#5b6478" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/>
+        </linearGradient>
+        <linearGradient id="g-blue" x1="0" y1="0" x2="60" y2="-28" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#2557ff" stop-opacity="0"/>
+          <stop offset="80%"  stop-color="#2557ff" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <!-- Each streak is a line from (0,0) to (60,-28) — head at right end (60,-28).
+           Lines are positioned via the y-attribute on the parent <g>, animated via CSS transform. -->
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-28" stroke="url(#g-blue)"/></g>
+    </svg>
   </div>
 </div>
 
