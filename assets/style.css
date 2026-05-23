@@ -76,15 +76,15 @@ body{
   display:flex;align-items:center;justify-content:space-between;
   flex-shrink:0;
 }
-.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left{display:flex;align-items:center;gap:18px}
 .topbar-mark{
-  width:34px;height:34px;color:var(--ink);
+  width:40px;height:40px;color:var(--ink);
   display:grid;place-items:center;flex-shrink:0;
 }
 .topbar-mark img,.topbar-mark svg{width:100%;height:100%;display:block}
 .topbar-brand{
-  font-size:14px;font-weight:700;color:var(--ink);
-  letter-spacing:.10em;text-transform:uppercase;
+  font-size:18px;font-weight:700;color:var(--ink);
+  letter-spacing:-.005em;
 }
 .topbar-sub{
   font-size:11px;font-weight:700;color:var(--ink-4);
