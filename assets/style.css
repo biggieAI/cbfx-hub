@@ -90,41 +90,65 @@ body{
   display:flex;align-items:center;
 }
 .topbar-sub{
-  /* (sub text replaced by 3D cube animation — kept selector for back-compat) */
+  /* (sub text replaced by energy cube animation — selector kept for back-compat) */
   display:none;
 }
 
-/* ── Animated 3D cube (top right) ───────────────────────── */
+/* ── Energy cube (top right) ────────────────────────────── */
 .cube-scene{
-  width:34px;height:34px;
-  perspective:200px;
+  width:44px;height:44px;
   flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
 }
-.cube{
-  position:relative;width:100%;height:100%;
-  transform-style:preserve-3d;
-  animation:cube-spin 16s linear infinite;
+.cube-scene svg{
+  width:100%;height:100%;
+  overflow:visible;
+  animation:cube-spin 18s linear infinite;
+  transform-origin:50% 50%;
 }
-.cube .face{
-  position:absolute;inset:0;
-  background:var(--surface);
-  border:.5px solid var(--hairline);
-  box-shadow:inset 0 0 0 .5px rgba(15,23,42,.03);
+.cube-scene .edge{
+  fill:none;
+  stroke:var(--ink);
+  stroke-width:1.4;
+  stroke-linecap:round;
+  stroke-dasharray:3 5;
+  stroke-dashoffset:0;
+  animation:edge-pulse 2.4s linear infinite;
 }
-.cube .f1{transform:translateZ(17px);background:var(--blue-soft)}
-.cube .f2{transform:rotateY(180deg) translateZ(17px);background:#fff}
-.cube .f3{transform:rotateY(90deg) translateZ(17px);background:#f7f8fc}
-.cube .f4{transform:rotateY(-90deg) translateZ(17px);background:#f7f8fc}
-.cube .f5{transform:rotateX(90deg) translateZ(17px);background:#eef1f7}
-.cube .f6{transform:rotateX(-90deg) translateZ(17px);background:#eef1f7}
+.cube-scene .edge.accent{
+  stroke:var(--blue);
+  stroke-width:1.6;
+}
+/* stagger so each edge fires at a different phase */
+.cube-scene .edge:nth-child(1)  {animation-delay:-0.0s}
+.cube-scene .edge:nth-child(2)  {animation-delay:-0.18s}
+.cube-scene .edge:nth-child(3)  {animation-delay:-0.36s}
+.cube-scene .edge:nth-child(4)  {animation-delay:-0.54s}
+.cube-scene .edge:nth-child(5)  {animation-delay:-0.72s}
+.cube-scene .edge:nth-child(6)  {animation-delay:-0.90s}
+.cube-scene .edge:nth-child(7)  {animation-delay:-1.08s}
+.cube-scene .edge:nth-child(8)  {animation-delay:-1.26s}
+.cube-scene .edge:nth-child(9)  {animation-delay:-1.44s}
+.cube-scene .edge:nth-child(10) {animation-delay:-1.62s}
+.cube-scene .edge:nth-child(11) {animation-delay:-1.80s}
+.cube-scene .edge:nth-child(12) {animation-delay:-1.98s}
+.cube-scene .vertex{
+  fill:var(--ink);
+  opacity:.6;
+}
 
+@keyframes edge-pulse{
+  0%   {stroke-dashoffset:0}
+  100% {stroke-dashoffset:-16}
+}
 @keyframes cube-spin{
-  0%   {transform:rotateX(-18deg) rotateY(0deg)}
-  100% {transform:rotateX(-18deg) rotateY(360deg)}
+  0%   {transform:rotate(0deg)}
+  100% {transform:rotate(360deg)}
 }
 
 @media (prefers-reduced-motion: reduce){
-  .cube{animation:none;transform:rotateX(-18deg) rotateY(35deg)}
+  .cube-scene svg{animation:none}
+  .cube-scene .edge{animation:none;stroke-dasharray:none}
 }
 
 /* ── Main content ───────────────────────────────────────── */
