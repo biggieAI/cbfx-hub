@@ -134,7 +134,7 @@ body{
 .cube-scene .edge:nth-child(12) {animation-delay:-1.98s}
 .cube-scene .vertex{
   fill:var(--ink);
-  opacity:.6;
+  opacity:.18;
 }
 
 @keyframes edge-pulse{
