@@ -1,0 +1,299 @@
+/* CBFX HUB · shared wizard styles
+   Builds on assets/style.css tokens (--ink, --blue, etc.) */
+
+/* ── Wizard page shell ──────────────────────────────────── */
+.wizard-wrap{max-width:780px;width:100%;margin:0 auto;padding:48px 24px 80px;flex:1}
+
+/* Header above wizard */
+.wizard-header{margin-bottom:32px}
+.wizard-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.wizard-eyebrow a{color:var(--ink-4);text-decoration:none;transition:color .15s}
+.wizard-eyebrow a:hover{color:var(--blue-2)}
+.wizard-eyebrow .sep{opacity:.5}
+.wizard-title{
+  font-family:var(--f-display);
+  font-size:40px;font-weight:800;color:var(--ink);
+  letter-spacing:-.035em;line-height:1.05;margin-bottom:10px;
+  text-wrap:balance;
+}
+.wizard-sub{
+  font-size:16px;color:var(--ink-3);line-height:1.5;font-weight:500;
+  max-width:580px;text-wrap:pretty;
+}
+
+/* ── Step progress (pills) ──────────────────────────────── */
+.step-progress{
+  display:flex;gap:6px;align-items:center;
+  margin:28px 0 32px;
+}
+.step-pill{
+  flex:1;height:6px;border-radius:99px;background:var(--surface-3);
+  position:relative;overflow:hidden;
+}
+.step-pill .fill{
+  position:absolute;inset:0;width:0;
+  background:linear-gradient(90deg,#3a6bff,var(--blue));
+  border-radius:99px;
+  transition:width .35s ease;
+}
+.step-pill.done .fill{width:100%}
+.step-pill.active .fill{width:50%}
+.step-labels{
+  display:flex;justify-content:space-between;
+  margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-4);
+}
+.step-labels span{flex:1;text-align:center}
+.step-labels span:first-child{text-align:left}
+.step-labels span:last-child{text-align:right}
+.step-labels span.active{color:var(--blue-2)}
+.step-labels span.done{color:var(--ink-2)}
+
+/* ── Step panels (show/hide) ────────────────────────────── */
+.step-panel{display:none}
+.step-panel.active{display:block;animation:fade-in .25s ease}
+@keyframes fade-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── Cards inside wizard ────────────────────────────────── */
+.wcard{
+  background:var(--surface);
+  border:.5px solid var(--hairline);
+  border-radius:var(--r-lg);
+  box-shadow:var(--sh-card);
+  padding:24px;
+  margin-bottom:14px;
+}
+.wcard-title{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.018em;margin-bottom:6px}
+.wcard-desc{font-size:14px;color:var(--ink-3);line-height:1.5;margin-bottom:18px}
+
+/* ── Form fields ────────────────────────────────────────── */
+.field-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;
+  transition:max-height .25s ease, opacity .2s ease, margin .2s ease;
+  overflow:hidden;max-height:200px;
+}
+.field-row.full{grid-template-columns:1fr}
+.field-row.field-row-collapsed{
+  max-height:0;opacity:0;margin:0;pointer-events:none;
+}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{
+  font-size:12px;font-weight:600;color:var(--ink-2);
+  letter-spacing:.02em;
+}
+.field label .opt{color:var(--ink-4);font-weight:500;margin-left:4px}
+.field input[type="text"],.field input[type="email"],.field input[type="tel"],
+.field input[type="date"],.field textarea,.field select{
+  font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);
+  background:var(--surface-2);
+  border:.5px solid var(--hairline-strong);
+  border-radius:var(--r-sm);
+  padding:11px 13px;
+  outline:none;transition:border-color .15s, background .15s, box-shadow .15s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  background:#fff;
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px var(--blue-soft);
+}
+.field input.invalid,.field textarea.invalid,.field select.invalid{
+  border-color:var(--err);
+  background:#fff5f5;
+}
+.field-error{
+  display:none;font-size:12px;color:var(--err);font-weight:500;
+  margin-top:2px;
+}
+.field-error.show{display:block}
+
+/* ── Radio card grid ────────────────────────────────────── */
+.radio-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;
+  margin-bottom:6px;
+}
+.radio-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.radio-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.radio-card{
+  position:relative;display:block;
+  background:var(--surface-2);
+  border:.5px solid var(--hairline-strong);
+  border-radius:var(--r-sm);
+  padding:12px 14px;cursor:pointer;
+  transition:.15s;
+}
+.radio-card:hover{background:#fff;border-color:var(--ink-5)}
+.radio-card input{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0;
+}
+.radio-card .rc-label{
+  font-size:13.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em;
+  display:block;
+}
+.radio-card .rc-sub{
+  display:block;font-size:11.5px;font-weight:500;color:var(--ink-4);margin-top:2px;
+}
+.radio-card:has(input:checked){
+  background:#fff;
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px var(--blue-soft);
+}
+.radio-card:has(input:checked) .rc-label{color:var(--blue-2)}
+.radio-group-invalid .radio-card{border-color:var(--err)}
+
+/* Group label above radio grid */
+.field-group-title{
+  font-size:12px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;
+  margin-bottom:8px;
+}
+.field-group{margin-bottom:14px}
+.field-group.field-row-collapsed{
+  max-height:0;opacity:0;margin:0;overflow:hidden;pointer-events:none;
+  transition:max-height .25s ease, opacity .2s ease, margin .2s ease;
+}
+
+/* ── Doc checklist (Step 2) ─────────────────────────────── */
+.doc-list{display:flex;flex-direction:column;gap:8px}
+.doc-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;
+  background:var(--surface-2);
+  border:.5px solid var(--hairline-strong);
+  border-radius:var(--r-sm);
+  cursor:pointer;transition:.15s;
+}
+.doc-item:hover{background:#fff;border-color:var(--ink-5)}
+.doc-item input[type="checkbox"]{
+  appearance:none;-webkit-appearance:none;
+  width:20px;height:20px;border-radius:6px;
+  border:1.5px solid var(--ink-5);
+  background:#fff;flex-shrink:0;margin-top:1px;cursor:pointer;
+  display:grid;place-items:center;transition:.15s;
+}
+.doc-item input[type="checkbox"]:checked{
+  background:var(--blue);border-color:var(--blue);
+}
+.doc-item input[type="checkbox"]:checked::after{
+  content:'';width:10px;height:6px;
+  border-left:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translate(1px,-1px);
+}
+.doc-item.checked{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.doc-item-body{flex:1;min-width:0}
+.doc-item-name{
+  font-size:14px;font-weight:600;color:var(--ink);line-height:1.3;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.doc-item-desc{font-size:12.5px;color:var(--ink-3);margin-top:2px;line-height:1.4}
+
+/* badges inside doc items */
+.badge-required{
+  display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:99px;
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--blue-soft);color:var(--blue-2);
+}
+.badge-applicable{
+  display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:99px;
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--surface-3);color:var(--ink-3);
+}
+
+/* ── Review step ────────────────────────────────────────── */
+.review-section{margin-top:20px;padding-top:20px;border-top:.5px solid var(--hairline)}
+.review-section:first-child{margin-top:0;padding-top:0;border-top:0}
+.review-section-title{
+  font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:12px;
+}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}
+.review-field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.review-field-label{
+  font-size:11px;font-weight:600;color:var(--ink-4);letter-spacing:.04em;text-transform:uppercase;
+}
+.review-field-value{font-size:14px;font-weight:600;color:var(--ink);overflow-wrap:break-word}
+.review-field-value.empty{color:var(--ink-4);font-style:italic;font-weight:500}
+
+.review-doc-list{display:flex;flex-direction:column;gap:6px}
+.review-doc-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:var(--r-sm);
+  font-size:13.5px;font-weight:500;
+}
+.review-doc-item.initiated{background:#e3f3e7;color:#0f7a48}
+.review-doc-item.pending{background:#fff4e6;color:#b56224}
+.review-doc-icon{font-size:14px;font-weight:700;flex-shrink:0}
+
+/* ── Notice / banner ────────────────────────────────────── */
+.notice{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 16px;border-radius:var(--r-sm);
+  font-size:13px;color:var(--ink-2);line-height:1.45;
+  margin-bottom:14px;
+}
+.notice strong{color:var(--ink);font-weight:600}
+.notice-warn{background:#fff4e6;color:#73431a;border:.5px solid #f3d3a8}
+.notice-warn strong{color:#5c3514}
+.notice-icon{font-size:15px;flex-shrink:0}
+
+.validation-banner{
+  display:none;align-items:center;gap:10px;
+  padding:12px 16px;margin-bottom:14px;border-radius:var(--r-sm);
+  font-size:13px;font-weight:500;color:#73151a;
+  background:#fff5f5;border:.5px solid #f3a8a8;
+}
+.validation-banner.show{display:flex}
+.validation-banner::before{content:'⚠';font-size:14px}
+
+/* ── Button row (Back / Next / Submit) ──────────────────── */
+.btn-row{
+  display:flex;align-items:center;gap:10px;margin-top:18px;
+  flex-wrap:wrap;
+}
+.btn-row .spacer{flex:1}
+.btn-row .copy-confirm{
+  display:none;font-size:12.5px;font-weight:600;color:var(--ok);
+  letter-spacing:.02em;
+}
+.btn-row .copy-confirm.show{display:inline}
+
+/* btn-primary / btn-secondary / btn-ghost already defined in style.css.
+   Add small overrides + extra variants */
+.btn-back{
+  height:44px;border-radius:999px;padding:0 18px;
+  background:transparent;color:var(--ink-3);font-weight:600;font-size:14px;
+  border:.5px solid var(--hairline-strong);font-family:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn-back:hover{background:var(--surface);color:var(--ink)}
+.btn-success{
+  height:44px;border-radius:999px;padding:0 22px;border:0;
+  background:linear-gradient(180deg,#1bb377 0%,var(--ok) 100%);
+  color:#fff;font-family:inherit;font-weight:600;font-size:14px;
+  box-shadow:0 8px 24px -10px rgba(15,157,99,.5), inset 0 1px 0 rgba(255,255,255,.25);
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-row .btn-ghost{height:44px}
+
+/* ── Print (PDF export) ─────────────────────────────────── */
+@media print{
+  .topbar,.btn-row,.step-progress,.validation-banner,.notice,.wizard-eyebrow{display:none!important}
+  body{background:#fff}
+  .step-panel{display:block!important}
+  .wcard{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  .wizard-wrap{padding:20px;max-width:none}
+}
+
+/* ── Mobile ─────────────────────────────────────────────── */
+@media(max-width:680px){
+  .wizard-wrap{padding:32px 18px 70px}
+  .wizard-title{font-size:30px}
+  .field-row{grid-template-columns:1fr}
+  .review-grid{grid-template-columns:1fr}
+  .radio-grid,.radio-grid.cols-2,.radio-grid.cols-3{grid-template-columns:1fr 1fr}
+  .btn-row{flex-direction:column;align-items:stretch}
+  .btn-row .spacer{display:none}
+  .btn-row button{width:100%;justify-content:center}
+}

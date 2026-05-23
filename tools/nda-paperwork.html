@@ -6,586 +6,115 @@
 <title>NDA & Paperwork — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #dde4ed;
-    --surface: #eaeff5;
-    --surface2: #d5dce7;
-    --nav: #1a1c22;
-    --border: #c0c8d4;
-    --border-dark: #a8b2bf;
-    --text: #1a1c22;
-    --text2: #3d4452;
-    --muted: #6b7585;
-    --white: #f4f7fa;
-    --blue-dark: #1e3a5a;
-    --accent: #2563eb;
-    --accent-light: #dbeafe;
-    --success: #166534;
-    --success-bg: #dcfce7;
-    --warn: #92400e;
-    --warn-bg: #fef3c7;
-    --error: #991b1b;
-    --error-bg: #fee2e2;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Figtree', sans-serif;
-    font-size: 15px;
-    min-height: 100vh;
-  }
-
-  /* TOPBAR */
-  .topbar {
-    background: var(--nav);
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .topbar-brand {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .topbar-section {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(244,247,250,0.6);
-    letter-spacing: 0.03em;
-  }
-  .topbar-back {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(244,247,250,0.75);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: color 0.15s;
-  }
-  .topbar-back:hover { color: var(--white); }
-
-  /* LAYOUT */
-  .page {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 32px 20px 64px;
-  }
-
-  .page-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .page-sub {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 28px;
-  }
-
-  /* PROGRESS BAR */
-  .progress-wrap {
-    display: flex;
-    gap: 0;
-    margin-bottom: 32px;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
-  .progress-step {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    cursor: default;
-    transition: background 0.2s;
-  }
-  .progress-step:last-child { border-right: none; }
-  .progress-step.active {
-    background: var(--blue-dark);
-  }
-  .progress-step.done {
-    background: var(--surface2);
-  }
-  .step-num {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--border);
-    color: var(--text2);
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.2s, color 0.2s;
-  }
-  .progress-step.active .step-num {
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-  }
-  .progress-step.done .step-num {
-    background: var(--accent);
-    color: #fff;
-  }
-  .step-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .progress-step.active .step-label { color: #fff; }
-  .progress-step.done .step-label { color: var(--text2); }
-
-  /* CARD */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 28px;
-    margin-bottom: 16px;
-  }
-  .card-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .card-desc {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 22px;
-  }
-
-  /* FORM */
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-  .field-row.single { grid-template-columns: 1fr; }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-  }
-  label .opt {
-    font-weight: 400;
-    color: var(--muted);
-    margin-left: 4px;
-  }
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="date"] {
-    background: var(--white);
-    border: 1px solid var(--border-dark);
-    border-radius: 6px;
-    padding: 9px 12px;
-    font-family: 'Figtree', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    width: 100%;
-  }
-  input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
-  }
-  input.invalid {
-    border-color: #dc2626;
-    box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
-  }
-  .field-error {
-    font-size: 12px;
-    color: #dc2626;
-    display: none;
-  }
-  .field-error.show { display: block; }
-
-  /* RADIO CARDS */
-  .radio-grid {
-    display: grid;
-    gap: 8px;
-    margin-top: 6px;
-  }
-  .radio-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .radio-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-  .radio-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-
-  .radio-card {
-    position: relative;
-  }
-  .radio-card input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .radio-card label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 11px 8px;
-    background: var(--white);
-    border: 1.5px solid var(--border);
-    border-radius: 7px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-    transition: border-color 0.15s, background 0.15s, color 0.15s;
-    min-height: 52px;
-    line-height: 1.3;
-    gap: 3px;
-  }
-  .radio-card label .rc-sub {
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--muted);
-  }
-  .radio-card input[type="radio"]:checked + label {
-    border-color: var(--accent);
-    background: var(--accent-light);
-    color: var(--blue-dark);
-  }
-  .radio-card input[type="radio"]:checked + label .rc-sub {
-    color: #3b5fa0;
-  }
-  .radio-group-invalid .radio-card label {
-    border-color: #dc2626;
-  }
-
-  /* SECTION DIVIDER */
-  .section-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 20px 0;
-  }
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
-    margin-top: 20px;
-  }
-
-  /* CHECKLIST */
-  .doc-list { display: flex; flex-direction: column; gap: 10px; }
-  .doc-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .doc-item:hover { border-color: var(--border-dark); }
-  .doc-item.checked {
-    border-color: #16a34a;
-    background: #f0fdf4;
-  }
-  .doc-item input[type="checkbox"] {
-    width: 17px;
-    height: 17px;
-    flex-shrink: 0;
-    margin-top: 1px;
-    accent-color: #16a34a;
-    cursor: pointer;
-  }
-  .doc-item-body { flex: 1; }
-  .doc-item-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .doc-item-desc {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-  .badge-required {
-    background: var(--blue-dark);
-    color: #fff;
-  }
-  .badge-applicable {
-    background: var(--surface2);
-    color: var(--muted);
-  }
-
-  /* REVIEW */
-  .review-section { margin-bottom: 22px; }
-  .review-section-title {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--muted);
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-  .review-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 20px;
-  }
-  .review-field { display: flex; flex-direction: column; gap: 2px; }
-  .review-field-label { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .review-field-value { font-size: 14px; font-weight: 600; color: var(--text); }
-  .review-field-value.empty { color: var(--muted); font-style: italic; font-weight: 400; }
-
-  .review-doc-list { display: flex; flex-direction: column; gap: 6px; }
-  .review-doc-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-  }
-  .review-doc-item.initiated {
-    background: var(--success-bg);
-    color: var(--success);
-  }
-  .review-doc-item.pending {
-    background: var(--warn-bg);
-    color: var(--warn);
-  }
-  .review-doc-icon { font-size: 15px; flex-shrink: 0; }
-
-  /* BUTTONS */
-  .btn-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 10px 20px;
-    border-radius: 7px;
-    font-family: 'Figtree', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: opacity 0.15s, box-shadow 0.15s;
-    text-decoration: none;
-  }
-  .btn:hover { opacity: 0.88; }
-  .btn-primary {
-    background: var(--blue-dark);
-    color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
-  .btn-ghost {
-    background: var(--surface2);
-    color: var(--text2);
-    border: 1px solid var(--border);
-  }
-  .btn-success {
-    background: #15803d;
-    color: #fff;
-  }
-  .btn-back {
-    background: none;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    padding: 10px 16px;
-  }
-  .btn-back:hover { color: var(--text); border-color: var(--border-dark); opacity: 1; }
-
-  /* NOTICE */
-  .notice {
-    display: flex;
-    gap: 10px;
-    padding: 12px 16px;
-    border-radius: 7px;
-    font-size: 13px;
-    margin-top: 16px;
-    align-items: flex-start;
-  }
-  .notice-warn {
-    background: var(--warn-bg);
-    color: var(--warn);
-    border: 1px solid #fcd34d;
-  }
-  .notice-icon { flex-shrink: 0; }
-
-  /* COPY SUCCESS */
-  .copy-confirm {
-    font-size: 13px;
-    color: #15803d;
-    font-weight: 600;
-    display: none;
-    align-items: center;
-    gap: 5px;
-  }
-  .copy-confirm.show { display: flex; }
-
-  /* STEP PANELS */
-  .step-panel { display: none; }
-  .step-panel.active { display: block; }
-
-  /* VALIDATION COLLAPSE */
-  .field-row-collapsed { display: none !important; }
-  .validation-banner {
-    display: none;
-    background: #fdecea;
-    border: 1px solid #e8504a;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #c0392b;
-    margin-bottom: 20px;
-  }
-  .validation-banner.show {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  @media print {
-    .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
-    body { background: #fff !important; color: #000 !important; }
-    .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
-    .wizard-step { display: block !important; }
-    .wizard-step:not(.active) { display: none !important; }
-    .review-field-label { color: #666 !important; }
-    .review-field-value { color: #000 !important; font-weight: 600 !important; }
-    .review-section-title { color: #333 !important; border-color: #ccc !important; }
-    @page { margin: 1.5cm; }
-  }
-
-  @media (max-width: 560px) {
-    .field-row { grid-template-columns: 1fr; }
-    .radio-grid.cols-4 { grid-template-columns: 1fr 1fr; }
-    .radio-grid.cols-3 { grid-template-columns: 1fr 1fr; }
-    .radio-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-    .review-grid { grid-template-columns: 1fr; }
-    .progress-step { padding: 10px 10px; }
-    .step-label { font-size: 11px; }
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/wizard.css">
 </head>
 <body>
 
-<!-- TOPBAR -->
-<nav class="topbar">
-  <a href="../index.html" class="topbar-brand">CBFX Hub</a>
-  <div class="topbar-right">
-    <span class="topbar-section">NDA &amp; Paperwork</span>
-    <a href="../index.html" class="topbar-back">&#8592; Back to Hub</a>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
   </div>
-</nav>
-
-<!-- PAGE -->
-<div class="page">
-  <div class="page-title">Contractor Onboarding</div>
-  <div class="page-sub">Submit contractor info and initiate required paperwork for new hires and vendors.</div>
-
-  <!-- PROGRESS -->
-  <div class="progress-wrap" id="progressWrap">
-    <div class="progress-step active" id="ps1">
-      <div class="step-num">1</div>
-      <div class="step-label">Contractor Info</div>
+  <div class="cube-scene" aria-hidden="true">
+    <div class="gyro">
+      <div class="gyro-ring gyro-r1"><svg viewBox="-25 -25 50 50">
+        <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
+      </svg></div>
+      <div class="gyro-ring gyro-r2"><svg viewBox="-25 -25 50 50">
+        <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
+      </svg></div>
+      <div class="gyro-ring gyro-r3"><svg viewBox="-25 -25 50 50">
+        <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
+      </svg></div>
+      <div class="gyro-ring gyro-r4"><svg viewBox="-25 -25 50 50">
+        <polygon class="base" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t5" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t4" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t3" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t2" points="0,-20 17.32,10 -17.32,10"/>
+        <polygon class="comet t1" points="0,-20 17.32,10 -17.32,10"/>
+      </svg></div>
+      <span class="gyro-core"></span>
     </div>
-    <div class="progress-step" id="ps2">
-      <div class="step-num">2</div>
-      <div class="step-label">Documents</div>
+  </div>
+</div>
+
+<div class="wizard-wrap">
+
+  <div class="wizard-header">
+    <div class="wizard-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Onboarding</span>
     </div>
-    <div class="progress-step" id="ps3">
-      <div class="step-num">3</div>
-      <div class="step-label">Review &amp; Submit</div>
+    <h1 class="wizard-title">NDA &amp; Paperwork</h1>
+    <p class="wizard-sub">Initiate NDA signing and required paperwork for new crew. Everything routes through DocuSign with status tracking — this form gathers the details and sends a summary to onboarding.</p>
+  </div>
+
+  <!-- Step progress -->
+  <div>
+    <div class="step-progress">
+      <div class="step-pill active" id="ps1"><div class="fill"></div></div>
+      <div class="step-pill" id="ps2"><div class="fill"></div></div>
+      <div class="step-pill" id="ps3"><div class="fill"></div></div>
+    </div>
+    <div class="step-labels">
+      <span class="active" id="psl1">Contractor Info</span>
+      <span id="psl2">Documents</span>
+      <span id="psl3">Review &amp; Submit</span>
     </div>
   </div>
 
-  <!-- STEP 1 -->
+  <!-- ──────────── STEP 1 ──────────── -->
   <div class="step-panel active" id="step1">
-    <div class="card">
-      <div class="card-title">Contractor Information</div>
-      <div class="card-desc">All fields marked required must be completed before proceeding.</div>
-      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
+
+    <div class="validation-banner" id="val-banner-1">
+      Some required fields need attention. Only those are shown.
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Contractor Details</div>
+      <div class="wcard-desc">Who's coming on, on what show, and when. All fields below are required unless noted.</div>
 
       <div class="field-row">
         <div class="field">
           <label for="fullName">Full Legal Name</label>
-          <input type="text" id="fullName" placeholder="e.g. Jordan Lee" autocomplete="name">
-          <span class="field-error" id="fullNameErr">Required</span>
+          <input type="text" id="fullName" placeholder="e.g. Jane R. Doe">
+          <div class="field-error" id="fullNameErr">Full legal name is required.</div>
         </div>
         <div class="field">
           <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="contractor@email.com" autocomplete="email">
-          <span class="field-error" id="emailErr">Valid email required</span>
+          <input type="email" id="email" placeholder="jane@example.com">
+          <div class="field-error" id="emailErr">Valid email address is required.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="phone">Phone <span class="opt">(optional)</span></label>
-          <input type="tel" id="phone" placeholder="+1 555 000 0000" autocomplete="tel">
+          <input type="tel" id="phone" placeholder="+1 (310) 555-0123">
         </div>
         <div class="field">
           <label for="showProject">Show / Project</label>
-          <input type="text" id="showProject" placeholder="e.g. Project Midnight S2">
-          <span class="field-error" id="showProjectErr">Required</span>
+          <input type="text" id="showProject" placeholder="e.g. WONDERLAND S2">
+          <div class="field-error" id="showProjectErr">Show / project is required.</div>
         </div>
       </div>
 
@@ -593,101 +122,90 @@
         <div class="field">
           <label for="startDate">Start Date</label>
           <input type="date" id="startDate">
-          <span class="field-error" id="startDateErr">Required</span>
+          <div class="field-error" id="startDateErr">Start date is required.</div>
         </div>
         <div class="field">
-          <label for="endDate">Estimated End Date <span class="opt">(leave blank if ongoing)</span></label>
+          <label for="endDate">Est. End Date <span class="opt">(blank if ongoing)</span></label>
           <input type="date" id="endDate">
         </div>
       </div>
 
-      <div class="field-row single">
+      <div class="field-row full">
         <div class="field">
           <label for="requestedBy">Requested by</label>
-          <input type="text" id="requestedBy" placeholder="Supervisor or producer name">
-          <span class="field-error" id="requestedByErr">Required</span>
+          <input type="text" id="requestedBy" placeholder="Producer / supervisor name">
+          <div class="field-error" id="requestedByErr">Requester name is required.</div>
         </div>
       </div>
+    </div>
 
-      <hr class="section-divider">
-      <div class="section-label">Engagement Type</div>
+    <div class="wcard">
+      <div class="wcard-title">Engagement Type</div>
+      <div class="wcard-desc">This drives which paperwork is required on the next step.</div>
 
-      <div class="radio-grid cols-2" id="engagementGroup">
-        <div class="radio-card">
-          <input type="radio" name="engagement" id="eng-dayrate" value="Freelance Day Rate">
-          <label for="eng-dayrate">Freelance Day Rate<span class="rc-sub">Daily billing</span></label>
+      <div class="field-group" id="engagementGroup">
+        <div class="radio-grid cols-2">
+          <label class="radio-card">
+            <input type="radio" name="engagement" value="Freelance Day Rate">
+            <span class="rc-label">Freelance Day Rate</span>
+            <span class="rc-sub">Daily billing</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="engagement" value="Freelance Weekly">
+            <span class="rc-label">Freelance Weekly</span>
+            <span class="rc-sub">Weekly billing</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="engagement" value="Staff (Full Time)">
+            <span class="rc-label">Staff (Full Time)</span>
+            <span class="rc-sub">Salaried employee</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="engagement" value="Vendor/Company">
+            <span class="rc-label">Vendor / Company</span>
+            <span class="rc-sub">Corporate entity</span>
+          </label>
         </div>
-        <div class="radio-card">
-          <input type="radio" name="engagement" id="eng-weekly" value="Freelance Weekly">
-          <label for="eng-weekly">Freelance Weekly<span class="rc-sub">Weekly billing</span></label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="engagement" id="eng-staff" value="Staff (Full Time)">
-          <label for="eng-staff">Staff (Full Time)<span class="rc-sub">Salaried employee</span></label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="engagement" id="eng-vendor" value="Vendor/Company">
-          <label for="eng-vendor">Vendor/Company<span class="rc-sub">Corporate entity</span></label>
-        </div>
+        <div class="field-error" id="engagementErr">Engagement type is required.</div>
       </div>
-      <span class="field-error" id="engagementErr" style="margin-top:6px;">Select an engagement type</span>
+    </div>
 
-      <hr class="section-divider">
-      <div class="section-label">Department</div>
+    <div class="wcard">
+      <div class="wcard-title">Department</div>
+      <div class="wcard-desc">Where they'll be working in the pipeline.</div>
 
-      <div class="radio-grid cols-4" id="departmentGroup">
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-comp" value="Compositing">
-          <label for="dep-comp">Compositing</label>
+      <div class="field-group" id="departmentGroup">
+        <div class="radio-grid cols-3">
+          <label class="radio-card"><input type="radio" name="department" value="Compositing"><span class="rc-label">Compositing</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="FX"><span class="rc-label">FX</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="CG"><span class="rc-label">CG</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Roto/Paint"><span class="rc-label">Roto / Paint</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Edit"><span class="rc-label">Edit</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Production"><span class="rc-label">Production</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Other"><span class="rc-label">Other</span></label>
         </div>
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-fx" value="FX">
-          <label for="dep-fx">FX</label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-cg" value="CG">
-          <label for="dep-cg">CG</label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-roto" value="Roto/Paint">
-          <label for="dep-roto">Roto/Paint</label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-edit" value="Edit">
-          <label for="dep-edit">Edit</label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-prod" value="Production">
-          <label for="dep-prod">Production</label>
-        </div>
-        <div class="radio-card">
-          <input type="radio" name="department" id="dep-other" value="Other">
-          <label for="dep-other">Other</label>
-        </div>
+        <div class="field-error" id="departmentErr">Department is required.</div>
       </div>
-      <span class="field-error" id="departmentErr" style="margin-top:6px;">Select a department</span>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="goStep2()">Continue to Documents &#8594;</button>
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep2()">Continue → Documents</button>
     </div>
   </div>
 
-  <!-- STEP 2 -->
+  <!-- ──────────── STEP 2 ──────────── -->
   <div class="step-panel" id="step2">
-    <div class="card">
-      <div class="card-title">Document Requirements</div>
-      <div class="card-desc">Check each box as you've initiated or completed the document. Unchecked items will appear as pending in the submission.</div>
+    <div class="wcard">
+      <div class="wcard-title">Document Requirements</div>
+      <div class="wcard-desc">Check each box as you've initiated or completed the document. Unchecked items will appear as pending in the submission.</div>
 
       <div class="doc-list" id="docList">
 
         <label class="doc-item" id="di-nda">
           <input type="checkbox" id="doc-nda" onchange="docChange(this,'di-nda')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              Non-Disclosure Agreement (NDA)
-              <span class="badge badge-required">Required</span>
-            </div>
+            <div class="doc-item-name">Non-Disclosure Agreement (NDA) <span class="badge-required">Required</span></div>
             <div class="doc-item-desc">Sent via DocuSign — all engagement types</div>
           </div>
         </label>
@@ -695,10 +213,7 @@
         <label class="doc-item" id="di-ica">
           <input type="checkbox" id="doc-ica" onchange="docChange(this,'di-ica')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              Independent Contractor Agreement
-              <span class="badge badge-applicable">If applicable</span>
-            </div>
+            <div class="doc-item-name">Independent Contractor Agreement <span class="badge-applicable">If applicable</span></div>
             <div class="doc-item-desc">Required for Freelance Day Rate &amp; Freelance Weekly engagements</div>
           </div>
         </label>
@@ -706,10 +221,7 @@
         <label class="doc-item" id="di-w9">
           <input type="checkbox" id="doc-w9" onchange="docChange(this,'di-w9')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              W-9 / Tax Form
-              <span class="badge badge-applicable">If applicable</span>
-            </div>
+            <div class="doc-item-name">W-9 / Tax Form <span class="badge-applicable">If applicable</span></div>
             <div class="doc-item-desc">Required for US-based freelance contractors</div>
           </div>
         </label>
@@ -717,10 +229,7 @@
         <label class="doc-item" id="di-coi">
           <input type="checkbox" id="doc-coi" onchange="docChange(this,'di-coi')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              Certificate of Insurance
-              <span class="badge badge-applicable">If applicable</span>
-            </div>
+            <div class="doc-item-name">Certificate of Insurance <span class="badge-applicable">If applicable</span></div>
             <div class="doc-item-desc">Required for Vendor/Company engagements</div>
           </div>
         </label>
@@ -728,10 +237,7 @@
         <label class="doc-item" id="di-i9">
           <input type="checkbox" id="doc-i9" onchange="docChange(this,'di-i9')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              I-9 Employment Eligibility Verification
-              <span class="badge badge-applicable">If applicable</span>
-            </div>
+            <div class="doc-item-name">I-9 Employment Eligibility Verification <span class="badge-applicable">If applicable</span></div>
             <div class="doc-item-desc">Required for Staff (Full Time) engagements</div>
           </div>
         </label>
@@ -739,10 +245,7 @@
         <label class="doc-item" id="di-dd">
           <input type="checkbox" id="doc-dd" onchange="docChange(this,'di-dd')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              Direct Deposit / Payment Setup Form
-              <span class="badge badge-required">Required</span>
-            </div>
+            <div class="doc-item-name">Direct Deposit / Payment Setup <span class="badge-required">Required</span></div>
             <div class="doc-item-desc">All paid engagements</div>
           </div>
         </label>
@@ -750,10 +253,7 @@
         <label class="doc-item" id="di-sec">
           <input type="checkbox" id="doc-sec" onchange="docChange(this,'di-sec')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              Security &amp; Confidentiality Acknowledgment
-              <span class="badge badge-required">Required</span>
-            </div>
+            <div class="doc-item-name">Security &amp; Confidentiality Acknowledgment <span class="badge-required">Required</span></div>
             <div class="doc-item-desc">All engagement types — asset protection policy</div>
           </div>
         </label>
@@ -761,10 +261,7 @@
         <label class="doc-item" id="di-badge">
           <input type="checkbox" id="doc-badge" onchange="docChange(this,'di-badge')">
           <div class="doc-item-body">
-            <div class="doc-item-name">
-              Studio Access &amp; Badge Request
-              <span class="badge badge-applicable">If applicable</span>
-            </div>
+            <div class="doc-item-name">Studio Access &amp; Badge Request <span class="badge-applicable">If applicable</span></div>
             <div class="doc-item-desc">Required if contractor will work on-site</div>
           </div>
         </label>
@@ -773,16 +270,17 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-back" onclick="goStep(1)">&#8592; Back</button>
-      <button class="btn btn-primary" onclick="goStep3()">Review &amp; Submit &#8594;</button>
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep3()">Review &amp; Submit →</button>
     </div>
   </div>
 
-  <!-- STEP 3 -->
+  <!-- ──────────── STEP 3 ──────────── -->
   <div class="step-panel" id="step3">
-    <div class="card">
-      <div class="card-title">Review &amp; Submit</div>
-      <div class="card-desc">Confirm all details before sending to onboarding.</div>
+    <div class="wcard">
+      <div class="wcard-title">Review &amp; Submit</div>
+      <div class="wcard-desc">Confirm all details before sending to onboarding.</div>
 
       <div class="review-section">
         <div class="review-section-title">Contractor Details</div>
@@ -796,20 +294,21 @@
     </div>
 
     <div class="notice notice-warn">
-      <span class="notice-icon">&#9888;</span>
+      <span class="notice-icon">⚠</span>
       <span>Incomplete document sets will delay start date. Contact <strong>onboarding@chicken-bone.com</strong> with questions.</span>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-back" onclick="goStep(2)">&#8592; Back</button>
-      <button class="btn btn-success" onclick="sendEmail()">&#9993; Open in Gmail</button>
-      <button class="btn btn-ghost" onclick="copyToClipboard()">&#128203; Copy to Clipboard</button>
-      <button class="btn btn-ghost" onclick="exportPDF()">&#x2193; Export PDF</button>
-      <span class="copy-confirm" id="copyConfirm">&#10003; Copied!</span>
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-ghost" onclick="copyToClipboard()">Copy</button>
+      <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
+      <button class="btn-success" onclick="sendEmail()">✉ Open in Gmail</button>
+      <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
     </div>
   </div>
 
-</div><!-- /page -->
+</div><!-- /wizard-wrap -->
 
 <script>
   // ─── STATE ───────────────────────────────────────────────────────────────
@@ -821,7 +320,7 @@
     { id: 'doc-w9',    name: 'W-9 / Tax Form',                             required: false },
     { id: 'doc-coi',   name: 'Certificate of Insurance',                   required: false },
     { id: 'doc-i9',    name: 'I-9 Employment Eligibility Verification',    required: false },
-    { id: 'doc-dd',    name: 'Direct Deposit / Payment Setup Form',        required: true  },
+    { id: 'doc-dd',    name: 'Direct Deposit / Payment Setup',             required: true  },
     { id: 'doc-sec',   name: 'Security & Confidentiality Acknowledgment',  required: true  },
     { id: 'doc-badge', name: 'Studio Access & Badge Request',              required: false }
   ];
@@ -829,21 +328,14 @@
   // ─── PROGRESS ─────────────────────────────────────────────────────────────
   function setProgress(step) {
     for (var i = 1; i <= 3; i++) {
-      var el = document.getElementById('ps' + i);
-      el.className = 'progress-step';
-      var numEl = el.querySelector('.step-num');
-      if (i < step) {
-        el.classList.add('done');
-        numEl.innerHTML = '&#10003;';
-      } else if (i === step) {
-        el.classList.add('active');
-        numEl.textContent = i;
-      } else {
-        numEl.textContent = i;
-      }
+      var pill = document.getElementById('ps' + i);
+      var lbl = document.getElementById('psl' + i);
+      pill.className = 'step-pill';
+      lbl.className = '';
+      if (i < step)      { pill.classList.add('done');   lbl.classList.add('done'); }
+      else if (i === step){ pill.classList.add('active'); lbl.classList.add('active'); }
     }
   }
-
   function goStep(n) {
     document.getElementById('step' + currentStep).classList.remove('active');
     currentStep = n;
@@ -857,13 +349,8 @@
   function setErr(fieldId, errId, show) {
     var input = document.getElementById(fieldId);
     var err = document.getElementById(errId);
-    if (show) {
-      input.classList.add('invalid');
-      err.classList.add('show');
-    } else {
-      input.classList.remove('invalid');
-      err.classList.remove('show');
-    }
+    if (show) { input.classList.add('invalid'); err.classList.add('show'); }
+    else      { input.classList.remove('invalid'); err.classList.remove('show'); }
     return show;
   }
   function getRadio(name) {
@@ -920,29 +407,32 @@
     // Collapse valid rows, surface invalid ones
     var banner = document.getElementById('val-banner-1');
     var stepEl = document.getElementById('step1');
-    var allRows = stepEl ? stepEl.querySelectorAll('.field-row') : [];
+    var fieldRows = stepEl.querySelectorAll('.field-row');
+    var fieldGroups = stepEl.querySelectorAll('.field-group');
 
     if (hasError) {
-      if (banner) banner.classList.add('show');
-      allRows.forEach(function(row) {
-        var hasErr = row.querySelector('.invalid, .field-error.show, .radio-group-invalid');
-        if (hasErr) {
-          row.classList.remove('field-row-collapsed');
-        } else {
-          row.classList.add('field-row-collapsed');
-        }
+      banner.classList.add('show');
+      fieldRows.forEach(function(row) {
+        var hasErr = row.querySelector('.invalid, .field-error.show');
+        if (hasErr) row.classList.remove('field-row-collapsed');
+        else row.classList.add('field-row-collapsed');
       });
-      // Also check engagement/department errors (standalone elements outside field-row)
+      fieldGroups.forEach(function(grp) {
+        var hasErr = grp.querySelector('.field-error.show, .radio-group-invalid');
+        if (hasErr || grp.classList.contains('radio-group-invalid')) grp.classList.remove('field-row-collapsed');
+        else grp.classList.add('field-row-collapsed');
+      });
     } else {
-      if (banner) banner.classList.remove('show');
-      allRows.forEach(function(row) { row.classList.remove('field-row-collapsed'); });
+      banner.classList.remove('show');
+      fieldRows.forEach(function(row) { row.classList.remove('field-row-collapsed'); });
+      fieldGroups.forEach(function(grp) { grp.classList.remove('field-row-collapsed'); });
     }
 
     if (!hasError) goStep(2);
   }
 
-  // Re-expand collapsed fields when user starts editing
-  document.querySelectorAll('#step1 input, #step1 textarea').forEach(function(el) {
+  // Re-expand collapsed rows when user starts editing
+  document.querySelectorAll('#step1 input').forEach(function(el) {
     el.addEventListener('input', expandAllGroups);
     el.addEventListener('change', expandAllGroups);
   });
@@ -954,11 +444,8 @@
   // ─── DOC CHECKBOX ─────────────────────────────────────────────────────────
   function docChange(cb, itemId) {
     var item = document.getElementById(itemId);
-    if (cb.checked) {
-      item.classList.add('checked');
-    } else {
-      item.classList.remove('checked');
-    }
+    if (cb.checked) item.classList.add('checked');
+    else            item.classList.remove('checked');
   }
 
   // ─── STEP 2 → 3 ──────────────────────────────────────────────────────────
@@ -1004,8 +491,8 @@
       var div = document.createElement('div');
       div.className = 'review-doc-item ' + (checked ? 'initiated' : 'pending');
       div.innerHTML =
-        '<span class="review-doc-icon">' + (checked ? '&#10003;' : '&#9888;') + '</span>' +
-        '<span>' + (checked ? 'Initiated' : 'Pending') + ' &mdash; ' + doc.name + '</span>';
+        '<span class="review-doc-icon">' + (checked ? '✓' : '⚠') + '</span>' +
+        '<span>' + (checked ? 'Initiated' : 'Pending') + ' — ' + doc.name + '</span>';
       docList.appendChild(div);
     });
   }
@@ -1060,32 +547,22 @@
     var text = 'To: onboarding@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildEmailBody();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function() { fallbackCopy(text); });
-    } else {
-      fallbackCopy(text);
-    }
+    } else { fallbackCopy(text); }
   }
-
   function fallbackCopy(text) {
     var ta = document.createElement('textarea');
     ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
     try { document.execCommand('copy'); } catch(e) {}
     document.body.removeChild(ta);
     showCopyConfirm();
   }
-
   function showCopyConfirm() {
     var el = document.getElementById('copyConfirm');
     if (el) { el.classList.add('show'); setTimeout(function() { el.classList.remove('show'); }, 2500); }
   }
-
-  function exportPDF() {
-    window.print();
-  }
+  function exportPDF() { window.print(); }
 </script>
 <script src="../assets/dev-mock-fill.js"></script>
 </body>
