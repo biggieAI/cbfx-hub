@@ -114,71 +114,80 @@ body{
   width:100%;height:100%;overflow:visible;display:block;
 }
 
-/* faint base ring — always visible at low opacity, gives structure */
+/* faint base triangle — always visible at low opacity, gives structure */
 .gyro-ring .base{
   fill:none;
   stroke-width:1;
-  stroke-linecap:round;
-  opacity:.12;
+  stroke-linejoin:round;
+  opacity:.14;
 }
-/* comet — short bright dash that chases around, leaves fading tail via 5 stacked layers */
+/* comet — short bright dash chasing around the triangle, 5 stacked layers = fading tail */
 .gyro-ring .comet{
   fill:none;
   stroke-width:1.6;
   stroke-linecap:round;
-  /* Each layer is a tiny visible segment; stacked layers with offset starts make the trail */
-  stroke-dasharray:4 122;
-  animation:comet-chase 2.6s linear infinite;
+  stroke-linejoin:round;
+  /* Triangle perimeter ≈ 104. Dash 4 then gap 100 = one chaser per triangle */
+  stroke-dasharray:4 100;
+  animation:comet-chase 2.8s linear infinite;
 }
 
-/* ring 1 — flat (XY plane), ink */
+/* ─ Ring 1 — flat (XY plane), deep navy-blue ─ */
 .gyro-r1{animation:r1-spin 9s linear infinite}
-.gyro-r1 .base   {stroke:var(--ink)}
-.gyro-r1 .comet  {stroke:var(--ink)}
+.gyro-r1 .base  {stroke:#1e44d6}
+.gyro-r1 .comet {stroke:#1e44d6}
 
-/* ring 2 — tilted, ink */
+/* ─ Ring 2 — tilted Y, primary blue ─ */
 .gyro-r2{transform:rotateY(70deg);animation:r2-spin 11s linear infinite reverse}
-.gyro-r2 .base   {stroke:var(--ink)}
-.gyro-r2 .comet  {stroke:var(--ink)}
+.gyro-r2 .base  {stroke:#2557ff}
+.gyro-r2 .comet {stroke:#2557ff}
 
-/* ring 3 — tilted, blue accent */
+/* ─ Ring 3 — tilted X, mid blue ─ */
 .gyro-r3{transform:rotateX(70deg);animation:r3-spin 13s linear infinite}
-.gyro-r3 .base   {stroke:var(--blue);opacity:.16}
-.gyro-r3 .comet  {stroke:var(--blue);stroke-width:1.8}
+.gyro-r3 .base  {stroke:#5b8bff}
+.gyro-r3 .comet {stroke:#5b8bff;stroke-width:1.8}
 
-/* tail layers — t1=head, t5=faintest tail tip. Layer delays are NEGATIVE so all
-   layers are already animating at t=0. The 0.06s offsets make each layer trail
-   slightly behind the previous one along the ring path.
-   Per-ring base delay (-.86s, -1.73s, etc) staggers the 3 comets in the cycle. */
-.gyro-r1 .t1{opacity:1;    animation-delay:-2.60s}
-.gyro-r1 .t2{opacity:.62;  animation-delay:-2.54s}
-.gyro-r1 .t3{opacity:.36;  animation-delay:-2.48s}
-.gyro-r1 .t4{opacity:.18;  animation-delay:-2.42s}
-.gyro-r1 .t5{opacity:.08;  animation-delay:-2.36s}
+/* ─ Ring 4 — diagonal axis, light sky-blue ─ */
+.gyro-r4{transform:rotateZ(45deg) rotateX(60deg);animation:r4-spin 15s linear infinite reverse}
+.gyro-r4 .base  {stroke:#9bb8ff}
+.gyro-r4 .comet {stroke:#9bb8ff}
 
-.gyro-r2 .t1{opacity:1;    animation-delay:-1.74s}
-.gyro-r2 .t2{opacity:.62;  animation-delay:-1.68s}
-.gyro-r2 .t3{opacity:.36;  animation-delay:-1.62s}
-.gyro-r2 .t4{opacity:.18;  animation-delay:-1.56s}
-.gyro-r2 .t5{opacity:.08;  animation-delay:-1.50s}
+/* tail layers — t1=head, t5=faintest tail. Per-ring base delay staggers the 4 comets. */
+.gyro-r1 .t1{opacity:1;    animation-delay:-2.80s}
+.gyro-r1 .t2{opacity:.62;  animation-delay:-2.74s}
+.gyro-r1 .t3{opacity:.36;  animation-delay:-2.68s}
+.gyro-r1 .t4{opacity:.18;  animation-delay:-2.62s}
+.gyro-r1 .t5{opacity:.08;  animation-delay:-2.56s}
 
-.gyro-r3 .t1{opacity:1;    animation-delay:-0.87s}
-.gyro-r3 .t2{opacity:.62;  animation-delay:-0.81s}
-.gyro-r3 .t3{opacity:.36;  animation-delay:-0.75s}
-.gyro-r3 .t4{opacity:.18;  animation-delay:-0.69s}
-.gyro-r3 .t5{opacity:.08;  animation-delay:-0.63s}
+.gyro-r2 .t1{opacity:1;    animation-delay:-2.10s}
+.gyro-r2 .t2{opacity:.62;  animation-delay:-2.04s}
+.gyro-r2 .t3{opacity:.36;  animation-delay:-1.98s}
+.gyro-r2 .t4{opacity:.18;  animation-delay:-1.92s}
+.gyro-r2 .t5{opacity:.08;  animation-delay:-1.86s}
+
+.gyro-r3 .t1{opacity:1;    animation-delay:-1.40s}
+.gyro-r3 .t2{opacity:.62;  animation-delay:-1.34s}
+.gyro-r3 .t3{opacity:.36;  animation-delay:-1.28s}
+.gyro-r3 .t4{opacity:.18;  animation-delay:-1.22s}
+.gyro-r3 .t5{opacity:.08;  animation-delay:-1.16s}
+
+.gyro-r4 .t1{opacity:1;    animation-delay:-0.70s}
+.gyro-r4 .t2{opacity:.62;  animation-delay:-0.64s}
+.gyro-r4 .t3{opacity:.36;  animation-delay:-0.58s}
+.gyro-r4 .t4{opacity:.18;  animation-delay:-0.52s}
+.gyro-r4 .t5{opacity:.08;  animation-delay:-0.46s}
 
 /* tiny center dot */
 .gyro-core{
   position:absolute;top:50%;left:50%;
   width:3px;height:3px;border-radius:99px;
-  background:var(--ink);opacity:.25;
+  background:var(--blue);opacity:.35;
   transform:translate(-50%,-50%);
 }
 
 @keyframes comet-chase{
   0%   {stroke-dashoffset:0}
-  100% {stroke-dashoffset:-126}
+  100% {stroke-dashoffset:-104}
 }
 @keyframes r1-spin{
   0%   {transform:rotateZ(0deg)}
@@ -192,6 +201,10 @@ body{
   0%   {transform:rotateX(70deg) rotateZ(0deg)}
   100% {transform:rotateX(70deg) rotateZ(360deg)}
 }
+@keyframes r4-spin{
+  0%   {transform:rotateZ(45deg) rotateX(60deg) rotateY(0deg)}
+  100% {transform:rotateZ(45deg) rotateX(60deg) rotateY(360deg)}
+}
 @keyframes gyro-tilt{
   0%   {transform:rotateX(-10deg) rotateY(0deg)}
   50%  {transform:rotateX(-10deg) rotateY(180deg)}
@@ -199,8 +212,8 @@ body{
 }
 
 @media (prefers-reduced-motion: reduce){
-  .gyro,.gyro-r1,.gyro-r2,.gyro-r3,.gyro-ring .comet{animation:none}
-  .gyro-ring .comet{stroke-dasharray:none;opacity:.3}
+  .gyro,.gyro-r1,.gyro-r2,.gyro-r3,.gyro-r4,.gyro-ring .comet{animation:none}
+  .gyro-ring .comet{stroke-dasharray:none;opacity:.5}
 }
 
 /* ── Main content ───────────────────────────────────────── */
