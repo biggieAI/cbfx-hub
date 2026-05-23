@@ -108,7 +108,52 @@ body{
   max-width:580px;text-wrap:pretty;
 }
 
-/* ── Section header ─────────────────────────────────────── */
+/* ── Section (collapsible) ──────────────────────────────── */
+.section{margin-top:36px}
+.section[open] + .section{margin-top:36px}
+
+.section-summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;margin:0 0 4px;
+  background:rgba(255,255,255,.55);
+  border:.5px solid var(--hairline);
+  border-radius:var(--r-md);
+  box-shadow:var(--sh-1);
+  transition:background .15s ease, box-shadow .15s ease;
+  user-select:none;
+}
+.section-summary::-webkit-details-marker{display:none}
+.section-summary:hover{background:rgba(255,255,255,.85);box-shadow:var(--sh-2)}
+.section[open] > .section-summary{
+  background:#fff;
+  box-shadow:var(--sh-card);
+  margin-bottom:14px;
+}
+
+.section-label{
+  font-size:12px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--ink-2);
+  flex:1;
+}
+.section-count{
+  font-size:11px;font-weight:600;color:var(--ink-4);
+  letter-spacing:.04em;
+  padding:3px 8px;border-radius:999px;
+  background:var(--surface-2);border:.5px solid var(--hairline);
+}
+.section[open] .section-count{background:var(--blue-soft);color:var(--blue-2);border-color:transparent}
+
+.section-chev{
+  width:24px;height:24px;border-radius:999px;
+  display:grid;place-items:center;color:var(--ink-3);
+  transition:transform .2s ease, background .15s ease;
+  flex-shrink:0;
+}
+.section-chev svg{width:14px;height:14px}
+.section[open] .section-chev{transform:rotate(90deg);color:var(--blue-2);background:var(--blue-soft)}
+
+/* legacy section-header kept for any other surfaces */
 .section-header{
   font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--ink-4);margin:48px 0 16px;
