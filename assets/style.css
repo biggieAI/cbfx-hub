@@ -91,7 +91,19 @@ body{
 .hub-wrap{max-width:1100px;width:100%;margin:0 auto;padding:56px 44px 100px;flex:1}
 
 /* ── Hero ───────────────────────────────────────────────── */
-.hero{margin-bottom:56px;max-width:760px}
+.hero{
+  margin-bottom:56px;
+  display:flex;align-items:center;justify-content:space-between;gap:30px;
+  position:relative;
+}
+.hero-text{flex:1;max-width:680px;min-width:0}
+.hero-watermark{
+  width:260px;height:260px;
+  color:var(--ink);opacity:.05;
+  pointer-events:none;
+  flex-shrink:0;
+}
+.hero-watermark svg,.hero-watermark img{width:100%;height:100%;display:block}
 .hero-eyebrow{
   font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--ink-4);margin-bottom:14px;
@@ -240,6 +252,9 @@ a.card:hover{
   display:flex;align-items:center;justify-content:space-between;
   flex-shrink:0;
 }
+.footer-left{display:flex;align-items:center;gap:10px;color:var(--ink-3)}
+.footer-mark{width:18px;height:18px;color:var(--ink-3);flex-shrink:0;display:inline-block}
+.footer-mark img,.footer-mark svg{width:100%;height:100%;display:block}
 .footer-brand{
   font-size:12px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
   color:var(--ink-3);
@@ -278,4 +293,5 @@ a.card:hover{
   .card-grid{grid-template-columns:1fr}
   .hero-title{font-size:38px}
   .hero-sub{font-size:16px}
+  .hero-watermark{display:none}
 }
