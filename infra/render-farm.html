@@ -3,160 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Render Farm Status — CBFX Hub</title>
+<title>Render Farm — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-    --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh;display:flex;flex-direction:column}
-
-  /* TOPBAR */
-  .topbar{background:var(--nav);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0}
-  .topbar-brand{color:#fff;font-weight:700;font-size:16px;letter-spacing:.04em}
-  .topbar-brand span{color:var(--muted);font-weight:400;font-size:13px;margin-left:14px;letter-spacing:.01em}
-  .topbar-right{font-size:13px;color:#a0a8b8;font-weight:500}
-
-  /* NAV STRIP */
-  .nav-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:20px}
-  .back-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .15s}
-  .back-link:hover{color:var(--text)}
-
-  /* CONTENT */
-  main{flex:1;padding:32px 20px 48px}
-  .inner{max-width:900px;margin:0 auto}
-
-  /* BANNER */
-  .banner{background:#fef3cd;border:1px solid #e8c74a;border-radius:8px;padding:12px 18px;margin-bottom:28px;display:flex;align-items:center;gap:12px}
-  .banner-icon{font-size:18px;flex-shrink:0}
-  .banner-text{font-size:13px;color:#5a4a00;font-weight:500;line-height:1.4}
-  .banner-text strong{font-weight:700}
-
-  /* PAGE HEADER */
-  .page-header{margin-bottom:24px}
-  .page-header h1{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
-
-  /* STAT CARDS */
-  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
-  @media(max-width:640px){.stat-row{grid-template-columns:repeat(2,1fr)}}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 18px 18px;text-align:center}
-  .stat-card .stat-num{font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:6px}
-  .stat-card .stat-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-  .stat-card.stat-green .stat-num{color:#1fa84f}
-  .stat-card.stat-yellow .stat-num{color:#a68800}
-  .stat-card.stat-red .stat-num{color:#c43c37}
-
-  /* SECTION HEADERS */
-  .section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;margin-top:32px}
-  .section-label:first-of-type{margin-top:0}
-
-  /* TABLE */
-  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
-  table{width:100%;border-collapse:collapse}
-  thead tr{background:var(--surface2);border-bottom:1px solid var(--border)}
-  th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
-  td{padding:11px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle}
-  tbody tr:last-child td{border-bottom:none}
-  tbody tr:hover{background:var(--surface2)}
-
-  /* STATUS BADGES */
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
-  .badge-running{background:#d6f5e3;color:#1a7a40}
-  .badge-pending{background:#fef3cd;color:#7a5a00}
-  .badge-failed{background:#fde8e8;color:#a03333}
-  .badge-idle{background:var(--surface2);color:var(--muted)}
-  .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
-
-  /* PROGRESS BAR */
-  .progress-wrap{display:flex;align-items:center;gap:8px}
-  .progress-bar-bg{flex:1;background:var(--surface2);border-radius:4px;height:7px;overflow:hidden;min-width:80px}
-  .progress-bar-fill{height:100%;border-radius:4px;background:var(--green);transition:width .3s}
-  .progress-bar-fill.fill-pending{background:var(--yellow)}
-  .progress-bar-fill.fill-failed{background:var(--red)}
-  .progress-pct{font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap;min-width:30px}
-
-  /* MONOSPACE */
-  .mono{font-family:monospace;font-size:12px;background:var(--surface2);padding:2px 7px;border-radius:4px;border:1px solid var(--border);color:var(--text2)}
-  .job-name{font-weight:600;color:var(--text)}
-  .timestamp{font-size:12px;color:var(--muted)}
-
-  /* FAILED TASKS */
-  .failed-list{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
-  .failed-item{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border)}
-  .failed-item:last-child{border-bottom:none}
-  .failed-item:hover{background:var(--surface2)}
-  .failed-icon{color:var(--red);font-size:16px;margin-top:1px;flex-shrink:0}
-  .failed-content{flex:1}
-  .failed-name{font-weight:600;font-size:13.5px;color:var(--text);margin-bottom:2px}
-  .failed-meta{font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-top:3px}
-  .failed-meta span{display:flex;align-items:center;gap:4px}
-  .failed-error{color:var(--red);font-weight:600}
-
-  /* FOOTER NOTE */
-  .page-note{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:28px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
-  .page-note a{color:var(--blue-dark);text-decoration:none;font-weight:600}
-  .page-note a:hover{text-decoration:underline}
-
-  /* PAGE FOOTER */
-  footer{background:var(--nav);text-align:center;padding:14px;font-size:12px;color:#6b7585;letter-spacing:.04em;flex-shrink:0}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/infra.css">
+<link rel="stylesheet" href="../assets/interactions.css">
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-brand">CBFX Hub <span>Infrastructure</span></div>
-  <div class="topbar-right">Render Farm Status</div>
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/></linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
 </div>
 
-<div class="nav-strip">
-  <a class="back-link" href="../index.html">&#8592; Back to Hub</a>
-</div>
+<div class="infra-wrap">
 
-<main>
-  <div class="inner">
-
-    <div class="banner">
-      <span class="banner-icon">&#9888;</span>
-      <div class="banner-text"><strong>Live data coming soon.</strong> This dashboard shows representative placeholder data. Real-time Deadline Cloud integration is in development. Check the Deadline Cloud console directly for current farm status.</div>
+  <div class="infra-header">
+    <div class="infra-header-left">
+      <div class="infra-eyebrow">
+        <a href="../index.html">CBFX Hub</a>
+        <span class="sep">›</span>
+        <span>Infrastructure</span>
+      </div>
+      <h1 class="infra-title">Render Farm</h1>
+      <p class="infra-sub">Deadline Cloud job queue, worker pool status, and recent failures. For job submission issues, file a Support Ticket.</p>
     </div>
+    <div class="infra-last-sync"><span class="pulse"></span>Last sync <span id="lastSync">—</span></div>
+  </div>
 
-    <div class="page-header">
-      <h1>Render Farm Status</h1>
+  <div class="stat-row">
+    <div class="stat-card blue"><div class="stat-num" id="stat-workers">0</div><div class="stat-label">Total Workers</div></div>
+    <div class="stat-card green"><div class="stat-num" id="stat-active">0</div><div class="stat-label">Active Jobs</div></div>
+    <div class="stat-card amber"><div class="stat-num" id="stat-queued">0</div><div class="stat-label">Queued Jobs</div></div>
+    <div class="stat-card red"><div class="stat-num" id="stat-failed">0</div><div class="stat-label">Failed Tasks</div></div>
+  </div>
+
+  <div class="infra-section">
+    <div class="infra-section-head">
+      <span class="infra-section-title">Active Jobs</span>
+      <span class="infra-section-count" id="jobCount">0 jobs</span>
     </div>
-
-    <!-- STAT CARDS -->
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-num">24</div>
-        <div class="stat-label">Total Workers</div>
-      </div>
-      <div class="stat-card stat-green">
-        <div class="stat-num">7</div>
-        <div class="stat-label">Active Jobs</div>
-      </div>
-      <div class="stat-card stat-yellow">
-        <div class="stat-num">12</div>
-        <div class="stat-label">Queued Jobs</div>
-      </div>
-      <div class="stat-card stat-red">
-        <div class="stat-num">3</div>
-        <div class="stat-label">Failed Tasks</div>
-      </div>
-    </div>
-
-    <!-- ACTIVE JOBS -->
-    <div class="section-label">Active Jobs</div>
-    <div class="table-wrap">
-      <table>
+    <div class="infra-table-wrap">
+      <table class="infra-table">
         <thead>
           <tr>
-            <th>Job Name</th>
+            <th>Job</th>
             <th>Show</th>
             <th>Artist</th>
             <th>Frame Range</th>
@@ -165,85 +79,18 @@
             <th>Submitted</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><span class="job-name">SHD_0240_v012_BEAUTY</span></td>
-            <td>Shadows & Dust</td>
-            <td>Maya Chen</td>
-            <td><span class="mono">1001–1124</span></td>
-            <td>
-              <div class="progress-wrap">
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:72%"></div></div>
-                <span class="progress-pct">72%</span>
-              </div>
-            </td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="timestamp">Today 08:14</td>
-          </tr>
-          <tr>
-            <td><span class="job-name">NVR_0055_v003_COMP</span></td>
-            <td>Never Look Back</td>
-            <td>Priya Nair</td>
-            <td><span class="mono">1001–1048</span></td>
-            <td>
-              <div class="progress-wrap">
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:41%"></div></div>
-                <span class="progress-pct">41%</span>
-              </div>
-            </td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="timestamp">Today 09:02</td>
-          </tr>
-          <tr>
-            <td><span class="job-name">EXP_0310_FX_PYRO_v007</span></td>
-            <td>Expedition Zero</td>
-            <td>Jordan Blake</td>
-            <td><span class="mono">1001–1200</span></td>
-            <td>
-              <div class="progress-wrap">
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:18%"></div></div>
-                <span class="progress-pct">18%</span>
-              </div>
-            </td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="timestamp">Today 10:30</td>
-          </tr>
-          <tr>
-            <td><span class="job-name">SHD_0188_LIGHT_v009</span></td>
-            <td>Shadows & Dust</td>
-            <td>Maya Chen</td>
-            <td><span class="mono">1001–1080</span></td>
-            <td>
-              <div class="progress-wrap">
-                <div class="progress-bar-bg"><div class="progress-bar-fill fill-pending" style="width:0%"></div></div>
-                <span class="progress-pct">0%</span>
-              </div>
-            </td>
-            <td><span class="badge badge-pending"><span class="badge-dot"></span>Pending</span></td>
-            <td class="timestamp">Today 11:05</td>
-          </tr>
-          <tr>
-            <td><span class="job-name">KNF_0071_v002_BEAUTY</span></td>
-            <td>Knife's Edge</td>
-            <td>Daisuke Mori</td>
-            <td><span class="mono">1001–1060</span></td>
-            <td>
-              <div class="progress-wrap">
-                <div class="progress-bar-bg"><div class="progress-bar-fill fill-failed" style="width:63%"></div></div>
-                <span class="progress-pct">63%</span>
-              </div>
-            </td>
-            <td><span class="badge badge-failed"><span class="badge-dot"></span>Failed</span></td>
-            <td class="timestamp">Today 07:50</td>
-          </tr>
-        </tbody>
+        <tbody id="jobsBody"></tbody>
       </table>
     </div>
+  </div>
 
-    <!-- WORKER POOL -->
-    <div class="section-label">Worker Pool</div>
-    <div class="table-wrap">
-      <table>
+  <div class="infra-section">
+    <div class="infra-section-head">
+      <span class="infra-section-title">Worker Pool</span>
+      <span class="infra-section-count" id="workerCount">0 workers</span>
+    </div>
+    <div class="infra-table-wrap">
+      <table class="infra-table">
         <thead>
           <tr>
             <th>Worker ID</th>
@@ -253,113 +100,131 @@
             <th>Last Heartbeat</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><span class="mono">wkr-001</span></td>
-            <td>gpu-primary</td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="job-name" style="font-size:12.5px">SHD_0240_v012_BEAUTY</td>
-            <td class="timestamp">2s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-002</span></td>
-            <td>gpu-primary</td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="job-name" style="font-size:12.5px">SHD_0240_v012_BEAUTY</td>
-            <td class="timestamp">4s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-003</span></td>
-            <td>gpu-primary</td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="job-name" style="font-size:12.5px">NVR_0055_v003_COMP</td>
-            <td class="timestamp">1s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-004</span></td>
-            <td>gpu-burst</td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="job-name" style="font-size:12.5px">EXP_0310_FX_PYRO_v007</td>
-            <td class="timestamp">8s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-005</span></td>
-            <td>gpu-burst</td>
-            <td><span class="badge badge-idle"><span class="badge-dot"></span>Idle</span></td>
-            <td style="color:var(--muted);font-size:13px">—</td>
-            <td class="timestamp">12s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-006</span></td>
-            <td>cpu-pool</td>
-            <td><span class="badge badge-idle"><span class="badge-dot"></span>Idle</span></td>
-            <td style="color:var(--muted);font-size:13px">—</td>
-            <td class="timestamp">5s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-007</span></td>
-            <td>cpu-pool</td>
-            <td><span class="badge badge-running"><span class="badge-dot"></span>Running</span></td>
-            <td class="job-name" style="font-size:12.5px">EXP_0310_FX_PYRO_v007</td>
-            <td class="timestamp">3s ago</td>
-          </tr>
-          <tr>
-            <td><span class="mono">wkr-008</span></td>
-            <td>gpu-primary</td>
-            <td><span class="badge badge-failed"><span class="badge-dot"></span>Error</span></td>
-            <td style="color:var(--muted);font-size:13px">—</td>
-            <td class="timestamp">4m ago</td>
-          </tr>
-        </tbody>
+        <tbody id="workersBody"></tbody>
       </table>
     </div>
-
-    <!-- FAILED TASKS -->
-    <div class="section-label">Failed Tasks</div>
-    <div class="failed-list">
-      <div class="failed-item">
-        <div class="failed-icon">&#9711;</div>
-        <div class="failed-content">
-          <div class="failed-name">KNF_0071_v002_BEAUTY — Frame 1038</div>
-          <div class="failed-meta">
-            <span class="failed-error">&#9888; RenderError: Out of GPU memory (CUDA OOM)</span>
-            <span>Worker: wkr-008</span>
-            <span>Today 07:51</span>
-          </div>
-        </div>
-      </div>
-      <div class="failed-item">
-        <div class="failed-icon">&#9711;</div>
-        <div class="failed-content">
-          <div class="failed-name">SHD_0091_v004_LIGHT — Frame 1014</div>
-          <div class="failed-meta">
-            <span class="failed-error">&#9888; TimeoutError: Frame exceeded 2h render limit</span>
-            <span>Worker: wkr-003</span>
-            <span>Yesterday 22:18</span>
-          </div>
-        </div>
-      </div>
-      <div class="failed-item">
-        <div class="failed-icon">&#9711;</div>
-        <div class="failed-content">
-          <div class="failed-name">EXP_0204_FX_v001_BEAUTY — Frames 1022–1027</div>
-          <div class="failed-meta">
-            <span class="failed-error">&#9888; AssetNotFound: Missing texture /proj/EXP/tex/grd_crk_v003.exr</span>
-            <span>Worker: wkr-005</span>
-            <span>Yesterday 18:44</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="page-note">
-      Deadline Cloud console: <a href="https://deadline.aws/" target="_blank" rel="noopener">https://deadline.aws/</a> — Contact GPL Tech for admin access. For job submission issues, open a <a href="../tools/support-ticket.html">Support Ticket</a>.
-    </div>
-
   </div>
-</main>
 
-<footer>CBFX &middot; Internal Use Only</footer>
+  <div class="infra-section">
+    <div class="infra-section-head">
+      <span class="infra-section-title">Failed Tasks</span>
+      <span class="infra-section-count" id="failedCount">0 failures</span>
+    </div>
+    <div id="failedList" class="failed-list"></div>
+  </div>
 
+  <div class="infra-note">
+    Deadline Cloud console: <a href="https://us-east-1.console.aws.amazon.com/deadlinecloud" target="_blank" rel="noopener">us-east-1 / Deadline Cloud</a> — Contact GPL Tech for admin access. For job submission issues, open a <a href="../tools/support-ticket.html">Support Ticket</a>.
+  </div>
+
+</div>
+
+<script>
+window.CBFX_INFRA_FIXTURES = {
+  renderFarm: {
+    stats: { totalWorkers: 24, queuedJobs: 12 },
+    jobs: [
+      { name:'SHD_0240_v012_BEAUTY',  show:'Shadows & Dust',   artist:'Maya Chen',     frames:'1001–1124', progress:72, status:'running', submitted:'Today 08:14' },
+      { name:'NVR_0055_v003_COMP',    show:'Never Look Back',  artist:'Priya Nair',    frames:'1001–1048', progress:41, status:'running', submitted:'Today 09:02' },
+      { name:'EXP_0310_FX_PYRO_v007', show:'Expedition Zero',  artist:'Jordan Blake',  frames:'1001–1200', progress:18, status:'running', submitted:'Today 10:30' },
+      { name:'SHD_0188_LIGHT_v009',   show:'Shadows & Dust',   artist:'Maya Chen',     frames:'1001–1080', progress:0,  status:'pending', submitted:'Today 11:05' },
+      { name:'KNF_0071_v002_BEAUTY',  show:"Knife's Edge",     artist:'Daisuke Mori',  frames:'1001–1060', progress:63, status:'failed',  submitted:'Today 07:50' },
+    ],
+    workers: [
+      { id:'wkr-001', pool:'gpu-primary', status:'running', job:'SHD_0240_v012_BEAUTY',  heartbeat:'2s ago' },
+      { id:'wkr-002', pool:'gpu-primary', status:'running', job:'SHD_0240_v012_BEAUTY',  heartbeat:'4s ago' },
+      { id:'wkr-003', pool:'gpu-primary', status:'running', job:'NVR_0055_v003_COMP',    heartbeat:'1s ago' },
+      { id:'wkr-004', pool:'gpu-burst',   status:'running', job:'EXP_0310_FX_PYRO_v007', heartbeat:'8s ago' },
+      { id:'wkr-005', pool:'gpu-burst',   status:'idle',    job:null,                    heartbeat:'12s ago' },
+      { id:'wkr-006', pool:'cpu-pool',    status:'idle',    job:null,                    heartbeat:'5s ago' },
+      { id:'wkr-007', pool:'cpu-pool',    status:'running', job:'EXP_0310_FX_PYRO_v007', heartbeat:'3s ago' },
+      { id:'wkr-008', pool:'gpu-primary', status:'error',   job:null,                    heartbeat:'4m ago' },
+    ],
+    failed: [
+      { name:'KNF_0071_v002_BEAUTY — Frame 1038',       error:'RenderError: Out of GPU memory (CUDA OOM)',         worker:'wkr-008', when:'Today 07:51' },
+      { name:'SHD_0091_v004_LIGHT — Frame 1014',        error:'TimeoutError: Frame exceeded 2h render limit',      worker:'wkr-003', when:'Yesterday 22:18' },
+      { name:'EXP_0204_FX_v001_BEAUTY — Frames 1022–1027', error:'AssetNotFound: Missing texture /proj/EXP/tex/grd_crk_v003.exr', worker:'wkr-005', when:'Yesterday 18:44' },
+    ]
+  }
+};
+</script>
+<script src="../assets/infra-data.js"></script>
+<script>
+async function init(){
+  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
+  const farm = await CBFXInfra.getRenderFarm();
+
+  const jobs = farm.jobs || [];
+  const workers = farm.workers || [];
+  const failed = farm.failed || [];
+
+  // ── Stats ───────────────────────────────────────────────
+  document.getElementById('stat-workers').textContent = farm.stats?.totalWorkers ?? workers.length;
+  document.getElementById('stat-active').textContent  = jobs.filter(j => j.status === 'running').length;
+  document.getElementById('stat-queued').textContent  = farm.stats?.queuedJobs ?? jobs.filter(j => j.status === 'pending').length;
+  document.getElementById('stat-failed').textContent  = failed.length;
+
+  // ── Jobs ────────────────────────────────────────────────
+  document.getElementById('jobCount').textContent = jobs.length + ' jobs';
+  const jobStatus = {
+    running: { badge:'green', dot:'green', label:'Running', fill:'' },
+    pending: { badge:'gray',  dot:'amber', label:'Pending', fill:'gray' },
+    failed:  { badge:'red',   dot:'red',   label:'Failed',  fill:'red' },
+  };
+  document.getElementById('jobsBody').innerHTML = jobs.map(j => {
+    const info = jobStatus[j.status] || { badge:'gray', dot:'amber', label:j.status, fill:'gray' };
+    return `<tr>
+      <td><span class="mono">${j.name}</span></td>
+      <td>${j.show}</td>
+      <td>${j.artist}</td>
+      <td><span class="mono">${j.frames}</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-track"><div class="progress-fill ${info.fill}" style="width:${j.progress}%"></div></div>
+          <span class="progress-pct">${j.progress}%</span>
+        </div>
+      </td>
+      <td><span class="infra-badge ${info.badge}"><span class="dot ${info.dot}" style="display:inline-block;margin-right:4px;vertical-align:middle"></span>${info.label}</span></td>
+      <td style="color:var(--ink-3);font-size:12px">${j.submitted}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" class="empty-state">No active jobs.</td></tr>';
+
+  // ── Workers ─────────────────────────────────────────────
+  document.getElementById('workerCount').textContent = workers.length + ' workers';
+  const workerStatus = {
+    running: { badge:'green', dot:'green', label:'Running' },
+    idle:    { badge:'gray',  dot:'amber', label:'Idle' },
+    error:   { badge:'red',   dot:'red',   label:'Error' },
+  };
+  document.getElementById('workersBody').innerHTML = workers.map(w => {
+    const info = workerStatus[w.status] || { badge:'gray', dot:'amber', label:w.status };
+    return `<tr>
+      <td><span class="mono">${w.id}</span></td>
+      <td>${w.pool}</td>
+      <td><span class="infra-badge ${info.badge}"><span class="dot ${info.dot}" style="display:inline-block;margin-right:4px;vertical-align:middle"></span>${info.label}</span></td>
+      <td>${w.job ? '<span class="mono" style="font-size:11.5px">' + w.job + '</span>' : '<span class="muted">—</span>'}</td>
+      <td style="color:var(--ink-3);font-size:12px">${w.heartbeat}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" class="empty-state">No workers online.</td></tr>';
+
+  // ── Failed tasks ────────────────────────────────────────
+  document.getElementById('failedCount').textContent = failed.length + ' failures';
+  document.getElementById('failedList').innerHTML = failed.map(f => `
+    <div class="failed-item">
+      <div class="failed-icon">!</div>
+      <div class="failed-content">
+        <div class="failed-name">${f.name}</div>
+        <div class="failed-meta">
+          <span class="err">⚠ ${f.error}</span>
+          <span>Worker: <span class="mono">${f.worker}</span></span>
+          <span>${f.when}</span>
+        </div>
+      </div>
+    </div>
+  `).join('') || '<div class="empty-state">No recent failures. 🎉</div>';
+}
+
+init();
+</script>
 </body>
 </html>

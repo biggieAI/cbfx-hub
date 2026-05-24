@@ -6,246 +6,181 @@
 <title>Active Shows — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-    --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh;display:flex;flex-direction:column}
-
-  /* TOPBAR */
-  .topbar{background:var(--nav);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0}
-  .topbar-brand{color:#fff;font-weight:700;font-size:16px;letter-spacing:.04em}
-  .topbar-brand span{color:var(--muted);font-weight:400;font-size:13px;margin-left:14px;letter-spacing:.01em}
-  .topbar-right{font-size:13px;color:#a0a8b8;font-weight:500}
-
-  /* NAV STRIP */
-  .nav-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:20px}
-  .back-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .15s}
-  .back-link:hover{color:var(--text)}
-
-  /* CONTENT */
-  main{flex:1;padding:32px 20px 48px}
-  .inner{max-width:900px;margin:0 auto}
-
-  /* PAGE HEADER */
-  .page-header{margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  .page-header h1{font-size:22px;font-weight:700;color:var(--text)}
-
-  /* BUTTON */
-  .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:7px;font-family:'Figtree',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;border:none;transition:background .15s,transform .1s}
-  .btn:active{transform:scale(.98)}
-  .btn-primary{background:var(--blue-dark);color:#fff}
-  .btn-primary:hover{background:#24497a}
-
-  /* STATUS BADGES */
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-  .badge-active{background:#d6f5e3;color:#1a7a40}
-  .badge-wrap{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
-  .badge-bidding{background:#e8f0ff;color:#2449a3}
-
-  /* SHOW GRID */
-  .show-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
-  @media(max-width:580px){.show-grid{grid-template-columns:1fr}}
-
-  .show-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 22px 18px;display:flex;flex-direction:column;gap:0;transition:box-shadow .15s,border-color .15s}
-  .show-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.09);border-color:var(--border-dark)}
-
-  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
-  .card-show-name{font-size:16px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:3px}
-  .card-client{font-size:12px;color:var(--muted);font-weight:500}
-
-  .card-meta{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
-  .card-meta-row{display:flex;gap:6px;font-size:12.5px}
-  .card-meta-row .meta-key{color:var(--muted);font-weight:500;min-width:90px;flex-shrink:0}
-  .card-meta-row .meta-val{color:var(--text2);font-weight:500}
-
-  .card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border)}
-  .shotgrid-link{font-size:12px;font-weight:600;color:var(--blue-dark);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
-  .shotgrid-link:hover{text-decoration:underline}
-  .shotgrid-link::before{content:'&#8599;';font-size:13px}
-
-  /* SECTION LABEL */
-  .section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
-
-  /* ARCHIVE TABLE */
-  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
-  table{width:100%;border-collapse:collapse}
-  thead tr{background:var(--surface2);border-bottom:1px solid var(--border)}
-  th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
-  td{padding:11px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle}
-  tbody tr:last-child td{border-bottom:none}
-  tbody tr:hover{background:var(--surface2)}
-  td.show-name-cell{font-weight:600;color:var(--text)}
-
-  /* PAGE NOTE */
-  .page-note{font-size:12.5px;color:var(--muted);line-height:1.6;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-top:4px}
-  .page-note a{color:var(--blue-dark);text-decoration:none;font-weight:600}
-  .page-note a:hover{text-decoration:underline}
-
-  /* PAGE FOOTER */
-  footer{background:var(--nav);text-align:center;padding:14px;font-size:12px;color:#6b7585;letter-spacing:.04em;flex-shrink:0}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/infra.css">
+<link rel="stylesheet" href="../assets/interactions.css">
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-brand">CBFX Hub <span>Production</span></div>
-  <div class="topbar-right">Active Shows</div>
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/></linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
 </div>
 
-<div class="nav-strip">
-  <a class="back-link" href="../index.html">&#8592; Back to Hub</a>
-</div>
+<div class="infra-wrap">
 
-<main>
-  <div class="inner">
-
-    <div class="page-header">
-      <h1>Active Shows</h1>
-      <a class="btn btn-primary" href="../tools/bid-request.html">&#43; New Bid Request</a>
+  <div class="infra-header">
+    <div class="infra-header-left">
+      <div class="infra-eyebrow">
+        <a href="../index.html">CBFX Hub</a>
+        <span class="sep">›</span>
+        <span>Infrastructure</span>
+      </div>
+      <h1 class="infra-title">Active Shows</h1>
+      <p class="infra-sub">Currently in-flight and bidding projects. ShotGrid is the source of truth — this is a quick-glance index.</p>
     </div>
+    <div class="infra-last-sync"><span class="pulse"></span>Last sync <span id="lastSync">—</span></div>
+  </div>
 
-    <!-- SHOW CARDS -->
-    <div class="show-grid">
+  <div class="stat-row">
+    <div class="stat-card green"><div class="stat-num" id="stat-active">0</div><div class="stat-label">Active</div></div>
+    <div class="stat-card amber"><div class="stat-num" id="stat-bidding">0</div><div class="stat-label">Bidding</div></div>
+    <div class="stat-card blue"><div class="stat-num" id="stat-shots">0</div><div class="stat-label">Total Shots In-Flight</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-wrapped">0</div><div class="stat-label">Recently Wrapped</div></div>
+  </div>
 
-      <!-- CARD 1 -->
-      <div class="show-card">
-        <div class="card-top">
-          <div>
-            <div class="card-show-name">Shadows &amp; Dust</div>
-            <div class="card-client">Meridian Pictures</div>
-          </div>
-          <span class="badge badge-active">Active</span>
-        </div>
-        <div class="card-meta">
-          <div class="card-meta-row"><span class="meta-key">VFX Supervisor</span><span class="meta-val">Elena Rourke</span></div>
-          <div class="card-meta-row"><span class="meta-key">Shot Count</span><span class="meta-val">348 shots</span></div>
-          <div class="card-meta-row"><span class="meta-key">Start Date</span><span class="meta-val">2026-01-06</span></div>
-          <div class="card-meta-row"><span class="meta-key">Delivery</span><span class="meta-val">2026-08-15</span></div>
-        </div>
-        <div class="card-footer">
-          <span class="badge badge-active">Active</span>
-          <a class="shotgrid-link" href="#">Open in ShotGrid</a>
-        </div>
-      </div>
-
-      <!-- CARD 2 -->
-      <div class="show-card">
-        <div class="card-top">
-          <div>
-            <div class="card-show-name">Never Look Back</div>
-            <div class="card-client">Apex Streaming</div>
-          </div>
-          <span class="badge badge-active">Active</span>
-        </div>
-        <div class="card-meta">
-          <div class="card-meta-row"><span class="meta-key">VFX Supervisor</span><span class="meta-val">Marcus Webb</span></div>
-          <div class="card-meta-row"><span class="meta-key">Shot Count</span><span class="meta-val">182 shots</span></div>
-          <div class="card-meta-row"><span class="meta-key">Start Date</span><span class="meta-val">2026-02-17</span></div>
-          <div class="card-meta-row"><span class="meta-key">Delivery</span><span class="meta-val">2026-07-30</span></div>
-        </div>
-        <div class="card-footer">
-          <span class="badge badge-active">Active</span>
-          <a class="shotgrid-link" href="#">Open in ShotGrid</a>
-        </div>
-      </div>
-
-      <!-- CARD 3 -->
-      <div class="show-card">
-        <div class="card-top">
-          <div>
-            <div class="card-show-name">Expedition Zero</div>
-            <div class="card-client">Northgate Films</div>
-          </div>
-          <span class="badge badge-active">Active</span>
-        </div>
-        <div class="card-meta">
-          <div class="card-meta-row"><span class="meta-key">VFX Supervisor</span><span class="meta-val">Soo-Jin Park</span></div>
-          <div class="card-meta-row"><span class="meta-key">Shot Count</span><span class="meta-val">520 shots</span></div>
-          <div class="card-meta-row"><span class="meta-key">Start Date</span><span class="meta-val">2025-11-04</span></div>
-          <div class="card-meta-row"><span class="meta-key">Delivery</span><span class="meta-val">2026-09-01</span></div>
-        </div>
-        <div class="card-footer">
-          <span class="badge badge-active">Active</span>
-          <a class="shotgrid-link" href="#">Open in ShotGrid</a>
-        </div>
-      </div>
-
-      <!-- CARD 4 -->
-      <div class="show-card">
-        <div class="card-top">
-          <div>
-            <div class="card-show-name">Knife's Edge</div>
-            <div class="card-client">Redline Entertainment</div>
-          </div>
-          <span class="badge badge-bidding">Bidding</span>
-        </div>
-        <div class="card-meta">
-          <div class="card-meta-row"><span class="meta-key">VFX Supervisor</span><span class="meta-val">TBD</span></div>
-          <div class="card-meta-row"><span class="meta-key">Shot Count</span><span class="meta-val">~90 est.</span></div>
-          <div class="card-meta-row"><span class="meta-key">Start Date</span><span class="meta-val">TBD</span></div>
-          <div class="card-meta-row"><span class="meta-key">Delivery</span><span class="meta-val">TBD</span></div>
-        </div>
-        <div class="card-footer">
-          <span class="badge badge-bidding">Bidding</span>
-          <a class="shotgrid-link" href="#">Open in ShotGrid</a>
-        </div>
-      </div>
-
+  <div class="infra-section">
+    <div class="infra-section-head">
+      <span class="infra-section-title">Active &amp; Bidding</span>
+      <span class="infra-section-count" id="showCount">0 shows</span>
     </div>
+    <div class="show-grid" id="showGrid"></div>
+  </div>
 
-    <!-- ARCHIVE -->
-    <div class="section-label">Active Shows Archive &mdash; Recently Wrapped</div>
-    <div class="table-wrap">
-      <table>
+  <div class="infra-section">
+    <div class="infra-section-head">
+      <span class="infra-section-title">Recently Wrapped</span>
+    </div>
+    <div class="infra-table-wrap">
+      <table class="infra-table">
         <thead>
           <tr>
             <th>Show</th>
             <th>Client</th>
-            <th>Wrapped Date</th>
-            <th>Shot Count</th>
+            <th>Wrapped</th>
+            <th>Shots</th>
             <th>Supervisor</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td class="show-name-cell">Iron Meridian</td>
-            <td>Parallax Studios</td>
-            <td>2026-03-28</td>
-            <td>412</td>
-            <td>Elena Rourke</td>
-          </tr>
-          <tr>
-            <td class="show-name-cell">The Quiet War S02</td>
-            <td>Apex Streaming</td>
-            <td>2025-12-14</td>
-            <td>267</td>
-            <td>Marcus Webb</td>
-          </tr>
-          <tr>
-            <td class="show-name-cell">Downfall Protocol</td>
-            <td>Ironclad Films</td>
-            <td>2025-10-01</td>
-            <td>189</td>
-            <td>Yuki Tanaka</td>
-          </tr>
-        </tbody>
+        <tbody id="archiveBody"></tbody>
       </table>
     </div>
-
-    <div class="page-note">
-      ShotGrid is the system of record for all show data, shot tracking, and review workflows. This page is a quick-reference index only — always refer to <a href="#">ShotGrid</a> for authoritative information.
-    </div>
-
   </div>
-</main>
 
-<footer>CBFX &middot; Internal Use Only</footer>
+  <div class="infra-note">
+    ShotGrid is the system of record for all show data, shot tracking, and review workflows. This page is a quick-reference index only — always refer to <a href="https://cbfx.shotgunstudio.com/" target="_blank" rel="noopener">ShotGrid</a> for authoritative information. To start a new bid, use the <a href="../tools/bid-request.html">Bid Request</a> wizard.
+  </div>
 
+</div>
+
+<script>
+window.CBFX_INFRA_FIXTURES = {
+  shows: {
+    active: [
+      { name:'Shadows & Dust',   client:'Meridian Pictures',  sup:'Elena Rourke', shots:348, start:'2026-01-06', delivery:'2026-08-15', sg:'https://cbfx.shotgunstudio.com/page/show/shadows-and-dust', status:'active' },
+      { name:'Never Look Back',  client:'Apex Streaming',     sup:'Marcus Webb',  shots:182, start:'2026-02-17', delivery:'2026-07-30', sg:'https://cbfx.shotgunstudio.com/page/show/never-look-back', status:'active' },
+      { name:'Expedition Zero',  client:'Northgate Films',    sup:'Soo-Jin Park', shots:520, start:'2025-11-04', delivery:'2026-09-01', sg:'https://cbfx.shotgunstudio.com/page/show/expedition-zero', status:'active' },
+      { name:"Knife's Edge",     client:'Redline Entertainment', sup:'TBD',       shots:90,  start:'TBD',        delivery:'TBD',        sg:'https://cbfx.shotgunstudio.com/page/show/knifes-edge', status:'bidding', shotsLabel:'~90 est.' },
+    ],
+    wrapped: [
+      { name:'Iron Meridian',    client:'Parallax Studios', wrapped:'2026-03-28', shots:412, sup:'Elena Rourke' },
+      { name:'The Quiet War S02',client:'Apex Streaming',   wrapped:'2025-12-14', shots:267, sup:'Marcus Webb' },
+      { name:'Downfall Protocol',client:'Ironclad Films',   wrapped:'2025-10-01', shots:189, sup:'Yuki Tanaka' },
+    ]
+  }
+};
+</script>
+<script src="../assets/infra-data.js"></script>
+<script>
+async function init(){
+  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
+  const data = (await CBFXInfra.getShows());
+
+  const active = data.active || [];
+  const wrapped = data.wrapped || [];
+
+  const inFlightShots = active
+    .filter(s => s.status === 'active')
+    .reduce((sum,s) => sum + (s.shots || 0), 0);
+
+  document.getElementById('stat-active').textContent = active.filter(s => s.status === 'active').length;
+  document.getElementById('stat-bidding').textContent = active.filter(s => s.status === 'bidding').length;
+  document.getElementById('stat-shots').textContent = inFlightShots.toLocaleString();
+  document.getElementById('stat-wrapped').textContent = wrapped.length;
+  document.getElementById('showCount').textContent = active.length + ' shows';
+
+  // Show cards
+  const grid = document.getElementById('showGrid');
+  if (!active.length){
+    grid.innerHTML = '<div class="empty-state">No active shows.</div>';
+  } else {
+    grid.innerHTML = active.map(s => {
+      const badge = s.status === 'bidding'
+        ? '<span class="infra-badge amber">Bidding</span>'
+        : '<span class="infra-badge green">Active</span>';
+      const shotLabel = s.shotsLabel || (s.shots + ' shots');
+      return `
+        <div class="show-card">
+          <div class="show-card-top">
+            <div>
+              <div class="show-card-name">${s.name}</div>
+              <div class="show-card-client">${s.client}</div>
+            </div>
+            ${badge}
+          </div>
+          <div class="show-card-meta">
+            <div class="show-card-meta-row"><span class="k">VFX Sup</span><span class="v">${s.sup}</span></div>
+            <div class="show-card-meta-row"><span class="k">Shots</span><span class="v">${shotLabel}</span></div>
+            <div class="show-card-meta-row"><span class="k">Start</span><span class="v">${s.start}</span></div>
+            <div class="show-card-meta-row"><span class="k">Delivery</span><span class="v">${s.delivery}</span></div>
+          </div>
+          <div class="show-card-footer">
+            ${badge}
+            <a class="show-card-link" href="${s.sg}" target="_blank" rel="noopener">Open in ShotGrid →</a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Wrapped archive
+  const tbody = document.getElementById('archiveBody');
+  if (!wrapped.length){
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No recently wrapped shows.</td></tr>';
+  } else {
+    tbody.innerHTML = wrapped.map(s => `<tr>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.client}</td>
+      <td><span class="mono">${s.wrapped}</span></td>
+      <td>${s.shots}</td>
+      <td>${s.sup}</td>
+    </tr>`).join('');
+  }
+}
+
+init();
+</script>
 </body>
 </html>
