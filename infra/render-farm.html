@@ -151,8 +151,8 @@ window.CBFX_INFRA_FIXTURES = {
 <script src="../assets/infra-data.js"></script>
 <script>
 async function init(){
-  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
   const farm = await CBFXInfra.getRenderFarm();
+  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
 
   const jobs = farm.jobs || [];
   const workers = farm.workers || [];

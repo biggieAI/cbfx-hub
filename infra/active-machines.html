@@ -128,8 +128,8 @@ window.CBFX_INFRA_FIXTURES = {
 let allMachines = [];
 
 async function init(){
-  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
   allMachines = await CBFXInfra.getMachines();
+  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
 
   // Populate dept filter dynamically
   const depts = [...new Set(allMachines.map(m => m.dept))].sort();

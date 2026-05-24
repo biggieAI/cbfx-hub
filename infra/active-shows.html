@@ -115,8 +115,8 @@ window.CBFX_INFRA_FIXTURES = {
 <script src="../assets/infra-data.js"></script>
 <script>
 async function init(){
-  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
   const data = (await CBFXInfra.getShows());
+  document.getElementById('lastSync').textContent = CBFXInfra.formatLastSync();
 
   const active = data.active || [];
   const wrapped = data.wrapped || [];
