@@ -3,302 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PO & Invoice Submission — CBFX Hub</title>
+<title>PO / Invoice — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/wizard.css">
+<link rel="stylesheet" href="../assets/interactions.css">
 <style>
-  :root{
-    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-    --blue-dark:#1e3a5a;--accent:#2a6dd9;--accent-light:#e8f0fc;
-    --error:#c0392b;--success:#1e7e34;
+  /* PO vs Invoice big cards */
+  .type-card{
+    display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+    padding:22px 22px 20px;border-radius:18px;
+    background:var(--surface);border:.5px solid var(--hairline);
+    cursor:pointer;transition:all .2s cubic-bezier(.2,.7,.2,1);
+    position:relative;text-align:left;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
+  .type-card input{position:absolute;opacity:0;pointer-events:none}
+  .type-card:hover{background:#fff;border-color:var(--ink-5);transform:translateY(-1px)}
+  .type-card:has(input:checked){background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .tc-icon{font-size:22px;line-height:1;margin-bottom:4px}
+  .tc-title{font-family:'Inter',sans-serif;font-weight:800;font-size:15px;letter-spacing:-.01em;color:var(--ink)}
+  .tc-desc{font-size:13px;color:var(--ink-3);line-height:1.4}
 
-  /* TOPBAR */
-  .topbar{
-    background:var(--nav);color:var(--white);
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 28px;height:54px;position:sticky;top:0;z-index:100;
+  /* Currency prefix */
+  .input-prefix{
+    display:flex;align-items:center;
+    background:var(--surface);border:.5px solid var(--hairline-strong);
+    border-radius:12px;overflow:hidden;
+    transition:border-color .15s, background .15s, box-shadow .15s;
   }
-  .topbar-brand{font-weight:700;font-size:16px;letter-spacing:.04em;color:var(--white)}
-  .topbar-sub{font-size:13px;color:#8a96a8;font-weight:500}
-  .topbar-back{font-size:13px;color:#8a96a8;text-decoration:none;transition:color .15s}
-  .topbar-back:hover{color:var(--white)}
-  .topbar-left{display:flex;align-items:center;gap:20px}
+  .input-prefix:focus-within{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-soft)}
+  .input-prefix-symbol{padding:0 14px;font-size:14px;font-weight:600;color:var(--ink-3);border-right:.5px solid var(--hairline)}
+  .input-prefix input{
+    border:0;background:transparent;outline:none;
+    flex:1;height:44px;padding:0 14px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink);
+  }
 
-  /* LAYOUT */
-  .page{max-width:720px;margin:0 auto;padding:36px 20px 60px}
+  /* Native select */
+  select{
+    width:100%;height:44px;padding:0 36px 0 14px;
+    border:.5px solid var(--hairline-strong);border-radius:12px;
+    background:var(--surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23475569' stroke-width='1.5'><polyline points='1.5,1.5 6,6.5 10.5,1.5'/></svg>") no-repeat right 14px center / 12px 8px;
+    font-family:inherit;font-size:14px;color:var(--ink);outline:none;
+    transition:border-color .15s, background-color .15s, box-shadow .15s;
+    appearance:none;-webkit-appearance:none;
+  }
+  select:focus{border-color:var(--blue);background-color:#fff;box-shadow:0 0 0 3px var(--blue-soft)}
 
-  /* PROGRESS */
-  .progress-bar{display:flex;gap:0;margin-bottom:36px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
-  .progress-step{
-    flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:600;
-    background:var(--surface);color:var(--muted);border-right:1px solid var(--border);
-    transition:all .2s;cursor:default;
-  }
-  .progress-step:last-child{border-right:none}
-  .progress-step.active{background:var(--blue-dark);color:var(--white)}
-  .progress-step.done{background:var(--surface2);color:var(--text2)}
-  .progress-step .step-num{display:block;font-size:11px;font-weight:700;opacity:.7;margin-bottom:2px}
-
-  /* CARD */
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px}
-  .card-title{font-size:19px;font-weight:700;color:var(--text);margin-bottom:6px}
-  .card-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
-
-  /* FORM */
-  .form-row{margin-bottom:20px}
-  .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-  label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
-  label .opt{font-weight:400;color:var(--muted);font-size:12px}
-  input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
-    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;
-    background:var(--white);color:var(--text);font-family:'Figtree',sans-serif;font-size:14px;
-    outline:none;transition:border-color .15s;
-  }
-  input:focus,textarea:focus,select:focus{border-color:var(--accent)}
-  input.error,textarea.error,select.error{border-color:var(--error)}
-  textarea{resize:vertical;min-height:90px}
-  .input-prefix{position:relative}
-  .input-prefix span.pre{
-    position:absolute;left:12px;top:50%;transform:translateY(-50%);
-    color:var(--muted);font-size:14px;font-weight:600;pointer-events:none;
-  }
-  .input-prefix input{padding-left:26px}
-
-  /* RADIO CARDS */
-  .radio-cards{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-  .radio-cards input[type=radio]{display:none}
-  .radio-cards label{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;
-    background:var(--white);color:var(--text2);font-size:13px;font-weight:600;
-    cursor:pointer;transition:all .15s;margin-bottom:0;
-  }
-  .radio-cards input[type=radio]:checked + label{
-    border-color:var(--accent);background:var(--accent-light);color:var(--accent);
-  }
-  .radio-cards label:hover{border-color:var(--border-dark);background:var(--surface2)}
-  .radio-cards input[type=radio]:checked + label:hover{background:var(--accent-light)}
-
-  /* Submission type — large cards */
-  .type-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
-  .type-cards input[type=radio]{display:none}
-  .type-cards label{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:22px 16px;border:2px solid var(--border);border-radius:10px;
-    background:var(--white);color:var(--text2);font-size:15px;font-weight:700;
-    cursor:pointer;transition:all .18s;text-align:center;gap:6px;margin-bottom:0;
-  }
-  .type-cards label .type-icon{font-size:26px;line-height:1}
-  .type-cards label .type-desc{font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
-  .type-cards input[type=radio]:checked + label{
-    border-color:var(--accent);background:var(--accent-light);color:var(--accent);
-  }
-  .type-cards input[type=radio]:checked + label .type-desc{color:var(--accent)}
-  .type-cards label:hover{border-color:var(--border-dark);background:var(--surface2)}
-
-  /* NAV BUTTONS */
-  .btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px}
-  .btn{
-    padding:11px 26px;border-radius:7px;font-family:'Figtree',sans-serif;
-    font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;
-  }
-  .btn-primary{background:var(--blue-dark);color:var(--white)}
-  .btn-primary:hover{background:#162d47}
-  .btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
-  .btn-secondary:hover{background:var(--border)}
-  .btn-accent{background:var(--accent);color:#fff}
-  .btn-accent:hover{background:#2060c0}
-
-  /* SUMMARY BOX */
+  /* Memo box */
   .memo-box{
-    background:var(--white);border:1px solid var(--border);border-radius:8px;
-    padding:28px 32px;font-size:14px;line-height:1.7;
+    background:#fff;border:.5px solid var(--hairline-strong);border-radius:18px;
+    padding:24px 28px;margin-top:12px;box-shadow:var(--sh-1);
   }
-  .memo-header{border-bottom:2px solid var(--blue-dark);padding-bottom:14px;margin-bottom:20px}
-  .memo-title{font-size:18px;font-weight:700;color:var(--blue-dark);letter-spacing:.02em}
-  .memo-date{font-size:12px;color:var(--muted);margin-top:3px}
+  .memo-header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding-bottom:14px;margin-bottom:18px;border-bottom:1px solid var(--ink);
+  }
+  .memo-title{font-family:'Inter',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.01em;color:var(--ink)}
+  .memo-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-4);letter-spacing:.04em}
   .memo-section{margin-bottom:18px}
+  .memo-section:last-child{margin-bottom:0}
   .memo-section-title{
-    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--muted);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);
+    font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-4);margin-bottom:10px;
   }
-  .memo-row{display:grid;grid-template-columns:180px 1fr;gap:8px;margin-bottom:5px}
-  .memo-key{font-weight:600;color:var(--text2);font-size:13px}
-  .memo-val{color:var(--text);font-size:13px}
-  .memo-note{
-    margin-top:20px;padding:12px 14px;background:#fff8e1;border:1px solid #ffe082;
-    border-radius:6px;font-size:12px;color:#6d5000;
+  .memo-row{
+    display:grid;grid-template-columns:170px 1fr;gap:14px;
+    padding:6px 0;font-size:13.5px;border-bottom:.5px dashed rgba(15,23,42,.08);
   }
+  .memo-row:last-child{border-bottom:0}
+  .memo-key{color:var(--ink-3);font-weight:500}
+  .memo-val{color:var(--ink);font-weight:600;overflow-wrap:break-word}
+  .memo-val.amount{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--blue)}
 
-  /* ACTIONS */
-  .actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-
-  /* TOAST */
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    background:var(--nav);color:var(--white);padding:10px 22px;
-    border-radius:8px;font-size:13px;font-weight:600;
-    opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;
-  }
-  .toast.show{opacity:1}
-
-  .err-msg{font-size:12px;color:var(--error);margin-top:4px}
-
-  .hidden{display:none!important}
-
-  /* VALIDATION COLLAPSE */
-  .form-row-collapsed{display:none!important}
-  .form-row-2-collapsed{display:none!important}
-  .validation-banner{
-    display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
-    padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
-  }
-  .validation-banner.show{display:flex;align-items:center;gap:8px}
-
-  @media(max-width:540px){
-    .type-cards{grid-template-columns:1fr}
-    .form-row-2{grid-template-columns:1fr}
-    .memo-row{grid-template-columns:1fr;gap:2px}
-    .memo-key{font-size:12px}
-  }
-
-  @media print {
-    .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
-    body { background: #fff !important; color: #000 !important; }
-    .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
-    .wizard-step { display: block !important; }
-    .wizard-step:not(.active) { display: none !important; }
-    .review-field-label { color: #666 !important; }
-    .review-field-value { color: #000 !important; font-weight: 600 !important; }
-    .review-section-title { color: #333 !important; border-color: #ccc !important; }
-    @page { margin: 1.5cm; }
+  @media print{
+    .topbar,.btn-row,.wizard-eyebrow,.notice,.step-progress,.step-labels{display:none!important}
+    .step-panel{display:block!important}
+    .step-panel:not(.active){display:none!important}
+    .memo-box{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
   }
 </style>
-<link rel="stylesheet" href="../assets/interactions.css">
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
     <span class="topbar-brand">CBFX Hub</span>
-    <a href="../index.html" class="topbar-back">← Back to Hub</a>
   </div>
-  <span class="topbar-sub">PO & Invoice Submission</span>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/>
+        </linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
 </div>
 
-<div class="page">
-  <div class="progress-bar">
-    <div class="progress-step active" id="prog-1"><span class="step-num">STEP 1</span>Type & Project</div>
-    <div class="progress-step" id="prog-2"><span class="step-num">STEP 2</span>Financial Details</div>
-    <div class="progress-step" id="prog-3"><span class="step-num">STEP 3</span>Review & Submit</div>
+<div class="wizard-wrap">
+
+  <div class="wizard-header">
+    <div class="wizard-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Production</span>
+    </div>
+    <h1 class="wizard-title">PO / Invoice Submission</h1>
+    <p class="wizard-sub">Submit a Purchase Order for approval, or an Invoice for payment. Routes to accounting with everything they need.</p>
   </div>
 
-  <!-- STEP 1 -->
-  <div id="step-1">
-    <div class="card">
-      <div class="card-title">Submission Type & Project</div>
-      <div class="card-sub">What are you submitting, and for which project?</div>
-      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
-
-      <div class="form-row">
-        <label>Submission Type</label>
-        <div class="type-cards">
-          <input type="radio" name="subType" id="type-po" value="Purchase Order">
-          <label for="type-po">
-            <span class="type-icon">📋</span>
-            Purchase Order (PO)
-            <span class="type-desc">Requesting approval to spend</span>
-          </label>
-          <input type="radio" name="subType" id="type-inv" value="Invoice">
-          <label for="type-inv">
-            <span class="type-icon">🧾</span>
-            Invoice
-            <span class="type-desc">Submitting for payment</span>
-          </label>
-        </div>
-        <div class="err-msg" id="err-subType"></div>
-      </div>
-
-      <div class="form-row">
-        <label>Show / Project</label>
-        <input type="text" id="show" placeholder="e.g. Project Nighthawk">
-        <div class="err-msg" id="err-show"></div>
-      </div>
-
-      <div class="form-row-2">
-        <div class="form-row" style="margin-bottom:0">
-          <label>Vendor / Payee Name</label>
-          <input type="text" id="vendor" placeholder="Company or individual name">
-          <div class="err-msg" id="err-vendor"></div>
-        </div>
-        <div class="form-row" style="margin-bottom:0">
-          <label>Vendor Email <span class="opt">(optional)</span></label>
-          <input type="email" id="vendorEmail" placeholder="vendor@example.com">
-        </div>
-      </div>
-
-      <div class="form-row-2" style="margin-top:20px">
-        <div class="form-row" style="margin-bottom:0">
-          <label>Submitted By</label>
-          <input type="text" id="submitter" placeholder="Your name (internal)">
-          <div class="err-msg" id="err-submitter"></div>
-        </div>
-        <div class="form-row" style="margin-bottom:0">
-          <label>Submitter Email</label>
-          <input type="email" id="submitterEmail" placeholder="you@chicken-bone.com">
-          <div class="err-msg" id="err-submitterEmail"></div>
-        </div>
-      </div>
-
-      <div class="form-row" style="margin-top:20px">
-        <label>Date of Submission</label>
-        <input type="date" id="subDate">
-        <div class="err-msg" id="err-subDate"></div>
-      </div>
-
-      <div class="btn-row">
-        <span></span>
-        <button class="btn btn-primary" onclick="goStep2()">Next: Financial Details →</button>
-      </div>
+  <div>
+    <div class="step-progress">
+      <div class="step-pill active" id="ps1"><div class="fill"></div></div>
+      <div class="step-pill" id="ps2"><div class="fill"></div></div>
+      <div class="step-pill" id="ps3"><div class="fill"></div></div>
+    </div>
+    <div class="step-labels">
+      <span class="active" id="psl1">Submission &amp; Project</span>
+      <span id="psl2">Financial</span>
+      <span id="psl3">Review</span>
     </div>
   </div>
 
-  <!-- STEP 2 -->
-  <div id="step-2" style="display:none">
-    <div class="card">
-      <div class="card-title">Financial Details</div>
-      <div class="card-sub">Amount, codes, and approval.</div>
-      <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
+  <!-- ──────────── STEP 1 ──────────── -->
+  <div class="step-panel active" id="step1">
 
-      <div class="form-row-2">
-        <div class="form-row" style="margin-bottom:0">
-          <label id="poNumLabel">PO Number</label>
-          <input type="text" id="poNumber" placeholder="e.g. PO-2026-042">
-          <div class="err-msg" id="err-poNumber"></div>
+    <div class="validation-banner" id="val-banner-1">Some required fields need attention. Only those are shown.</div>
+
+    <div class="wcard">
+      <div class="wcard-title">Submission Type</div>
+      <div class="wcard-desc">What are you submitting? Determines what fields appear next.</div>
+
+      <div class="field-group" id="subTypeGroup">
+        <div class="radio-grid cols-2">
+          <label class="type-card">
+            <input type="radio" name="subType" value="Purchase Order">
+            <span class="tc-icon">📋</span>
+            <div class="tc-title">Purchase Order</div>
+            <div class="tc-desc">Requesting approval to spend. Issued before goods or services are received.</div>
+          </label>
+          <label class="type-card">
+            <input type="radio" name="subType" value="Invoice">
+            <span class="tc-icon">🧾</span>
+            <div class="tc-title">Invoice</div>
+            <div class="tc-desc">Submitting for payment. Issued after goods or services are delivered.</div>
+          </label>
         </div>
-        <div class="form-row" id="invNumRow" style="margin-bottom:0">
-          <label>Invoice Number</label>
-          <input type="text" id="invNumber" placeholder="e.g. INV-0197">
-          <div class="err-msg" id="err-invNumber"></div>
+        <div class="field-error" id="subTypeErr">Submission type is required.</div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Project &amp; Vendor</div>
+      <div class="wcard-desc">Where this expense applies and who's getting paid.</div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="show">Show / Project</label>
+          <input type="text" id="show" placeholder="e.g. Project Nighthawk">
+          <div class="field-error" id="showErr">Show is required.</div>
         </div>
       </div>
 
-      <div class="form-row-2" style="margin-top:20px">
-        <div class="form-row" style="margin-bottom:0">
-          <label>Amount</label>
+      <div class="field-row">
+        <div class="field">
+          <label for="vendor">Vendor / Payee Name</label>
+          <input type="text" id="vendor" placeholder="Company or individual name">
+          <div class="field-error" id="vendorErr">Vendor is required.</div>
+        </div>
+        <div class="field">
+          <label for="vendorEmail">Vendor Email <span class="opt">(optional)</span></label>
+          <input type="email" id="vendorEmail" placeholder="vendor@example.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Submitter</div>
+      <div class="wcard-desc">Who's filing this submission.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="submitter">Submitted By</label>
+          <input type="text" id="submitter" placeholder="Your name (internal)">
+          <div class="field-error" id="submitterErr">Submitter is required.</div>
+        </div>
+        <div class="field">
+          <label for="submitterEmail">Submitter Email</label>
+          <input type="email" id="submitterEmail" placeholder="you@chicken-bone.com">
+          <div class="field-error" id="submitterEmailErr">Valid email required.</div>
+        </div>
+      </div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="subDate">Date of Submission</label>
+          <input type="date" id="subDate">
+          <div class="field-error" id="subDateErr">Date is required.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(2)">Continue → Financial</button>
+    </div>
+  </div>
+
+  <!-- ──────────── STEP 2 ──────────── -->
+  <div class="step-panel" id="step2">
+
+    <div class="validation-banner" id="val-banner-2">Some required fields need attention. Only those are shown.</div>
+
+    <div class="wcard">
+      <div class="wcard-title">Document Numbers</div>
+      <div class="wcard-desc">PO number always required. Invoice number required only when submitting an invoice.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="poNumber">PO Number</label>
+          <input type="text" id="poNumber" placeholder="e.g. PO-2026-042">
+          <div class="field-error" id="poNumberErr">PO Number is required.</div>
+        </div>
+        <div class="field" id="invNumWrap">
+          <label for="invNumber">Invoice Number</label>
+          <input type="text" id="invNumber" placeholder="e.g. INV-0197">
+          <div class="field-error" id="invNumberErr">Invoice Number is required.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Amount &amp; Details</div>
+      <div class="wcard-desc">What's being charged and what for.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="amount">Amount</label>
           <div class="input-prefix">
-            <span class="pre">$</span>
+            <span class="input-prefix-symbol" id="currencySymbol">$</span>
             <input type="number" id="amount" placeholder="0.00" min="0" step="0.01">
           </div>
-          <div class="err-msg" id="err-amount"></div>
+          <div class="field-error" id="amountErr">Amount is required.</div>
         </div>
-        <div class="form-row" style="margin-bottom:0">
-          <label>Currency</label>
+        <div class="field">
+          <label for="currency">Currency</label>
           <select id="currency">
             <option value="USD">USD — US Dollar</option>
             <option value="CAD">CAD — Canadian Dollar</option>
@@ -308,334 +276,325 @@
         </div>
       </div>
 
-      <div class="form-row" style="margin-top:20px">
-        <label>Description of Services / Goods</label>
-        <textarea id="description" placeholder="What is this PO/invoice for? Be specific."></textarea>
-        <div class="err-msg" id="err-description"></div>
+      <div class="field-row full">
+        <div class="field">
+          <label for="description">Description of Services / Goods</label>
+          <textarea id="description" placeholder="What is this PO/invoice for? Be specific."></textarea>
+          <div class="field-error" id="descriptionErr">Description is required.</div>
+        </div>
       </div>
 
-      <div class="form-row-2">
-        <div class="form-row" style="margin-bottom:0">
-          <label>Due Date</label>
+      <div class="field-row">
+        <div class="field">
+          <label for="dueDate">Due Date</label>
           <input type="date" id="dueDate">
-          <div class="err-msg" id="err-dueDate"></div>
+          <div class="field-error" id="dueDateErr">Due date is required.</div>
         </div>
-        <div class="form-row" style="margin-bottom:0">
-          <label>Approval Required From</label>
+        <div class="field">
+          <label for="approver">Approval Required From</label>
           <input type="text" id="approver" placeholder="Supervisor or EP name">
-          <div class="err-msg" id="err-approver"></div>
+          <div class="field-error" id="approverErr">Approver is required.</div>
         </div>
       </div>
 
-      <div class="form-row" style="margin-top:20px">
-        <label>Budget Line / Cost Code <span class="opt">(optional)</span></label>
-        <input type="text" id="costCode" placeholder="e.g. 6200-VFX-POST or EP07">
+      <div class="field-row full">
+        <div class="field">
+          <label for="costCode">Budget Line / Cost Code <span class="opt">(optional)</span></label>
+          <input type="text" id="costCode" placeholder="e.g. 6200-VFX-POST or EP07">
+          <div class="field-hint">Helps accounting route the expense to the right budget.</div>
+        </div>
       </div>
+    </div>
 
-      <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goBack(1)">← Back</button>
-        <button class="btn btn-primary" onclick="goStep3()">Next: Review →</button>
-      </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(3)">Review &amp; Submit →</button>
     </div>
   </div>
 
-  <!-- STEP 3 -->
-  <div id="step-3" style="display:none">
-    <div class="card">
-      <div class="card-title">Review & Submit</div>
-      <div class="card-sub">Confirm before sending to accounting.</div>
+  <!-- ──────────── STEP 3 ──────────── -->
+  <div class="step-panel" id="step3">
+    <div class="wcard">
+      <div class="wcard-title">Review &amp; Submit</div>
+      <div class="wcard-desc">Confirm before sending to accounting.</div>
 
       <div class="memo-box" id="memoBox"></div>
+    </div>
 
-      <div class="memo-note">
-        Attach the physical PO or invoice document directly in your email client after sending.
-      </div>
+    <div class="notice notice-warn">
+      <span class="notice-icon">⚠</span>
+      <span>Attach the physical PO or invoice document directly in your email client after clicking <strong>Open in Gmail</strong>.</span>
+    </div>
 
-      <div class="actions-row">
-        <button class="btn btn-primary" onclick="sendToAccounting()">&#9993; Open in Gmail</button>
-        <button class="btn btn-accent" onclick="copySummary()">Copy Summary</button>
-        <button class="btn btn-secondary" onclick="exportPDF()">&#x2193; Export PDF</button>
-        <button class="btn btn-secondary" onclick="goBack(2)">← Edit</button>
-      </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-ghost" onclick="copySummary()">Copy</button>
+      <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
+      <button class="btn-success" onclick="sendToAccounting()">✉ Open in Gmail</button>
+      <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
     </div>
   </div>
-</div>
 
-<div class="toast" id="toast">Copied to clipboard</div>
+</div><!-- /wizard-wrap -->
 
 <script>
-  // Auto-fill today's date
-  (function() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth()+1).padStart(2,'0');
-    const dd = String(today.getDate()).padStart(2,'0');
-    document.getElementById('subDate').value = `${yyyy}-${mm}-${dd}`;
-  })();
+  var currentStep = 1;
+  var CURRENCY_SYMBOL = { USD:'$', CAD:'CA$', GBP:'£', EUR:'€' };
 
-  // Show/hide invoice number based on type
-  document.querySelectorAll('input[name="subType"]').forEach(r => {
-    r.addEventListener('change', updateTypeUI);
+  function v(id){ return (document.getElementById(id)?.value || '').trim(); }
+  function vRadio(name){ var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function isEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
+
+  // Currency symbol live update
+  document.getElementById('currency').addEventListener('change', function(){
+    document.getElementById('currencySymbol').textContent = CURRENCY_SYMBOL[this.value] || '$';
   });
 
-  function updateTypeUI() {
-    const type = radio('subType');
-    const invRow = document.getElementById('invNumRow');
-    const poLabel = document.getElementById('poNumLabel');
-    if (type === 'Invoice') {
-      invRow.classList.remove('hidden');
-      poLabel.textContent = 'PO Number (this invoice is against)';
-    } else {
-      invRow.classList.add('hidden');
-      poLabel.textContent = 'PO Number';
-    }
-  }
-
-  function val(id) { return (document.getElementById(id) || {}).value?.trim() || ''; }
-  function radio(name) {
-    const el = document.querySelector(`input[name="${name}"]:checked`);
-    return el ? el.value : '';
-  }
-
-  function setErr(id, msg) {
-    const el = document.getElementById('err-' + id);
-    if (el) el.textContent = msg;
-    const input = document.getElementById(id);
-    if (input) input.classList.toggle('error', !!msg);
-  }
-  function clearErrs(ids) { ids.forEach(id => setErr(id, '')); }
-
-  function goStep2() {
-    const fields = ['show','vendor','submitter','submitterEmail','subDate'];
-    clearErrs([...fields,'subType']);
-    let ok = true;
-
-    if (!radio('subType')) { setErr('subType', 'Select a submission type'); ok = false; }
-    fields.forEach(f => {
-      if (!val(f)) { setErr(f, 'Required'); ok = false; }
-    });
-
-    // Collapse valid form-rows
-    const banner = document.getElementById('val-banner-1');
-    const stepEl = document.getElementById('step-1');
-    const allRows = stepEl ? stepEl.querySelectorAll('.form-row, .form-row-2') : [];
-    if (!ok) {
-      if (banner) banner.classList.add('show');
-      allRows.forEach(function(row) {
-        const errEl = row.querySelector('.err-msg');
-        const hasErr = row.querySelector('.error') || (errEl && errEl.textContent.trim());
-        if (hasErr) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); }
-        else {
-          if (row.classList.contains('form-row-2')) row.classList.add('form-row-2-collapsed');
-          else row.classList.add('form-row-collapsed');
-        }
-      });
-      return;
-    } else {
-      if (banner) banner.classList.remove('show');
-      allRows.forEach(function(row) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); });
-    }
-
-    updateTypeUI();
-    showStep(2);
-  }
-
-  function goStep3() {
-    const type = radio('subType');
-    const fields = ['poNumber','amount','description','dueDate','approver'];
-    clearErrs([...fields,'invNumber']);
-    let ok = true;
-
-    fields.forEach(f => {
-      if (!val(f)) { setErr(f, 'Required'); ok = false; }
-    });
-    if (val('amount') && parseFloat(val('amount')) <= 0) {
-      setErr('amount', 'Enter a valid amount'); ok = false;
-    }
-    if (type === 'Invoice' && !val('invNumber')) {
-      setErr('invNumber', 'Required for invoices'); ok = false;
-    }
-
-    // Collapse valid form-rows
-    const banner = document.getElementById('val-banner-2');
-    const stepEl = document.getElementById('step-2');
-    const allRows = stepEl ? stepEl.querySelectorAll('.form-row, .form-row-2') : [];
-    if (!ok) {
-      if (banner) banner.classList.add('show');
-      allRows.forEach(function(row) {
-        const errEl = row.querySelector('.err-msg');
-        const hasErr = row.querySelector('.error') || (errEl && errEl.textContent.trim());
-        if (hasErr) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); }
-        else {
-          if (row.classList.contains('form-row-2')) row.classList.add('form-row-2-collapsed');
-          else row.classList.add('form-row-collapsed');
-        }
-      });
-      return;
-    } else {
-      if (banner) banner.classList.remove('show');
-      allRows.forEach(function(row) { row.classList.remove('form-row-collapsed'); row.classList.remove('form-row-2-collapsed'); });
-    }
-
-    buildSummary();
-    showStep(3);
-  }
-
-  // Re-expand collapsed fields when user starts editing
-  document.querySelectorAll('#step-1 input, #step-1 textarea, #step-2 input, #step-2 textarea, #step-2 select').forEach(function(el) {
-    el.addEventListener('input', expandAllGroups);
-    el.addEventListener('change', expandAllGroups);
+  // Hide invoice number field when type=Purchase Order
+  document.querySelectorAll('input[name="subType"]').forEach(function(r){
+    r.addEventListener('change', updateInvNumberVisibility);
   });
-  function expandAllGroups() {
-    document.querySelectorAll('.form-row-collapsed, .form-row-2-collapsed').forEach(function(g) {
-      g.classList.remove('form-row-collapsed');
-      g.classList.remove('form-row-2-collapsed');
+  function updateInvNumberVisibility(){
+    var isPO = vRadio('subType') === 'Purchase Order';
+    var wrap = document.getElementById('invNumWrap');
+    if (!wrap) return;
+    wrap.style.opacity = isPO ? '.45' : '1';
+    document.getElementById('invNumber').disabled = isPO;
+  }
+
+  function setProgress(step){
+    for (var i = 1; i <= 3; i++){
+      var pill = document.getElementById('ps' + i);
+      var lbl  = document.getElementById('psl' + i);
+      pill.className = 'step-pill';
+      lbl.className  = '';
+      if (i < step)        { pill.classList.add('done');   lbl.classList.add('done'); }
+      else if (i === step) { pill.classList.add('active'); lbl.classList.add('active'); }
+    }
+  }
+  function goStep(n){
+    if (n > currentStep && !validateStep(currentStep)) return;
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step' + n).classList.add('active');
+    setProgress(n);
+    if (n === 3) buildMemo();
+    if (n === 2) updateInvNumberVisibility();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setErr(id, errId, show){
+    var input = document.getElementById(id);
+    var err   = document.getElementById(errId);
+    if (show){ input.classList.add('invalid'); err.classList.add('show'); }
+    else     { input.classList.remove('invalid'); err.classList.remove('show'); }
+    return show;
+  }
+  function validateRadio(name, groupId, errId){
+    var val = vRadio(name);
+    var grp = document.getElementById(groupId);
+    var err = document.getElementById(errId);
+    if (!val){
+      err.classList.add('show');
+      grp.classList.add('radio-group-invalid');
+      return false;
+    }
+    err.classList.remove('show');
+    grp.classList.remove('radio-group-invalid');
+    return true;
+  }
+  function collapseStep(stepId, bannerId){
+    document.getElementById(bannerId).classList.add('show');
+    var stepEl = document.getElementById(stepId);
+    stepEl.querySelectorAll('.field-row').forEach(function(row){
+      var bad = row.querySelector('.invalid, .field-error.show');
+      if (bad) row.classList.remove('field-row-collapsed');
+      else     row.classList.add('field-row-collapsed');
     });
-    document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
-  }
-
-  function goBack(step) { showStep(step); }
-
-  function showStep(n) {
-    [1,2,3].forEach(i => {
-      document.getElementById('step-' + i).style.display = i === n ? '' : 'none';
-      const prog = document.getElementById('prog-' + i);
-      prog.classList.remove('active','done');
-      if (i === n) prog.classList.add('active');
-      else if (i < n) prog.classList.add('done');
+    stepEl.querySelectorAll('.field-group').forEach(function(grp){
+      var bad = grp.querySelector('.field-error.show, .radio-group-invalid')
+             || grp.classList.contains('radio-group-invalid');
+      if (bad) grp.classList.remove('field-row-collapsed');
+      else     grp.classList.add('field-row-collapsed');
     });
-    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function clearCollapse(stepId, bannerId){
+    document.getElementById(bannerId).classList.remove('show');
+    document.getElementById(stepId).querySelectorAll('.field-row-collapsed')
+      .forEach(function(g){ g.classList.remove('field-row-collapsed'); });
   }
 
-  function fmt(num) {
-    const n = parseFloat(num);
-    return isNaN(n) ? '' : n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function validateStep(n){
+    var ok = true;
+    if (n === 1){
+      if (!validateRadio('subType', 'subTypeGroup', 'subTypeErr')) ok = false;
+      if (!v('show'))            ok = !setErr('show',            'showErr',            true) && ok;
+      else                            setErr('show',            'showErr',            false);
+      if (!v('vendor'))          ok = !setErr('vendor',          'vendorErr',          true) && ok;
+      else                            setErr('vendor',          'vendorErr',          false);
+      if (!v('submitter'))       ok = !setErr('submitter',       'submitterErr',       true) && ok;
+      else                            setErr('submitter',       'submitterErr',       false);
+      if (!isEmail(v('submitterEmail'))) ok = !setErr('submitterEmail','submitterEmailErr',true) && ok;
+      else                            setErr('submitterEmail',  'submitterEmailErr',  false);
+      if (!v('subDate'))         ok = !setErr('subDate',         'subDateErr',         true) && ok;
+      else                            setErr('subDate',         'subDateErr',         false);
+      if (!ok) collapseStep('step1','val-banner-1');
+      else     clearCollapse('step1','val-banner-1');
+      return ok;
+    }
+    if (n === 2){
+      if (!v('poNumber'))    ok = !setErr('poNumber',    'poNumberErr',    true) && ok;
+      else                        setErr('poNumber',    'poNumberErr',    false);
+      var isPO = vRadio('subType') === 'Purchase Order';
+      if (!isPO && !v('invNumber')) ok = !setErr('invNumber','invNumberErr',true) && ok;
+      else                                setErr('invNumber','invNumberErr',false);
+      if (!v('amount') || parseFloat(v('amount')) <= 0) ok = !setErr('amount','amountErr',true) && ok;
+      else                                                   setErr('amount','amountErr',false);
+      if (!v('description')) ok = !setErr('description','descriptionErr',true) && ok;
+      else                        setErr('description','descriptionErr',false);
+      if (!v('dueDate'))     ok = !setErr('dueDate',    'dueDateErr',    true) && ok;
+      else                        setErr('dueDate',    'dueDateErr',    false);
+      if (!v('approver'))    ok = !setErr('approver',   'approverErr',   true) && ok;
+      else                        setErr('approver',   'approverErr',   false);
+      if (!ok) collapseStep('step2','val-banner-2');
+      else     clearCollapse('step2','val-banner-2');
+      return ok;
+    }
+    return true;
   }
 
-  function fmtDate(d) {
+  document.addEventListener('input', function(e){
+    if (!e.target.matches('input, textarea, select')) return;
+    document.querySelectorAll('.field-row-collapsed').forEach(function(g){ g.classList.remove('field-row-collapsed'); });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b){ b.classList.remove('show'); });
+    document.querySelectorAll('.radio-group-invalid').forEach(function(g){
+      if (g.querySelector('input[type="radio"]:checked')) g.classList.remove('radio-group-invalid');
+    });
+    document.querySelectorAll('.field-error.show').forEach(function(err){
+      var grp = err.closest('.field, .field-group');
+      if (grp && !grp.querySelector('.invalid') && !grp.classList.contains('radio-group-invalid')) err.classList.remove('show');
+    });
+  });
+
+  function fmtDate(d){
     if (!d) return '';
-    const [y,m,day] = d.split('-');
-    return `${m}/${day}/${y}`;
+    return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  function fmtMoney(s){
+    var n = parseFloat(s);
+    if (isNaN(n)) return '';
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function memoRow(key, val, cls){
+    if (!val) return '';
+    cls = cls ? ' ' + cls : '';
+    return '<div class="memo-row"><div class="memo-key">' + key + '</div><div class="memo-val' + cls + '">' + val + '</div></div>';
   }
 
-  function memoRow(key, v) {
-    if (!v) return '';
-    return `<div class="memo-row"><div class="memo-key">${key}</div><div class="memo-val">${v}</div></div>`;
+  function buildMemo(){
+    var type = vRadio('subType');
+    var typeLabel = type === 'Purchase Order' ? 'PO' : 'Invoice';
+    var amtStr = v('currency') + ' ' + fmtMoney(v('amount'));
+    var today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+    var html = ''
+      + '<div class="memo-header">'
+      +   '<div class="memo-title">' + typeLabel + ' SUBMISSION — CBFX / Chicken Bone FX</div>'
+      +   '<div class="memo-date">SUBMITTED ' + today + '</div>'
+      + '</div>'
+      + '<div class="memo-section">'
+      +   '<div class="memo-section-title">Submission</div>'
+      +   memoRow('Type',            type)
+      +   memoRow('Show / Project',  v('show'))
+      +   memoRow('Submitted By',    v('submitter'))
+      +   memoRow('Submitter Email', v('submitterEmail'))
+      +   memoRow('Date',            fmtDate(v('subDate')))
+      + '</div>'
+      + '<div class="memo-section">'
+      +   '<div class="memo-section-title">Vendor</div>'
+      +   memoRow('Vendor / Payee', v('vendor'))
+      +   (v('vendorEmail') ? memoRow('Vendor Email', v('vendorEmail')) : '')
+      + '</div>'
+      + '<div class="memo-section">'
+      +   '<div class="memo-section-title">Financial</div>'
+      +   memoRow('PO Number',     v('poNumber'))
+      +   (type === 'Invoice' ? memoRow('Invoice Number', v('invNumber')) : '')
+      +   memoRow('Amount',        amtStr, 'amount')
+      +   memoRow('Due Date',      fmtDate(v('dueDate')))
+      +   memoRow('Description',   v('description'))
+      +   memoRow('Approval From', v('approver'))
+      +   (v('costCode') ? memoRow('Budget / Code', v('costCode')) : '')
+      + '</div>';
+    document.getElementById('memoBox').innerHTML = html;
   }
 
-  function getTypeLabel() {
-    const t = radio('subType');
-    return t === 'Purchase Order' ? 'PO' : 'Invoice';
-  }
-
-  function buildSummary() {
-    const type = radio('subType');
-    const typeLabel = getTypeLabel();
-    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
-    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    const box = document.getElementById('memoBox');
-    if (!box) return;
-    box.innerHTML = `
-      <div class="memo-header">
-        <div class="memo-title">${typeLabel} SUBMISSION — CBFX / Chicken Bone FX</div>
-        <div class="memo-date">Submitted ${today}</div>
-      </div>
-      <div class="memo-section">
-        <div class="memo-section-title">Submission</div>
-        ${memoRow('Type', type)}
-        ${memoRow('Show / Project', val('show'))}
-        ${memoRow('Submitted By', val('submitter'))}
-        ${memoRow('Submitter Email', val('submitterEmail'))}
-        ${memoRow('Date', fmtDate(val('subDate')))}
-      </div>
-      <div class="memo-section">
-        <div class="memo-section-title">Vendor</div>
-        ${memoRow('Vendor / Payee', val('vendor'))}
-        ${val('vendorEmail') ? memoRow('Vendor Email', val('vendorEmail')) : ''}
-      </div>
-      <div class="memo-section">
-        <div class="memo-section-title">Financial</div>
-        ${memoRow('PO Number', val('poNumber'))}
-        ${type === 'Invoice' ? memoRow('Invoice Number', val('invNumber')) : ''}
-        ${memoRow('Amount', amtStr)}
-        ${memoRow('Due Date', fmtDate(val('dueDate')))}
-        ${memoRow('Description', val('description'))}
-        ${memoRow('Approval From', val('approver'))}
-        ${val('costCode') ? memoRow('Budget Line / Code', val('costCode')) : ''}
-      </div>
-    `;
-  }
-
-  function getSummaryText() {
-    const type = radio('subType');
-    const typeLabel = getTypeLabel();
-    const amtStr = `${val('currency')} ${fmt(val('amount'))}`;
-    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    const lines = [
-      `${typeLabel} SUBMISSION — CBFX / Chicken Bone FX`,
-      `Submitted ${today}`,
+  function getSummaryText(){
+    var type = vRadio('subType');
+    var typeLabel = type === 'Purchase Order' ? 'PO' : 'Invoice';
+    var amtStr = v('currency') + ' ' + fmtMoney(v('amount'));
+    var today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    var lines = [
+      typeLabel + ' SUBMISSION — CBFX / Chicken Bone FX',
+      'Submitted ' + today,
       '',
       '--- SUBMISSION ---',
-      `Type:             ${type}`,
-      `Show / Project:   ${val('show')}`,
-      `Submitted By:     ${val('submitter')}`,
-      `Submitter Email:  ${val('submitterEmail')}`,
-      `Date:             ${fmtDate(val('subDate'))}`,
+      'Type:             ' + type,
+      'Show / Project:   ' + v('show'),
+      'Submitted By:     ' + v('submitter'),
+      'Submitter Email:  ' + v('submitterEmail'),
+      'Date:             ' + fmtDate(v('subDate')),
       '',
       '--- VENDOR ---',
-      `Vendor / Payee:   ${val('vendor')}`,
+      'Vendor / Payee:   ' + v('vendor')
     ];
-    if (val('vendorEmail')) lines.push(`Vendor Email:     ${val('vendorEmail')}`);
+    if (v('vendorEmail')) lines.push('Vendor Email:     ' + v('vendorEmail'));
     lines.push(
       '',
       '--- FINANCIAL ---',
-      `PO Number:        ${val('poNumber')}`,
+      'PO Number:        ' + v('poNumber')
     );
-    if (type === 'Invoice') lines.push(`Invoice Number:   ${val('invNumber')}`);
+    if (type === 'Invoice') lines.push('Invoice Number:   ' + v('invNumber'));
     lines.push(
-      `Amount:           ${amtStr}`,
-      `Due Date:         ${fmtDate(val('dueDate'))}`,
-      `Description:      ${val('description')}`,
-      `Approval From:    ${val('approver')}`,
+      'Amount:           ' + amtStr,
+      'Due Date:         ' + fmtDate(v('dueDate')),
+      'Description:      ' + v('description'),
+      'Approval From:    ' + v('approver')
     );
-    if (val('costCode')) lines.push(`Budget Line/Code: ${val('costCode')}`);
+    if (v('costCode')) lines.push('Budget / Code:    ' + v('costCode'));
     lines.push('','---','Attach the physical PO or invoice document directly in your email client after sending.');
     return lines.join('\n');
   }
 
-  function sendToAccounting() {
-    const typeLabel = getTypeLabel();
-    const amtRaw = fmt(val('amount'));
-    const subject = encodeURIComponent(`[${typeLabel}] ${val('vendor')} — ${val('show')} — $${amtRaw}`);
-    const body = encodeURIComponent(getSummaryText());
-    window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=accounting@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
+  function sendToAccounting(){
+    var typeLabel = vRadio('subType') === 'Purchase Order' ? 'PO' : 'Invoice';
+    var amtRaw = fmtMoney(v('amount'));
+    var subject = '[' + typeLabel + '] ' + v('vendor') + ' — ' + v('show') + ' — ' + v('currency') + ' ' + amtRaw;
+    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=accounting@chicken-bone.com'
+      + '&su=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(getSummaryText());
+    window.open(url, '_blank');
   }
-
-  function copySummary() {
-    navigator.clipboard.writeText(getSummaryText()).then(() => showToast('Summary copied')).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = getSummaryText();
-      ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('Summary copied');
-    });
+  function copySummary(){
+    var text = getSummaryText();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
+    } else fallbackCopy(text);
   }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
+  function fallbackCopy(t){
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta); showCopyConfirm();
   }
-
-  function exportPDF() {
-    window.print();
+  function showCopyConfirm(){
+    var el = document.getElementById('copyConfirm');
+    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
   }
+  function exportPDF(){ window.print(); }
 </script>
-<script src="../assets/dev-mock-fill.js"></script>
 <script src="../assets/date-clamp.js"></script>
 </body>
 </html>

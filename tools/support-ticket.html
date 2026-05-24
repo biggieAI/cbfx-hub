@@ -3,650 +3,547 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBFX — Support Ticket</title>
+<title>Support Ticket — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-  --blue-dark:#1e3a5a;
-}
-body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
-
-.topbar{background:var(--nav);padding:14px 44px;display:flex;align-items:center;justify-content:space-between}
-.topbar-brand{font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--white)}
-.topbar-sub{font-size:11px;color:rgba(244,247,250,.4);letter-spacing:.1em;text-transform:uppercase}
-
-.back-link-wrap{max-width:720px;margin:0 auto;padding:18px 24px 0}
-.back-link{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:color .15s}
-.back-link:hover{color:var(--text)}
-
-.wizard-wrap{max-width:720px;margin:0 auto;padding:28px 24px 80px}
-
-.step-bar{display:flex;align-items:flex-start;margin-bottom:40px}
-.step-col{display:flex;flex-direction:column;align-items:center}
-.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border-dark);background:var(--surface2);color:var(--muted);flex-shrink:0;transition:all .2s}
-.step-dot.active{background:var(--nav);border-color:var(--nav);color:var(--white)}
-.step-dot.done{background:var(--border-dark);border-color:var(--border-dark);color:var(--white)}
-.step-dot.done .step-num{display:none}
-.step-dot.done::after{content:'✓';font-size:13px}
-.step-line-wrap{flex:1;padding-top:15px}
-.step-line{height:2px;background:var(--border);transition:background .2s}
-.step-line.done{background:var(--border-dark)}
-.step-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap}
-.step-label.active{color:var(--text)}
-
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:none;animation:fadeIn .18s ease}
-.panel.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-.panel-header{background:var(--nav);padding:20px 28px}
-.panel-eyebrow{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,247,250,.45);margin-bottom:4px}
-.panel-title{font-size:22px;font-weight:700;color:var(--white);letter-spacing:-.01em}
-
-.panel-body{padding:28px}
-
-.field-group{margin-bottom:22px}
-.field-group:last-child{margin-bottom:0}
-.field-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;display:block}
-.field-label .optional{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px}
-.field-hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
-
-input[type=text],input[type=email],textarea{
-  width:100%;padding:11px 14px;font-family:'Figtree',sans-serif;font-size:15px;font-weight:400;
-  color:var(--text);background:var(--white);border:1px solid var(--border-dark);border-radius:5px;
-  outline:none;transition:border-color .15s
-}
-input[type=text]:focus,input[type=email]:focus,textarea:focus{border-color:var(--nav)}
-input::placeholder,textarea::placeholder{color:var(--muted);font-weight:400}
-textarea{resize:vertical;min-height:90px;line-height:1.55}
-textarea.tall{min-height:130px}
-
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-
-.radio-grid{display:grid;gap:10px}
-.radio-grid.cols-3{grid-template-columns:repeat(3,1fr)}
-.radio-grid.cols-2{grid-template-columns:repeat(2,1fr)}
-.radio-opt input{display:none}
-.radio-opt label{
-  display:block;padding:12px 16px;border:1px solid var(--border-dark);border-radius:5px;
-  font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;
-  background:var(--white);transition:all .15s;text-align:center;line-height:1.3
-}
-.radio-opt label .sublabel{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px}
-.radio-opt input:checked + label{background:var(--nav);border-color:var(--nav);color:var(--white)}
-.radio-opt input:checked + label .sublabel{color:rgba(244,247,250,.55)}
-.radio-opt label:hover{border-color:var(--nav)}
-
-.priority-high input:checked + label{background:#4a1c1c;border-color:#6b2c2c;color:var(--white)}
-.priority-high input:checked + label .sublabel{color:rgba(244,247,250,.55)}
-.priority-med input:checked + label{background:#3a2e10;border-color:#5c4a1a;color:var(--white)}
-.priority-med input:checked + label .sublabel{color:rgba(244,247,250,.55)}
-
-.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
-
-.attachments-note{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:12px 16px;font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
-.attachments-note .note-icon{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:var(--border-dark);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-top:1px}
-
-.panel-footer{padding:20px 28px;border-top:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:space-between}
-.btn-back{padding:10px 22px;border:1px solid var(--border-dark);border-radius:5px;background:transparent;font-family:'Figtree',sans-serif;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
-.btn-back:hover{background:var(--surface);border-color:var(--nav)}
-.btn-next{padding:10px 28px;border:none;border-radius:5px;background:var(--nav);font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;color:var(--white);cursor:pointer;transition:background .15s;letter-spacing:.01em}
-.btn-next:hover{background:#2d3040}
-.spacer{flex:1}
-
-/* Review step */
-.review-section{margin-bottom:24px}
-.review-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.review-section-title::after{content:'';height:1px;background:var(--border);flex:1}
-
-.review-grid{display:grid;grid-template-columns:180px 1fr;row-gap:10px;align-items:baseline}
-.rv-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding-right:12px}
-.rv-value{font-size:14px;color:var(--text);line-height:1.5}
-.rv-value.preformat{white-space:pre-wrap;font-size:13px;color:var(--text2)}
-.rv-value.priority-low{color:var(--text2)}
-.rv-value.priority-med{color:#7a5a10;font-weight:600}
-.rv-value.priority-high{color:#7a1c1c;font-weight:600}
-
-.priority-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:3px}
-.pb-low{background:var(--surface2);color:var(--text2);border:1px solid var(--border-dark)}
-.pb-med{background:#f5e9c8;color:#7a5a10;border:1px solid #d4b870}
-.pb-high{background:#f5c8c8;color:#7a1c1c;border:1px solid #d48070}
-
-.action-row{display:flex;gap:12px;flex-wrap:wrap}
-.btn-email{flex:1;min-width:200px;padding:14px 28px;border:none;border-radius:5px;background:var(--nav);font-family:'Figtree',sans-serif;font-size:15px;font-weight:700;color:var(--white);cursor:pointer;transition:background .15s;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-email:hover{background:#2d3040}
-.btn-copy{padding:14px 22px;border:1.5px solid var(--border-dark);border-radius:5px;background:var(--white);font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
-.btn-copy:hover{border-color:var(--nav);color:var(--text)}
-.btn-copy.copied{border-color:var(--border-dark);color:var(--muted)}
-
-.submit-note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
-
-/* Validation error */
-.field-error{font-size:12px;color:#a03030;margin-top:5px;display:none}
-.field-group.has-error input,
-.field-group.has-error textarea{border-color:#c04040}
-.field-group.has-error .field-error{display:block}
-.radio-error{font-size:12px;color:#a03030;margin-top:6px;display:none}
-.radio-group-wrap.has-error .radio-error{display:block}
-
-/* Validation collapse */
-.field-group-collapsed{display:none!important}
-.validation-banner{
-  display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
-  padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
-}
-.validation-banner.show{display:flex;align-items:center;gap:8px}
-
-@media print {
-  .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
-  body { background: #fff !important; color: #000 !important; }
-  .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
-  .wizard-step { display: block !important; }
-  .wizard-step:not(.active) { display: none !important; }
-  .review-field-label { color: #666 !important; }
-  .review-field-value { color: #000 !important; font-weight: 600 !important; }
-  .review-section-title { color: #333 !important; border-color: #ccc !important; }
-  @page { margin: 1.5cm; }
-}
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/wizard.css">
 <link rel="stylesheet" href="../assets/interactions.css">
+<style>
+  /* Priority cards w/ color-coded left bar */
+  .priority-card{
+    display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+    padding:14px 18px 14px 22px;border-radius:14px;
+    background:var(--surface);border:.5px solid var(--hairline);
+    cursor:pointer;transition:all .2s cubic-bezier(.2,.7,.2,1);
+    position:relative;text-align:left;
+  }
+  .priority-card input{position:absolute;opacity:0;pointer-events:none}
+  .priority-card::before{
+    content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:2px;
+    background:var(--accent,#94a3b8);transition:all .15s ease;
+  }
+  .priority-card.low::before{background:#10b981}
+  .priority-card.med::before{background:#f59e0b}
+  .priority-card.high::before{background:#ef4444}
+  .priority-card:hover{background:#fff;border-color:var(--ink-5);transform:translateY(-1px)}
+  .priority-card:has(input:checked){background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .priority-card:has(input:checked).high{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.15)}
+  .priority-card:has(input:checked).high::before{background:#ef4444;width:4px}
+  .pc-label{font-family:'Inter',sans-serif;font-weight:800;font-size:14px;letter-spacing:-.01em;color:var(--ink)}
+  .pc-sub{font-size:12px;color:var(--ink-3)}
+
+  /* Preformat for review */
+  .review-pre{
+    white-space:pre-wrap;word-wrap:break-word;
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    color:var(--ink);background:rgba(15,23,42,.025);
+    border:.5px solid var(--hairline);border-radius:10px;
+    padding:12px 14px;line-height:1.55;
+  }
+  .review-pre.empty{color:var(--ink-4);font-style:italic}
+
+  /* High-priority notice override */
+  .notice-error{
+    background:#fdecea;color:#7a1c1c;border-color:#f3b5b1;
+  }
+  .notice-error strong{color:#5a1212}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <span class="topbar-brand">CBFX Hub</span>
-  <span class="topbar-sub">Support Ticket</span>
-</div>
-
-<div class="back-link-wrap">
-  <a class="back-link" href="../index.html">← Back to Hub</a>
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/>
+        </linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
 </div>
 
 <div class="wizard-wrap">
 
-  <!-- Step Progress Bar -->
-  <div class="step-bar">
-    <div class="step-col">
-      <div class="step-dot active" id="dot-1"><span class="step-num">1</span></div>
-      <div class="step-label active" id="lbl-1">Classification</div>
+  <div class="wizard-header">
+    <div class="wizard-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Support</span>
     </div>
-    <div class="step-line-wrap"><div class="step-line" id="line-1"></div></div>
-    <div class="step-col">
-      <div class="step-dot" id="dot-2"><span class="step-num">2</span></div>
-      <div class="step-label" id="lbl-2">Detail</div>
+    <h1 class="wizard-title">Support Ticket</h1>
+    <p class="wizard-sub">File a structured ticket for pipeline, infrastructure, or software issues. Routes to GPL Tech with everything they need to diagnose and resolve.</p>
+  </div>
+
+  <div>
+    <div class="step-progress">
+      <div class="step-pill active" id="ps1"><div class="fill"></div></div>
+      <div class="step-pill" id="ps2"><div class="fill"></div></div>
+      <div class="step-pill" id="ps3"><div class="fill"></div></div>
     </div>
-    <div class="step-line-wrap"><div class="step-line" id="line-2"></div></div>
-    <div class="step-col">
-      <div class="step-dot" id="dot-3"><span class="step-num">3</span></div>
-      <div class="step-label" id="lbl-3">Review & Submit</div>
+    <div class="step-labels">
+      <span class="active" id="psl1">Classification</span>
+      <span id="psl2">Issue Detail</span>
+      <span id="psl3">Review</span>
     </div>
   </div>
 
-  <!-- ─── STEP 1: Issue Classification ─── -->
-  <div class="panel active" id="step-1">
-    <div class="panel-header">
-      <div class="panel-eyebrow">Step 1 of 3</div>
-      <div class="panel-title">Issue Classification</div>
-    </div>
-    <div class="panel-body">
-      <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
+  <!-- ──────────── STEP 1 ──────────── -->
+  <div class="step-panel active" id="step1">
 
-      <div class="two-col">
-        <div class="field-group" id="fg-name">
-          <label class="field-label" for="submitter-name">Submitter Name</label>
+    <div class="validation-banner" id="val-banner-1">Some required fields need attention. Only those are shown.</div>
+
+    <div class="wcard">
+      <div class="wcard-title">Submitter</div>
+      <div class="wcard-desc">Who's filing this ticket — we may follow up here.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="submitter-name">Submitter Name</label>
           <input type="text" id="submitter-name" placeholder="e.g. Jordan Lee">
-          <div class="field-error">Name is required.</div>
+          <div class="field-error" id="submitter-nameErr">Name is required.</div>
         </div>
-        <div class="field-group" id="fg-email">
-          <label class="field-label" for="submitter-email">Submitter Email</label>
+        <div class="field">
+          <label for="submitter-email">Submitter Email</label>
           <input type="email" id="submitter-email" placeholder="you@chicken-bone.com">
-          <div class="field-error">A valid email address is required.</div>
+          <div class="field-error" id="submitter-emailErr">Valid email required.</div>
         </div>
       </div>
-
-      <div class="field-group">
-        <label class="field-label">Issue Type</label>
-        <div class="radio-group-wrap" id="rg-issue-type">
-          <div class="radio-grid cols-3">
-            <div class="radio-opt"><input type="radio" name="issue-type" id="it-pipeline" value="Pipeline"><label for="it-pipeline">Pipeline</label></div>
-            <div class="radio-opt"><input type="radio" name="issue-type" id="it-workstation" value="Workstation"><label for="it-workstation">Workstation</label></div>
-            <div class="radio-opt"><input type="radio" name="issue-type" id="it-network" value="Network / VPN"><label for="it-network">Network / VPN</label></div>
-            <div class="radio-opt"><input type="radio" name="issue-type" id="it-shotgrid" value="ShotGrid"><label for="it-shotgrid">ShotGrid</label></div>
-            <div class="radio-opt"><input type="radio" name="issue-type" id="it-render" value="Render Farm"><label for="it-render">Render Farm</label></div>
-            <div class="radio-opt"><input type="radio" name="issue-type" id="it-other" value="Other"><label for="it-other">Other</label></div>
-          </div>
-          <div class="radio-error">Please select an issue type.</div>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Priority</label>
-        <div class="radio-group-wrap" id="rg-priority">
-          <div class="radio-grid cols-3">
-            <div class="radio-opt priority-low">
-              <input type="radio" name="priority" id="pr-low" value="Low">
-              <label for="pr-low">Low<span class="sublabel">Non-blocking</span></label>
-            </div>
-            <div class="radio-opt priority-med">
-              <input type="radio" name="priority" id="pr-med" value="Medium">
-              <label for="pr-med">Medium<span class="sublabel">Blocking work</span></label>
-            </div>
-            <div class="radio-opt priority-high">
-              <input type="radio" name="priority" id="pr-high" value="High">
-              <label for="pr-high">High<span class="sublabel">Production down</span></label>
-            </div>
-          </div>
-          <div class="radio-error">Please select a priority level.</div>
-        </div>
-      </div>
-
-      <div class="field-group" id="fg-affected">
-        <label class="field-label" for="affected-system">Affected System <span class="optional">— be specific</span></label>
-        <input type="text" id="affected-system" placeholder="e.g. EC2 i-0abc123, Nuke 16.0v8, ShotGrid Project X">
-        <div class="field-error">Please describe the affected system.</div>
-      </div>
-
     </div>
-    <div class="panel-footer">
-      <span></span>
-      <button class="btn-next" onclick="goNext(1)">Continue →</button>
+
+    <div class="wcard">
+      <div class="wcard-title">Issue Type</div>
+      <div class="wcard-desc">What area of the pipeline is affected?</div>
+
+      <div class="field-group" id="issue-typeGroup">
+        <div class="radio-grid cols-3">
+          <label class="radio-card"><input type="radio" name="issue-type" value="Pipeline"><span class="rc-label">Pipeline</span></label>
+          <label class="radio-card"><input type="radio" name="issue-type" value="Workstation"><span class="rc-label">Workstation</span></label>
+          <label class="radio-card"><input type="radio" name="issue-type" value="Network / VPN"><span class="rc-label">Network / VPN</span></label>
+          <label class="radio-card"><input type="radio" name="issue-type" value="ShotGrid"><span class="rc-label">ShotGrid</span></label>
+          <label class="radio-card"><input type="radio" name="issue-type" value="Render Farm"><span class="rc-label">Render Farm</span></label>
+          <label class="radio-card"><input type="radio" name="issue-type" value="Other"><span class="rc-label">Other</span></label>
+        </div>
+        <div class="field-error" id="issue-typeErr">Issue type is required.</div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Priority</div>
+      <div class="wcard-desc">How blocking is this? <strong>High</strong> means production is down.</div>
+
+      <div class="field-group" id="priorityGroup">
+        <div class="radio-grid cols-3">
+          <label class="priority-card low">
+            <input type="radio" name="priority" value="Low">
+            <span class="pc-label">Low</span>
+            <span class="pc-sub">Non-blocking, FYI</span>
+          </label>
+          <label class="priority-card med">
+            <input type="radio" name="priority" value="Medium">
+            <span class="pc-label">Medium</span>
+            <span class="pc-sub">Blocking your work</span>
+          </label>
+          <label class="priority-card high">
+            <input type="radio" name="priority" value="High">
+            <span class="pc-label">High</span>
+            <span class="pc-sub">Production down</span>
+          </label>
+        </div>
+        <div class="field-error" id="priorityErr">Priority is required.</div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Affected System</div>
+      <div class="wcard-desc">Be specific — software versions, hostnames, project names help diagnosis.</div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="affected-system">Affected System</label>
+          <input type="text" id="affected-system" placeholder="e.g. EC2 i-0abc123, Nuke 16.0v8, ShotGrid Project X">
+          <div class="field-error" id="affected-systemErr">Please describe the affected system.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(2)">Continue → Issue Detail</button>
     </div>
   </div>
 
-  <!-- ─── STEP 2: Issue Detail ─── -->
-  <div class="panel" id="step-2">
-    <div class="panel-header">
-      <div class="panel-eyebrow">Step 2 of 3</div>
-      <div class="panel-title">Issue Detail</div>
-    </div>
-    <div class="panel-body">
-      <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
+  <!-- ──────────── STEP 2 ──────────── -->
+  <div class="step-panel" id="step2">
 
-      <div class="field-group" id="fg-title">
-        <label class="field-label" for="issue-title">Short Title <span class="optional">— becomes email subject</span></label>
-        <input type="text" id="issue-title" placeholder="e.g. Nuke script crashes on read node with EXR sequence">
-        <div class="field-error">A short title is required.</div>
+    <div class="validation-banner" id="val-banner-2">Some required fields need attention. Only those are shown.</div>
+
+    <div class="wcard">
+      <div class="wcard-title">Issue Detail</div>
+      <div class="wcard-desc">The more specific you are, the faster this gets resolved.</div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="issue-title">Short Title <span class="opt">— becomes email subject</span></label>
+          <input type="text" id="issue-title" placeholder="e.g. Nuke script crashes on read node with EXR sequence">
+          <div class="field-error" id="issue-titleErr">A short title is required.</div>
+        </div>
       </div>
 
-      <div class="field-group" id="fg-description">
-        <label class="field-label" for="issue-description">Description</label>
-        <textarea id="issue-description" class="tall" placeholder="Describe what's happening. Include software versions, project names, and any error messages you see."></textarea>
-        <div class="field-error">Please describe the issue.</div>
+      <div class="field-row full">
+        <div class="field">
+          <label for="issue-description">Description</label>
+          <textarea id="issue-description" style="min-height:130px" placeholder="Describe what's happening. Include software versions, project names, and any error messages you see."></textarea>
+          <div class="field-error" id="issue-descriptionErr">Please describe the issue.</div>
+        </div>
       </div>
 
-      <div class="field-group" id="fg-steps">
-        <label class="field-label" for="issue-steps">Steps to Reproduce <span class="optional">— enter "N/A" if not applicable</span></label>
-        <textarea id="issue-steps" placeholder="1. Open Nuke 16.0v8&#10;2. Load script from ShotGrid&#10;3. Click Play in the viewer&#10;4. Application crashes"></textarea>
-        <div class="field-error">Please provide steps to reproduce, or enter N/A.</div>
+      <div class="field-row full">
+        <div class="field">
+          <label for="issue-steps">Steps to Reproduce <span class="opt">— enter "N/A" if not applicable</span></label>
+          <textarea id="issue-steps" placeholder="1. Open Nuke 16.0v8&#10;2. Load script from ShotGrid&#10;3. Click Play in the viewer&#10;4. Application crashes"></textarea>
+          <div class="field-error" id="issue-stepsErr">Steps to reproduce required (or "N/A").</div>
+        </div>
       </div>
 
-      <div class="two-col">
-        <div class="field-group" id="fg-expected">
-          <label class="field-label" for="issue-expected">Expected Behavior</label>
+      <div class="field-row">
+        <div class="field">
+          <label for="issue-expected">Expected Behavior</label>
           <textarea id="issue-expected" placeholder="What should have happened?"></textarea>
-          <div class="field-error">Please describe the expected behavior.</div>
+          <div class="field-error" id="issue-expectedErr">Expected behavior is required.</div>
         </div>
-        <div class="field-group" id="fg-actual">
-          <label class="field-label" for="issue-actual">Actual Behavior</label>
+        <div class="field">
+          <label for="issue-actual">Actual Behavior</label>
           <textarea id="issue-actual" placeholder="What actually happened instead?"></textarea>
-          <div class="field-error">Please describe the actual behavior.</div>
+          <div class="field-error" id="issue-actualErr">Actual behavior is required.</div>
         </div>
       </div>
-
-      <div class="attachments-note">
-        <div class="note-icon">i</div>
-        <span><strong>Attachments:</strong> Attach screenshots, logs, or screen recordings directly in your email client after clicking "Open Email Client" in the next step.</span>
-      </div>
-
     </div>
-    <div class="panel-footer">
-      <button class="btn-back" onclick="goBack(2)">← Back</button>
-      <button class="btn-next" onclick="goNext(2)">Review →</button>
+
+    <div class="notice">
+      <span class="notice-icon">📎</span>
+      <span><strong>Attachments:</strong> Attach screenshots, logs, or screen recordings directly in your email client after clicking <strong>Open in Gmail</strong> in the next step.</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(3)">Review &amp; Submit →</button>
     </div>
   </div>
 
-  <!-- ─── STEP 3: Review & Submit ─── -->
-  <div class="panel" id="step-3">
-    <div class="panel-header">
-      <div class="panel-eyebrow">Step 3 of 3</div>
-      <div class="panel-title">Review & Submit</div>
-    </div>
-    <div class="panel-body">
+  <!-- ──────────── STEP 3 ──────────── -->
+  <div class="step-panel" id="step3">
+    <div class="wcard">
+      <div class="wcard-title">Review &amp; Submit</div>
+      <div class="wcard-desc">Confirm before sending to GPL Tech.</div>
 
       <div class="review-section">
         <div class="review-section-title">Submitter</div>
-        <div class="review-grid">
-          <div class="rv-label">Name</div><div class="rv-value" id="rv-name">—</div>
-          <div class="rv-label">Email</div><div class="rv-value" id="rv-email">—</div>
-        </div>
+        <div class="review-grid" id="reviewSubmitter"></div>
       </div>
 
-      <div class="review-section">
+      <div class="review-section" style="margin-top:18px">
         <div class="review-section-title">Classification</div>
-        <div class="review-grid">
-          <div class="rv-label">Issue Type</div><div class="rv-value" id="rv-issue-type">—</div>
-          <div class="rv-label">Priority</div><div class="rv-value" id="rv-priority">—</div>
-          <div class="rv-label">Affected System</div><div class="rv-value" id="rv-affected">—</div>
-        </div>
+        <div class="review-grid" id="reviewClassification"></div>
       </div>
 
-      <div class="review-section">
+      <div class="review-section" style="margin-top:18px">
         <div class="review-section-title">Issue Detail</div>
-        <div class="review-grid">
-          <div class="rv-label">Title</div><div class="rv-value" id="rv-title">—</div>
-          <div class="rv-label">Description</div><div class="rv-value preformat" id="rv-description">—</div>
-          <div class="rv-label">Steps to Reproduce</div><div class="rv-value preformat" id="rv-steps">—</div>
-          <div class="rv-label">Expected</div><div class="rv-value preformat" id="rv-expected">—</div>
-          <div class="rv-label">Actual</div><div class="rv-value preformat" id="rv-actual">—</div>
+        <div class="review-grid" style="grid-template-columns:1fr">
+          <div class="review-field"><span class="review-field-label">Title</span><span class="review-field-value" id="rv-title">—</span></div>
+        </div>
+        <div style="margin-top:14px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px">Description</div>
+          <div class="review-pre" id="rv-description">—</div>
+        </div>
+        <div style="margin-top:14px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px">Steps to Reproduce</div>
+          <div class="review-pre" id="rv-steps">—</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px">
+          <div>
+            <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px">Expected</div>
+            <div class="review-pre" id="rv-expected">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px">Actual</div>
+            <div class="review-pre" id="rv-actual">—</div>
+          </div>
         </div>
       </div>
-
-      <hr class="divider">
-
-      <div class="action-row">
-        <button class="btn-email" onclick="openEmail()">✉ Open in Gmail</button>
-        <button class="btn-copy" id="copy-btn" onclick="copyToClipboard()">⎘ Copy to Clipboard</button>
-        <button class="btn-copy" onclick="exportPDF()">&#x2193; Export PDF</button>
-      </div>
-      <div class="submit-note" id="submit-note">
-        This will open your default email client addressed to <strong>support@gpltech.com</strong>. If priority is <strong>High</strong>, please CC your supervisor before sending.
-      </div>
-
     </div>
-    <div class="panel-footer">
-      <button class="btn-back" onclick="goBack(3)">← Back</button>
-      <span></span>
+
+    <div class="notice" id="submitNote">
+      <span class="notice-icon">ℹ</span>
+      <span>This will open Gmail addressed to <strong>support@gpltech.com</strong>. CC your supervisor if priority escalates to High.</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-ghost" onclick="copyToClipboard()">Copy</button>
+      <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
+      <button class="btn-success" onclick="openEmail()">✉ Open in Gmail</button>
+      <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
     </div>
   </div>
 
-</div><!-- end wizard-wrap -->
+</div><!-- /wizard-wrap -->
 
 <script>
-// ─── State ───────────────────────────────────────────────────────────────────
-let currentStep = 1;
+  var currentStep = 1;
 
-// ─── Navigation ──────────────────────────────────────────────────────────────
-function goNext(from) {
-  if (!validate(from)) return;
-  setStep(from + 1);
-}
+  function v(id){ return (document.getElementById(id)?.value || '').trim(); }
+  function vRadio(name){ var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function isEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
-function goBack(from) {
-  setStep(from - 1);
-}
-
-function setStep(n) {
-  document.getElementById('step-' + currentStep).classList.remove('active');
-  currentStep = n;
-  document.getElementById('step-' + currentStep).classList.add('active');
-  updateStepBar();
-  if (n === 3) populateReview();
-  window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-function updateStepBar() {
-  for (let i = 1; i <= 3; i++) {
-    const dot = document.getElementById('dot-' + i);
-    const lbl = document.getElementById('lbl-' + i);
-    dot.classList.remove('active', 'done');
-    lbl.classList.remove('active');
-    if (i < currentStep) {
-      dot.classList.add('done');
-    } else if (i === currentStep) {
-      dot.classList.add('active');
-      lbl.classList.add('active');
-    }
-    if (i < 3) {
-      const line = document.getElementById('line-' + i);
-      line.classList.toggle('done', i < currentStep);
+  function setProgress(step){
+    for (var i = 1; i <= 3; i++){
+      var pill = document.getElementById('ps' + i);
+      var lbl  = document.getElementById('psl' + i);
+      pill.className = 'step-pill';
+      lbl.className  = '';
+      if (i < step)        { pill.classList.add('done');   lbl.classList.add('done'); }
+      else if (i === step) { pill.classList.add('active'); lbl.classList.add('active'); }
     }
   }
-}
-
-// ─── Validation ───────────────────────────────────────────────────────────────
-function validate(step) {
-  let ok = true;
-
-  if (step === 1) {
-    ok = requireText('fg-name', 'submitter-name') && ok;
-    ok = requireEmail('fg-email', 'submitter-email') && ok;
-    ok = requireRadio('rg-issue-type', 'issue-type') && ok;
-    ok = requireRadio('rg-priority', 'priority') && ok;
-    ok = requireText('fg-affected', 'affected-system') && ok;
+  function goStep(n){
+    if (n > currentStep && !validateStep(currentStep)) return;
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step' + n).classList.add('active');
+    setProgress(n);
+    if (n === 3) buildReview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  if (step === 2) {
-    ok = requireText('fg-title', 'issue-title') && ok;
-    ok = requireText('fg-description', 'issue-description') && ok;
-    ok = requireText('fg-steps', 'issue-steps') && ok;
-    ok = requireText('fg-expected', 'issue-expected') && ok;
-    ok = requireText('fg-actual', 'issue-actual') && ok;
+  function setErr(id, errId, show){
+    var input = document.getElementById(id);
+    var err   = document.getElementById(errId);
+    if (show){ input.classList.add('invalid'); err.classList.add('show'); }
+    else     { input.classList.remove('invalid'); err.classList.remove('show'); }
+    return show;
   }
-
-  // Collapse valid groups, surface invalid ones
-  var banner = document.getElementById('val-banner-' + step);
-  var stepEl = document.getElementById('step-' + step);
-  var allGroups = stepEl ? stepEl.querySelectorAll('.field-group') : [];
-
-  if (!ok) {
-    if (banner) banner.classList.add('show');
-    allGroups.forEach(function(group) {
-      var hasError = group.classList.contains('has-error') || group.querySelector('.radio-group-wrap.has-error');
-      if (hasError) {
-        group.classList.remove('field-group-collapsed');
-      } else {
-        group.classList.add('field-group-collapsed');
-      }
+  function validateRadio(name, groupId, errId){
+    var val = vRadio(name);
+    var grp = document.getElementById(groupId);
+    var err = document.getElementById(errId);
+    if (!val){
+      err.classList.add('show');
+      grp.classList.add('radio-group-invalid');
+      return false;
+    }
+    err.classList.remove('show');
+    grp.classList.remove('radio-group-invalid');
+    return true;
+  }
+  function collapseStep(stepId, bannerId){
+    document.getElementById(bannerId).classList.add('show');
+    var stepEl = document.getElementById(stepId);
+    stepEl.querySelectorAll('.field-row').forEach(function(row){
+      var bad = row.querySelector('.invalid, .field-error.show');
+      if (bad) row.classList.remove('field-row-collapsed');
+      else     row.classList.add('field-row-collapsed');
     });
-  } else {
-    if (banner) banner.classList.remove('show');
-    allGroups.forEach(function(group) { group.classList.remove('field-group-collapsed'); });
-  }
-
-  return ok;
-}
-
-// Re-expand collapsed fields when user starts editing
-document.querySelectorAll('.panel input, .panel textarea').forEach(function(el) {
-  el.addEventListener('input', expandAllGroups);
-  el.addEventListener('change', expandAllGroups);
-});
-function expandAllGroups() {
-  document.querySelectorAll('.field-group-collapsed').forEach(function(g) { g.classList.remove('field-group-collapsed'); });
-  document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
-}
-
-function requireText(groupId, inputId) {
-  const group = document.getElementById(groupId);
-  const val = document.getElementById(inputId).value.trim();
-  if (!val) {
-    group.classList.add('has-error');
-    return false;
-  }
-  group.classList.remove('has-error');
-  return true;
-}
-
-function requireEmail(groupId, inputId) {
-  const group = document.getElementById(groupId);
-  const val = document.getElementById(inputId).value.trim();
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!val || !re.test(val)) {
-    group.classList.add('has-error');
-    return false;
-  }
-  group.classList.remove('has-error');
-  return true;
-}
-
-function requireRadio(groupId, radioName) {
-  const group = document.getElementById(groupId);
-  const selected = document.querySelector('input[name="' + radioName + '"]:checked');
-  if (!selected) {
-    group.classList.add('has-error');
-    return false;
-  }
-  group.classList.remove('has-error');
-  return true;
-}
-
-// Clear error on input
-['submitter-name','submitter-email','affected-system','issue-title','issue-description','issue-steps','issue-expected','issue-actual'].forEach(function(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  el.addEventListener('input', function() {
-    var fg = el.closest('.field-group');
-    if (fg) fg.classList.remove('has-error');
-  });
-});
-
-document.querySelectorAll('input[type=radio]').forEach(function(r) {
-  r.addEventListener('change', function() {
-    var wrap = r.closest('.radio-group-wrap');
-    if (wrap) wrap.classList.remove('has-error');
-  });
-});
-
-// ─── Review population ────────────────────────────────────────────────────────
-function getField(id) {
-  return document.getElementById(id).value.trim();
-}
-function getRadio(name) {
-  var el = document.querySelector('input[name="' + name + '"]:checked');
-  return el ? el.value : '';
-}
-
-function populateReview() {
-  const priority = getRadio('priority');
-  const issueType = getRadio('issue-type');
-
-  document.getElementById('rv-name').textContent = getField('submitter-name');
-  document.getElementById('rv-email').textContent = getField('submitter-email');
-  document.getElementById('rv-issue-type').textContent = issueType;
-
-  // Priority badge
-  var pbClass = priority === 'High' ? 'pb-high' : priority === 'Medium' ? 'pb-med' : 'pb-low';
-  document.getElementById('rv-priority').innerHTML =
-    '<span class="priority-badge ' + pbClass + '">' + priority + '</span>';
-
-  document.getElementById('rv-affected').textContent = getField('affected-system');
-  document.getElementById('rv-title').textContent = getField('issue-title');
-  document.getElementById('rv-description').textContent = getField('issue-description');
-  document.getElementById('rv-steps').textContent = getField('issue-steps');
-  document.getElementById('rv-expected').textContent = getField('issue-expected');
-  document.getElementById('rv-actual').textContent = getField('issue-actual');
-
-  // Update submit note based on priority
-  var note = document.getElementById('submit-note');
-  if (priority === 'High') {
-    note.innerHTML = 'This will open your default email client addressed to <strong>support@gpltech.com</strong>. Priority is <strong style="color:#7a1c1c">High</strong> — please CC your supervisor before sending.';
-  } else {
-    note.innerHTML = 'This will open your default email client addressed to <strong>support@gpltech.com</strong>. CC your supervisor if priority escalates to High.';
-  }
-}
-
-// ─── Email / Copy ─────────────────────────────────────────────────────────────
-function buildSubject() {
-  var priority = getRadio('priority');
-  var issueType = getRadio('issue-type');
-  var title = getField('issue-title');
-  return '[CBFX | ' + priority + ' | ' + issueType + '] ' + title;
-}
-
-function buildBody() {
-  var lines = [];
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('CBFX SUPPORT TICKET');
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('');
-  lines.push('SUBMITTER');
-  lines.push('  Name:   ' + getField('submitter-name'));
-  lines.push('  Email:  ' + getField('submitter-email'));
-  lines.push('');
-  lines.push('PRIORITY');
-  lines.push('  ' + getRadio('priority'));
-  lines.push('');
-  lines.push('ISSUE TYPE');
-  lines.push('  ' + getRadio('issue-type'));
-  lines.push('');
-  lines.push('AFFECTED SYSTEM');
-  lines.push('  ' + getField('affected-system'));
-  lines.push('');
-  lines.push('─────────────────────────────────────────────────');
-  lines.push('');
-  lines.push('DESCRIPTION');
-  lines.push(indent(getField('issue-description')));
-  lines.push('');
-  lines.push('STEPS TO REPRODUCE');
-  lines.push(indent(getField('issue-steps')));
-  lines.push('');
-  lines.push('EXPECTED BEHAVIOR');
-  lines.push(indent(getField('issue-expected')));
-  lines.push('');
-  lines.push('ACTUAL BEHAVIOR');
-  lines.push(indent(getField('issue-actual')));
-  lines.push('');
-  lines.push('─────────────────────────────────────────────────');
-  lines.push('Submitted via CBFX Hub Support Ticket Wizard');
-  return lines.join('\n');
-}
-
-function indent(text) {
-  return (text || '').split('\n').map(function(l){ return '  ' + l; }).join('\n');
-}
-
-function openEmail() {
-  var subject = encodeURIComponent(buildSubject());
-  var body = encodeURIComponent(buildBody());
-  window.open('https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=support@gpltech.com&su=' + subject + '&body=' + body, '_blank');
-}
-
-function copyToClipboard() {
-  var text = 'Subject: ' + buildSubject() + '\n\n' + buildBody();
-  var btn = document.getElementById('copy-btn');
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(function() {
-      showCopied(btn);
-    }).catch(function() {
-      fallbackCopy(text, btn);
+    stepEl.querySelectorAll('.field-group').forEach(function(grp){
+      var bad = grp.querySelector('.field-error.show, .radio-group-invalid')
+             || grp.classList.contains('radio-group-invalid');
+      if (bad) grp.classList.remove('field-row-collapsed');
+      else     grp.classList.add('field-row-collapsed');
     });
-  } else {
-    fallbackCopy(text, btn);
   }
-}
+  function clearCollapse(stepId, bannerId){
+    document.getElementById(bannerId).classList.remove('show');
+    document.getElementById(stepId).querySelectorAll('.field-row-collapsed')
+      .forEach(function(g){ g.classList.remove('field-row-collapsed'); });
+  }
 
-function fallbackCopy(text, btn) {
-  var ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  try { document.execCommand('copy'); showCopied(btn); } catch(e) {}
-  document.body.removeChild(ta);
-}
+  function validateStep(n){
+    var ok = true;
+    if (n === 1){
+      if (!v('submitter-name'))      ok = !setErr('submitter-name', 'submitter-nameErr', true) && ok;
+      else                                setErr('submitter-name', 'submitter-nameErr', false);
+      if (!isEmail(v('submitter-email'))) ok = !setErr('submitter-email','submitter-emailErr',true) && ok;
+      else                                setErr('submitter-email','submitter-emailErr',false);
+      if (!validateRadio('issue-type','issue-typeGroup','issue-typeErr')) ok = false;
+      if (!validateRadio('priority',  'priorityGroup',  'priorityErr'))   ok = false;
+      if (!v('affected-system'))     ok = !setErr('affected-system','affected-systemErr',true) && ok;
+      else                                setErr('affected-system','affected-systemErr',false);
+      if (!ok) collapseStep('step1','val-banner-1');
+      else     clearCollapse('step1','val-banner-1');
+      return ok;
+    }
+    if (n === 2){
+      if (!v('issue-title'))       ok = !setErr('issue-title',      'issue-titleErr',      true) && ok;
+      else                              setErr('issue-title',      'issue-titleErr',      false);
+      if (!v('issue-description')) ok = !setErr('issue-description','issue-descriptionErr',true) && ok;
+      else                              setErr('issue-description','issue-descriptionErr',false);
+      if (!v('issue-steps'))       ok = !setErr('issue-steps',      'issue-stepsErr',      true) && ok;
+      else                              setErr('issue-steps',      'issue-stepsErr',      false);
+      if (!v('issue-expected'))    ok = !setErr('issue-expected',   'issue-expectedErr',   true) && ok;
+      else                              setErr('issue-expected',   'issue-expectedErr',   false);
+      if (!v('issue-actual'))      ok = !setErr('issue-actual',     'issue-actualErr',     true) && ok;
+      else                              setErr('issue-actual',     'issue-actualErr',     false);
+      if (!ok) collapseStep('step2','val-banner-2');
+      else     clearCollapse('step2','val-banner-2');
+      return ok;
+    }
+    return true;
+  }
 
-function showCopied(btn) {
-  if (!btn) return;
-  var orig = btn.innerHTML;
-  btn.innerHTML = '✓ Copied!';
-  btn.classList.add('copied');
-  setTimeout(function() {
-    btn.innerHTML = orig;
-    btn.classList.remove('copied');
-  }, 2200);
-}
+  document.addEventListener('input', function(e){
+    if (!e.target.matches('input, textarea, select')) return;
+    document.querySelectorAll('.field-row-collapsed').forEach(function(g){ g.classList.remove('field-row-collapsed'); });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b){ b.classList.remove('show'); });
+    document.querySelectorAll('.radio-group-invalid').forEach(function(g){
+      if (g.querySelector('input[type="radio"]:checked')) g.classList.remove('radio-group-invalid');
+    });
+    document.querySelectorAll('.field-error.show').forEach(function(err){
+      var grp = err.closest('.field, .field-group');
+      if (grp && !grp.querySelector('.invalid') && !grp.classList.contains('radio-group-invalid')) err.classList.remove('show');
+    });
+  });
 
-function exportPDF() {
-  window.print();
-}
+  function paintGrid(id, rows){
+    var grid = document.getElementById(id);
+    grid.innerHTML = '';
+    rows.forEach(function(pair){
+      var k = pair[0], val = pair[1];
+      var div = document.createElement('div');
+      div.className = 'review-field';
+      var isEmpty = !val || val === '—';
+      div.innerHTML =
+        '<span class="review-field-label">' + k + '</span>' +
+        '<span class="review-field-value' + (isEmpty ? ' empty' : '') + '">' + (val || '—') + '</span>';
+      grid.appendChild(div);
+    });
+  }
+  function paintPre(id, text){
+    var el = document.getElementById(id);
+    if (!text){ el.textContent = '—'; el.classList.add('empty'); }
+    else      { el.textContent = text; el.classList.remove('empty'); }
+  }
+
+  function buildReview(){
+    paintGrid('reviewSubmitter', [
+      ['Name',  v('submitter-name')],
+      ['Email', v('submitter-email')]
+    ]);
+
+    var priority = vRadio('priority');
+    paintGrid('reviewClassification', [
+      ['Issue Type',      vRadio('issue-type')],
+      ['Priority',        priority],
+      ['Affected System', v('affected-system')]
+    ]);
+
+    document.getElementById('rv-title').textContent = v('issue-title') || '—';
+    paintPre('rv-description', v('issue-description'));
+    paintPre('rv-steps',       v('issue-steps'));
+    paintPre('rv-expected',    v('issue-expected'));
+    paintPre('rv-actual',      v('issue-actual'));
+
+    // Update submit note tone based on priority
+    var note = document.getElementById('submitNote');
+    if (priority === 'High'){
+      note.className = 'notice notice-error';
+      note.innerHTML = '<span class="notice-icon">⚠</span><span>Priority is <strong>High</strong> — production is down. <strong>CC your supervisor</strong> before sending to <strong>support@gpltech.com</strong>.</span>';
+    } else {
+      note.className = 'notice';
+      note.innerHTML = '<span class="notice-icon">ℹ</span><span>This will open Gmail addressed to <strong>support@gpltech.com</strong>. CC your supervisor if priority escalates to High.</span>';
+    }
+  }
+
+  function buildSubject(){
+    return '[CBFX | ' + vRadio('priority') + ' | ' + vRadio('issue-type') + '] ' + v('issue-title');
+  }
+  function indent(text){ return (text || '').split('\n').map(function(l){ return '  ' + l; }).join('\n'); }
+  function buildBody(){
+    var lines = [];
+    lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    lines.push('CBFX SUPPORT TICKET');
+    lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    lines.push('');
+    lines.push('SUBMITTER');
+    lines.push('  Name:   ' + v('submitter-name'));
+    lines.push('  Email:  ' + v('submitter-email'));
+    lines.push('');
+    lines.push('PRIORITY');
+    lines.push('  ' + vRadio('priority'));
+    lines.push('');
+    lines.push('ISSUE TYPE');
+    lines.push('  ' + vRadio('issue-type'));
+    lines.push('');
+    lines.push('AFFECTED SYSTEM');
+    lines.push('  ' + v('affected-system'));
+    lines.push('');
+    lines.push('─────────────────────────────────────────────────');
+    lines.push('');
+    lines.push('DESCRIPTION');
+    lines.push(indent(v('issue-description')));
+    lines.push('');
+    lines.push('STEPS TO REPRODUCE');
+    lines.push(indent(v('issue-steps')));
+    lines.push('');
+    lines.push('EXPECTED BEHAVIOR');
+    lines.push(indent(v('issue-expected')));
+    lines.push('');
+    lines.push('ACTUAL BEHAVIOR');
+    lines.push(indent(v('issue-actual')));
+    lines.push('');
+    lines.push('─────────────────────────────────────────────────');
+    lines.push('Submitted via CBFX Hub Support Ticket Wizard');
+    return lines.join('\n');
+  }
+
+  function openEmail(){
+    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=support@gpltech.com'
+      + '&su=' + encodeURIComponent(buildSubject())
+      + '&body=' + encodeURIComponent(buildBody());
+    window.open(url, '_blank');
+  }
+  function copyToClipboard(){
+    var text = 'Subject: ' + buildSubject() + '\n\n' + buildBody();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
+    } else fallbackCopy(text);
+  }
+  function fallbackCopy(t){
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta); showCopyConfirm();
+  }
+  function showCopyConfirm(){
+    var el = document.getElementById('copyConfirm');
+    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+  }
+  function exportPDF(){ window.print(); }
 </script>
-<script src="../assets/dev-mock-fill.js"></script>
 <script src="../assets/date-clamp.js"></script>
 </body>
 </html>
