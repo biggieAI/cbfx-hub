@@ -6,258 +6,124 @@
 <title>Naming Conventions — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/docs.css">
+<link rel="stylesheet" href="../assets/interactions.css">
 <style>
-  :root {
-    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-    --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
+  .token-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}
+  .token-item{background:#fff;border:.5px solid var(--hairline);border-radius:12px;padding:12px 14px}
+  .token-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px}
+  .token-desc{font-size:13px;color:var(--ink-3);line-height:1.5}
+  .token-desc strong{color:var(--ink);font-weight:700}
+  .pill-y,.pill-n{
+    display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 10px;border-radius:999px;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Figtree', sans-serif;
-    font-size: 15px;
-    min-height: 100vh;
-  }
-  .topbar {
-    background: var(--nav);
-    padding: 0 32px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .topbar-brand {
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-  .topbar-title {
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .page-wrap {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-  .back-link {
-    display: inline-block;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 36px;
-    transition: color 0.15s;
-  }
-  .back-link:hover { color: var(--text); }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 28px;
-    overflow: hidden;
-  }
-  .card-header {
-    background: var(--nav);
-    padding: 16px 24px;
-  }
-  .card-header h2 {
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-  .card-body {
-    padding: 24px;
-  }
-  .card-body p {
-    color: var(--text2);
-    line-height: 1.7;
-    margin-bottom: 12px;
-  }
-  .card-body p:last-child { margin-bottom: 0; }
-  .card-body ul {
-    padding-left: 20px;
-    color: var(--text2);
-    line-height: 1.8;
-  }
-  .card-body ul li { margin-bottom: 4px; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  th {
-    background: var(--nav);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 10px 14px;
-    text-align: left;
-  }
-  td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text2);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:nth-child(even) td { background: rgba(0,0,0,0.025); }
-  .code-block {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 16px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: auto;
-    white-space: pre;
-  }
-  .code-block-lg {
-    font-size: 16px;
-    padding: 16px 20px;
-    letter-spacing: 0.02em;
-  }
-  .code-note {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 10px;
-    font-style: italic;
-  }
-  .token-list {
-    margin-top: 18px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .token-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 10px 14px;
-  }
-  .token-item .token-name {
-    font-family: monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--blue-dark);
-    margin-bottom: 4px;
-  }
-  .token-item .token-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-  /* Yes/No badges */
-  .badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .badge-yes {
-    background: #eaf9f0;
-    color: #1a7a40;
-    border: 1px solid #3ecf6e;
-  }
-  .badge-no {
-    background: #fdf0ef;
-    color: #a02a27;
-    border: 1px solid var(--red);
-  }
-  .footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    margin-top: 16px;
-  }
+  .pill-y{background:#dbf4e8;color:#0f7a4a}
+  .pill-n{background:#fdecea;color:#7a1c1c}
 </style>
 </head>
 <body>
 
-<nav class="topbar">
-  <a class="topbar-brand" href="../index.html">CBFX Hub</a>
-  <span class="topbar-title">Naming Conventions</span>
-</nav>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/></linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
+</div>
 
-<div class="page-wrap">
-  <a class="back-link" href="../index.html">← Back to Hub</a>
+<div class="docs-wrap">
 
-  <!-- Shot Naming -->
-  <div class="card">
-    <div class="card-header"><h2>Shot Naming Pattern</h2></div>
-    <div class="card-body">
-      <div class="code-block code-block-lg">{SHOW}_{SEQ}_{SHOT}_{TASK}_{VERSION}</div>
-      <p class="code-note">Example: <strong>PROJ_010_0100_COMP_v001</strong></p>
-      <div class="token-list">
-        <div class="token-item">
-          <div class="token-name">{SHOW}</div>
-          <div class="token-desc">4-character uppercase show code — assigned at project kickoff (e.g. <strong>PROJ</strong>)</div>
-        </div>
-        <div class="token-item">
-          <div class="token-name">{SEQ}</div>
-          <div class="token-desc">3-digit zero-padded sequence number (e.g. <strong>010</strong>, <strong>020</strong>)</div>
-        </div>
-        <div class="token-item">
-          <div class="token-name">{SHOT}</div>
-          <div class="token-desc">4-digit zero-padded shot number within the sequence (e.g. <strong>0100</strong>)</div>
-        </div>
-        <div class="token-item">
-          <div class="token-name">{TASK}</div>
-          <div class="token-desc">Uppercase task abbreviation: <strong>COMP</strong>, <strong>FX</strong>, <strong>CG</strong>, <strong>ROTO</strong>, <strong>PAINT</strong>, <strong>GRADE</strong></div>
-        </div>
-        <div class="token-item">
-          <div class="token-name">{VERSION}</div>
-          <div class="token-desc">Lowercase v + 3-digit zero-padded version number (e.g. <strong>v001</strong>, <strong>v012</strong>)</div>
-        </div>
-      </div>
+  <div class="docs-header">
+    <div class="docs-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Documentation</span>
+    </div>
+    <h1 class="docs-title">Naming Conventions</h1>
+    <p class="docs-sub">Shot codes, version suffixes, NAS path structure, delivery filenames, ShotGrid field mapping. Every comp, render, and delivery follows the patterns below.</p>
+    <div class="docs-meta">
+      <span class="docs-meta-item">Pattern<strong>{SHOW}_{SEQ}_{SHOT}_{TASK}_{VERSION}</strong></span>
+      <span class="docs-meta-item">Frame pad<strong>%04d</strong></span>
     </div>
   </div>
 
-  <!-- File Sequences -->
-  <div class="card">
-    <div class="card-header"><h2>File Sequences &amp; Frame Padding</h2></div>
-    <div class="card-body">
-      <p>Always use <strong>%04d</strong> for frame padding in sequence notation. Never use single or double-digit padding — pipeline tools assume 4-digit padding uniformly.</p>
-      <div class="code-block">PROJ_010_0100_COMP_v001.%04d.exr
+  <nav class="docs-toc">
+    <div class="docs-toc-label">On this page</div>
+    <ul>
+      <li><a href="#shot-naming">Shot Naming Pattern</a></li>
+      <li><a href="#frame-padding">File Sequences &amp; Frame Padding</a></li>
+      <li><a href="#nas-paths">NAS Path Structure</a></li>
+      <li><a href="#do-dont">Do / Don't Quick Reference</a></li>
+      <li><a href="#delivery">Delivery Filename Pattern</a></li>
+      <li><a href="#shotgrid-mapping">ShotGrid Field Mapping</a></li>
+    </ul>
+  </nav>
+
+  <section class="docs-section" id="shot-naming">
+    <h2 class="docs-section-title">Shot Naming Pattern</h2>
+    <pre class="code-block">{SHOW}_{SEQ}_{SHOT}_{TASK}_{VERSION}</pre>
+    <p class="code-note">Example: <code class="inline">PROJ_010_0100_COMP_v001</code></p>
+    <div class="token-list">
+      <div class="token-item">
+        <div class="token-name">{SHOW}</div>
+        <div class="token-desc">4-character uppercase show code, assigned at project kickoff (e.g. <strong>PROJ</strong>).</div>
+      </div>
+      <div class="token-item">
+        <div class="token-name">{SEQ}</div>
+        <div class="token-desc">3-digit zero-padded sequence number (e.g. <strong>010</strong>, <strong>020</strong>).</div>
+      </div>
+      <div class="token-item">
+        <div class="token-name">{SHOT}</div>
+        <div class="token-desc">4-digit zero-padded shot number within the sequence (e.g. <strong>0100</strong>).</div>
+      </div>
+      <div class="token-item">
+        <div class="token-name">{TASK}</div>
+        <div class="token-desc">Uppercase task abbreviation: <strong>COMP</strong>, <strong>FX</strong>, <strong>CG</strong>, <strong>ROTO</strong>, <strong>PAINT</strong>, <strong>GRADE</strong>.</div>
+      </div>
+      <div class="token-item">
+        <div class="token-name">{VERSION}</div>
+        <div class="token-desc">Lowercase v + 3-digit zero-padded version number (e.g. <strong>v001</strong>, <strong>v012</strong>).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="docs-section" id="frame-padding">
+    <h2 class="docs-section-title">File Sequences &amp; Frame Padding</h2>
+    <p>Always use <code class="inline">%04d</code> for frame padding in sequence notation. Never use single or double-digit padding — pipeline tools assume 4-digit padding uniformly.</p>
+    <pre class="code-block">PROJ_010_0100_COMP_v001.%04d.exr
 
 # Frame range example (1001–1100):
 PROJ_010_0100_COMP_v001.1001.exr
 PROJ_010_0100_COMP_v001.1002.exr
 ...
-PROJ_010_0100_COMP_v001.1100.exr</div>
-      <p class="code-note">Nuke: use <strong>#</strong> notation in Write nodes — the system maps this to 4-digit %04d. Confirm padding in Read node info panel before rendering.</p>
-    </div>
-  </div>
+PROJ_010_0100_COMP_v001.1100.exr</pre>
+    <p class="code-note">Nuke: use <code class="inline">#</code> notation in Write nodes — the system maps this to 4-digit <code class="inline">%04d</code>. Confirm padding in Read node info panel before rendering.</p>
+  </section>
 
-  <!-- NAS Path Structure -->
-  <div class="card">
-    <div class="card-header"><h2>NAS Path Structure</h2></div>
-    <div class="card-body">
-      <div class="code-block">Y:\{SHOW}\
+  <section class="docs-section" id="nas-paths">
+    <h2 class="docs-section-title">NAS Path Structure</h2>
+    <pre class="code-block">Y:\{SHOW}\
   {SEQ}\
     {SHOT}\
       COMP\
@@ -278,115 +144,89 @@ PROJ_010_0100_COMP_v001.1100.exr</div>
       GRADE\
         renders\
         scripts\
-  _DELIVERY\           ← client deliveries only (managed by pipeline)</div>
-      <p class="code-note">Never write outputs directly to the root show folder or to _DELIVERY — pipeline scripts manage delivery packaging. Always write to the task-appropriate renders\ subfolder.</p>
+  _DELIVERY\           ← client deliveries only (managed by pipeline)</pre>
+    <div class="docs-callout warn">
+      <span class="docs-callout-icon">⚠</span>
+      <span>Never write outputs directly to the root show folder or to <code class="inline">_DELIVERY</code> — pipeline scripts manage delivery packaging. Always write to the task-appropriate <code class="inline">renders\</code> subfolder.</span>
     </div>
+  </section>
+
+  <section class="docs-section" id="do-dont">
+    <h2 class="docs-section-title">Do / Don't Quick Reference</h2>
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th>Convention</th>
+          <th style="width:90px;text-align:center">Allowed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Spaces in filenames</td><td style="text-align:center"><span class="pill-n">No</span></td></tr>
+        <tr><td>Special characters in filenames (<code>! @ # $ % ^ &amp;</code>)</td><td style="text-align:center"><span class="pill-n">No</span></td></tr>
+        <tr><td>Lowercase show code (e.g. <code>proj</code> instead of <code>PROJ</code>)</td><td style="text-align:center"><span class="pill-n">No</span></td></tr>
+        <tr><td>Short version suffix (e.g. <code>v1</code> or <code>v01</code> instead of <code>v001</code>)</td><td style="text-align:center"><span class="pill-n">No</span></td></tr>
+        <tr><td>Single-digit frame padding</td><td style="text-align:center"><span class="pill-n">No</span></td></tr>
+        <tr><td>Uppercase task codes (<code>COMP, FX, CG, ROTO, PAINT, GRADE</code>)</td><td style="text-align:center"><span class="pill-y">Yes</span></td></tr>
+        <tr><td>Date in delivery filename (YYYYMMDD format)</td><td style="text-align:center"><span class="pill-y">Yes</span></td></tr>
+        <tr><td>Underscores as token separators</td><td style="text-align:center"><span class="pill-y">Yes</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="docs-section" id="delivery">
+    <h2 class="docs-section-title">Delivery Filename Pattern</h2>
+    <pre class="code-block">{CLIENT}_{SHOW}_{SHOT}_{VERSION}_DLVR_{YYYYMMDD}</pre>
+    <p class="code-note">Example: <code class="inline">STUDIOX_PROJ_010_0100_v003_DLVR_20260520</code></p>
+    <p>The <code class="inline">_DLVR_</code> suffix flags the file as a finalized client delivery — <strong>never use this suffix on internal review renders</strong>. The date reflects the day the delivery is packaged, not the render date.</p>
+  </section>
+
+  <section class="docs-section" id="shotgrid-mapping">
+    <h2 class="docs-section-title">ShotGrid Field Mapping</h2>
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th>ShotGrid Field</th>
+          <th>Naming Token</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Shot Code</td>
+          <td><code>SHOW_SEQ_SHOT</code></td>
+          <td>e.g. <code>PROJ_010_0100</code> — no task or version</td>
+        </tr>
+        <tr>
+          <td>Version Name</td>
+          <td>Full filename stem</td>
+          <td>e.g. <code>PROJ_010_0100_COMP_v001</code> — no extension</td>
+        </tr>
+        <tr>
+          <td>Task</td>
+          <td>TASK abbreviation</td>
+          <td>Must match exactly: <code>COMP, FX, CG, ROTO, PAINT, GRADE</code></td>
+        </tr>
+        <tr>
+          <td>Sequence</td>
+          <td><code>SEQ</code> (3-digit)</td>
+          <td>e.g. <code>010</code> — must be zero-padded</td>
+        </tr>
+        <tr>
+          <td>Published File Path</td>
+          <td>Full NAS path with <code>%04d</code></td>
+          <td>Relative to <code>Y:\</code> root — confirm mapping with pipeline</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="docs-footer">
+    <span class="docs-footer-brand">CBFX · Internal Use Only</span>
+    <span class="docs-footer-meta">Last updated 2026-05-24</span>
   </div>
 
-  <!-- Do / Don't Table -->
-  <div class="card">
-    <div class="card-header"><h2>Do / Don't Quick Reference</h2></div>
-    <div class="card-body" style="padding:0;">
-      <table>
-        <thead>
-          <tr>
-            <th>Convention</th>
-            <th style="width:80px;text-align:center;">Allowed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Spaces in filenames</td>
-            <td style="text-align:center;"><span class="badge badge-no">NO</span></td>
-          </tr>
-          <tr>
-            <td>Special characters in filenames ( ! @ # $ % ^ &amp; )</td>
-            <td style="text-align:center;"><span class="badge badge-no">NO</span></td>
-          </tr>
-          <tr>
-            <td>Lowercase show code (e.g. <code>proj</code> instead of <code>PROJ</code>)</td>
-            <td style="text-align:center;"><span class="badge badge-no">NO</span></td>
-          </tr>
-          <tr>
-            <td>Short version suffix (e.g. <code>v1</code> or <code>v01</code> instead of <code>v001</code>)</td>
-            <td style="text-align:center;"><span class="badge badge-no">NO</span></td>
-          </tr>
-          <tr>
-            <td>Single-digit frame padding</td>
-            <td style="text-align:center;"><span class="badge badge-no">NO</span></td>
-          </tr>
-          <tr>
-            <td>Uppercase task codes (COMP, FX, CG, ROTO, PAINT, GRADE)</td>
-            <td style="text-align:center;"><span class="badge badge-yes">YES</span></td>
-          </tr>
-          <tr>
-            <td>Date in delivery filename (YYYYMMDD format)</td>
-            <td style="text-align:center;"><span class="badge badge-yes">YES</span></td>
-          </tr>
-          <tr>
-            <td>Underscores as token separators</td>
-            <td style="text-align:center;"><span class="badge badge-yes">YES</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Delivery Filename -->
-  <div class="card">
-    <div class="card-header"><h2>Delivery Filename Pattern</h2></div>
-    <div class="card-body">
-      <div class="code-block code-block-lg">{CLIENT}_{SHOW}_{SHOT}_{VERSION}_DLVR_{YYYYMMDD}</div>
-      <p class="code-note">Example: <strong>STUDIOX_PROJ_010_0100_v003_DLVR_20260520</strong></p>
-      <p style="margin-top:14px;color:var(--text2);">The <strong>_DLVR_</strong> suffix flags the file as a finalized client delivery — never use this suffix on internal review renders. The date reflects the day the delivery is packaged, not the render date.</p>
-    </div>
-  </div>
-
-  <!-- ShotGrid Mapping -->
-  <div class="card">
-    <div class="card-header"><h2>ShotGrid Field Mapping</h2></div>
-    <div class="card-body" style="padding:0;">
-      <table>
-        <thead>
-          <tr>
-            <th>ShotGrid Field</th>
-            <th>Naming Token</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Shot Code</td>
-            <td><code>SHOW_SEQ_SHOT</code></td>
-            <td>e.g. <code>PROJ_010_0100</code> — no task or version</td>
-          </tr>
-          <tr>
-            <td>Version Name</td>
-            <td>Full filename stem</td>
-            <td>e.g. <code>PROJ_010_0100_COMP_v001</code> — no extension</td>
-          </tr>
-          <tr>
-            <td>Task</td>
-            <td>TASK abbreviation</td>
-            <td>Must match exactly: COMP, FX, CG, ROTO, PAINT, GRADE</td>
-          </tr>
-          <tr>
-            <td>Sequence</td>
-            <td><code>SEQ</code> (3-digit)</td>
-            <td>e.g. <code>010</code> — must be zero-padded</td>
-          </tr>
-          <tr>
-            <td>Published File Path</td>
-            <td>Full NAS path with %04d</td>
-            <td>Relative to Y:\ root — confirm mapping with pipeline</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="footer">CBFX &middot; Internal Use Only</div>
 </div>
 
+<script src="../assets/docs-toc.js"></script>
 </body>
 </html>

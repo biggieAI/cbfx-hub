@@ -3,289 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Delivery Specifications — CBFX Hub</title>
+<title>Delivery Specs — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/docs.css">
+<link rel="stylesheet" href="../assets/interactions.css">
 <style>
-  :root {
-    --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-    --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-    --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-    --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
+  .fmt-pill{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+    background:var(--blue-soft);color:var(--blue);
+    padding:2px 8px;border-radius:999px;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Figtree', sans-serif;
-    font-size: 15px;
-    min-height: 100vh;
+  .handle-stat{
+    display:inline-flex;align-items:center;gap:14px;
+    background:#fff;border:.5px solid var(--hairline);border-radius:14px;
+    padding:14px 18px;
   }
-  .topbar {
-    background: var(--nav);
-    padding: 0 32px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  .handle-num{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:36px;
+    color:var(--blue);line-height:1;
   }
-  .topbar-brand {
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-  .topbar-title {
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .page-wrap {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-  .back-link {
-    display: inline-block;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 36px;
-    transition: color 0.15s;
-  }
-  .back-link:hover { color: var(--text); }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 28px;
-    overflow: hidden;
-  }
-  .card-header {
-    background: var(--nav);
-    padding: 16px 24px;
-  }
-  .card-header h2 {
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-  .card-body {
-    padding: 24px;
-  }
-  .card-body p {
-    color: var(--text2);
-    line-height: 1.7;
-    margin-bottom: 12px;
-  }
-  .card-body p:last-child { margin-bottom: 0; }
-  .card-body ul {
-    padding-left: 20px;
-    color: var(--text2);
-    line-height: 1.8;
-  }
-  .card-body ul li { margin-bottom: 5px; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  th {
-    background: var(--nav);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 10px 14px;
-    text-align: left;
-  }
-  td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text2);
-    font-size: 14px;
-    line-height: 1.5;
-    vertical-align: middle;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:nth-child(even) td { background: rgba(0,0,0,0.025); }
-  .code-block {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 16px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: auto;
-    white-space: pre;
-  }
-  .code-note {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 10px;
-    font-style: italic;
-  }
-  /* Format pills */
-  .fmt-pill {
-    display: inline-block;
-    background: var(--nav);
-    color: #fff;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    font-family: monospace;
-  }
-  .fmt-pill.green { background: #1a7a40; }
-  .fmt-pill.yellow { background: #8a6e10; }
-  .fmt-pill.red { background: #a02a27; }
-  /* Warning notice */
-  .notice {
-    background: #fdf6e3;
-    border: 1px solid var(--yellow);
-    border-radius: 6px;
-    padding: 14px 18px;
-    color: #6b5500;
-    font-size: 13px;
-    line-height: 1.6;
-    margin-top: 16px;
-  }
-  .notice strong { color: #4a3a00; }
-  /* TBD badge */
-  .tbd {
-    color: var(--muted);
-    font-style: italic;
-    font-size: 13px;
-  }
-  /* Handle highlight */
-  .handle-num {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--blue-dark);
-    line-height: 1;
-  }
-  .handle-label {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .handle-stat {
-    display: inline-block;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 24px;
-    text-align: center;
-    margin-right: 12px;
-  }
-  .footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    margin-top: 16px;
-  }
+  .handle-label{font-size:12.5px;color:var(--ink-3);font-weight:500;letter-spacing:.02em}
+  .tbd{color:var(--ink-4);font-style:italic;font-size:13px}
 </style>
 </head>
 <body>
 
-<nav class="topbar">
-  <a class="topbar-brand" href="../index.html">CBFX Hub</a>
-  <span class="topbar-title">Delivery Specifications</span>
-</nav>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/></linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
+</div>
 
-<div class="page-wrap">
-  <a class="back-link" href="../index.html">← Back to Hub</a>
+<div class="docs-wrap">
 
-  <!-- Standard Formats -->
-  <div class="card">
-    <div class="card-header"><h2>Standard Delivery Formats</h2></div>
-    <div class="card-body" style="padding:0;">
-      <table>
-        <thead>
-          <tr>
-            <th>Format</th>
-            <th>Container</th>
-            <th>Colorspace</th>
-            <th>Bit Depth</th>
-            <th>Frame Rate</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>DPX 10-bit</strong></td>
-            <td><span class="fmt-pill">.dpx</span></td>
-            <td>Linear</td>
-            <td>10-bit</td>
-            <td>Match source</td>
-            <td>Preferred for finishing; use for grading handoffs</td>
-          </tr>
-          <tr>
-            <td><strong>EXR half</strong></td>
-            <td><span class="fmt-pill">.exr</span></td>
-            <td>ACEScg</td>
-            <td>16-bit half</td>
-            <td>Match source</td>
-            <td>VFX pulls and internal handoffs; preserve all channels</td>
-          </tr>
-          <tr>
-            <td><strong>ProRes 4444</strong></td>
-            <td><span class="fmt-pill">.mov</span></td>
-            <td>Rec.709</td>
-            <td>12-bit</td>
-            <td>Match source</td>
-            <td>Client review masters; supports alpha channel</td>
-          </tr>
-          <tr>
-            <td><strong>ProRes 422 HQ</strong></td>
-            <td><span class="fmt-pill">.mov</span></td>
-            <td>Rec.709</td>
-            <td>10-bit</td>
-            <td>Match source</td>
-            <td>Standard client delivery; no alpha</td>
-          </tr>
-          <tr>
-            <td><strong>H.264</strong></td>
-            <td><span class="fmt-pill">.mp4</span></td>
-            <td>sRGB</td>
-            <td>8-bit</td>
-            <td>23.976 or 25</td>
-            <td>Screener and reference only — never for finishing</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="docs-header">
+    <div class="docs-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Documentation</span>
+    </div>
+    <h1 class="docs-title">Delivery Specs</h1>
+    <p class="docs-sub">Standard formats, frame handles, slate requirements, audio rules, and per-show client overrides. Confirm specs at kickoff — never assume they carry over from prior shows.</p>
+    <div class="docs-meta">
+      <span class="docs-meta-item">Default handles<strong>8 frames each side</strong></span>
+      <span class="docs-meta-item">Default audio<strong>MOS</strong></span>
     </div>
   </div>
 
-  <!-- Frame Handles -->
-  <div class="card">
-    <div class="card-header"><h2>Frame Handles</h2></div>
-    <div class="card-body">
-      <div style="margin-bottom:20px;">
-        <div class="handle-stat">
-          <div class="handle-num">8</div>
-          <div class="handle-label">Frames — each side (default)</div>
-        </div>
-      </div>
-      <p>All VFX deliveries include <strong>8 frames of handle</strong> on each side of the cut unless the client specifies otherwise. Always confirm handle requirements at show kickoff and document any exceptions in the show bible.</p>
-      <div class="code-block"># Handle notation in filename (start–end frames inclusive of handles):
+  <nav class="docs-toc">
+    <div class="docs-toc-label">On this page</div>
+    <ul>
+      <li><a href="#formats">Standard Delivery Formats</a></li>
+      <li><a href="#handles">Frame Handles</a></li>
+      <li><a href="#slate">Slate Requirements</a></li>
+      <li><a href="#audio">Audio</a></li>
+      <li><a href="#per-show">Client Specs Per Show</a></li>
+    </ul>
+  </nav>
+
+  <section class="docs-section" id="formats">
+    <h2 class="docs-section-title">Standard Delivery Formats</h2>
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th>Format</th>
+          <th>Container</th>
+          <th>Colorspace</th>
+          <th>Bit Depth</th>
+          <th>Frame Rate</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>DPX 10-bit</strong></td><td><span class="fmt-pill">.dpx</span></td><td>Linear</td><td>10-bit</td><td>Match source</td><td>Preferred for finishing; use for grading handoffs</td></tr>
+        <tr><td><strong>EXR half</strong></td><td><span class="fmt-pill">.exr</span></td><td>ACEScg</td><td>16-bit half</td><td>Match source</td><td>VFX pulls and internal handoffs; preserve all channels</td></tr>
+        <tr><td><strong>ProRes 4444</strong></td><td><span class="fmt-pill">.mov</span></td><td>Rec.709</td><td>12-bit</td><td>Match source</td><td>Client review masters; supports alpha</td></tr>
+        <tr><td><strong>ProRes 422 HQ</strong></td><td><span class="fmt-pill">.mov</span></td><td>Rec.709</td><td>10-bit</td><td>Match source</td><td>Standard client delivery; no alpha</td></tr>
+        <tr><td><strong>H.264</strong></td><td><span class="fmt-pill">.mp4</span></td><td>sRGB</td><td>8-bit</td><td>23.976 or 25</td><td>Screener and reference only — never for finishing</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="docs-section" id="handles">
+    <h2 class="docs-section-title">Frame Handles</h2>
+    <div class="handle-stat">
+      <div class="handle-num">8</div>
+      <div class="handle-label">FRAMES — each side (default)</div>
+    </div>
+    <p style="margin-top:14px">All VFX deliveries include <strong>8 frames of handle</strong> on each side of the cut unless the client specifies otherwise. Always confirm handle requirements at show kickoff and document any exceptions in the show bible.</p>
+    <pre class="code-block"># Handle notation in filename (start–end frames inclusive of handles):
 # Shot cut: 1001–1100 | With 8-frame handles: 0993–1108
 
 PROJ_010_0100_COMP_v001.0993.exr   ← handle start
@@ -294,97 +123,72 @@ PROJ_010_0100_COMP_v001.1001.exr   ← cut in
 ...
 PROJ_010_0100_COMP_v001.1100.exr   ← cut out
 ...
-PROJ_010_0100_COMP_v001.1108.exr   ← handle end</div>
-      <p class="code-note">Nuke Write node: set frame range to include handles. Never trim to cut points before receiving explicit sign-off from editorial.</p>
+PROJ_010_0100_COMP_v001.1108.exr   ← handle end</pre>
+    <p class="code-note">Nuke Write node: set frame range to include handles. Never trim to cut points before receiving explicit sign-off from editorial.</p>
+  </section>
+
+  <section class="docs-section" id="slate">
+    <h2 class="docs-section-title">Slate Requirements</h2>
+    <p>All client deliveries must include a <strong>1-second (24–25 frame) slate</strong> before the first handle frame. The slate must display the following information in a legible layout:</p>
+    <ul>
+      <li><strong>Show Name</strong> — full show title as agreed with client</li>
+      <li><strong>Shot Code</strong> — in standard CBFX format (e.g. <code>PROJ_010_0100</code>)</li>
+      <li><strong>Version</strong> — version string (e.g. <code>v003</code>)</li>
+      <li><strong>Date</strong> — package date in <code>YYYY-MM-DD</code> format</li>
+      <li><strong>Colorspace</strong> — the display colorspace baked into the delivery (e.g. Rec.709)</li>
+      <li><strong>Artist Initials</strong> — 2–3 letter initials of the lead artist responsible for the delivery</li>
+      <li><strong>Duration</strong> — total frame count including handles (e.g. 116 frames)</li>
+    </ul>
+    <div class="docs-callout info">
+      <span class="docs-callout-icon">ℹ</span>
+      <span>Use the approved CBFX slate template from <code class="inline">Y:\_TOOLS\templates\cbfx_slate_v2.nk</code>. Do not create ad-hoc slates.</span>
     </div>
+  </section>
+
+  <section class="docs-section" id="audio">
+    <h2 class="docs-section-title">Audio</h2>
+    <p>VFX deliveries are <strong>MOS (no audio)</strong> by default. Do not mux audio into any VFX delivery file under any circumstances.</p>
+    <p>If editorial explicitly requests audio (e.g. for client review cuts), deliver audio as a <strong>separate file</strong> alongside the video — never embedded in the container:</p>
+    <ul>
+      <li>Preferred: <strong>WAV</strong> (48kHz, 24-bit, stereo)</li>
+      <li>Acceptable: <strong>AAC</strong> (48kHz, 256kbps stereo) for screener-only use</li>
+    </ul>
+    <div class="docs-callout danger">
+      <span class="docs-callout-icon">⛔</span>
+      <span><strong>Never mux audio into a video delivery.</strong> Downstream tools in the finishing pipeline assume MOS VFX elements — embedded audio causes sync issues in editorial and automated QC failures.</span>
+    </div>
+  </section>
+
+  <section class="docs-section" id="per-show">
+    <h2 class="docs-section-title">Client Delivery Specs — Per Show</h2>
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Format</th>
+          <th>Resolution</th>
+          <th>FPS</th>
+          <th>Colorspace</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="6" style="text-align:center"><span class="tbd">No active shows configured — update at kickoff.</span></td></tr>
+      </tbody>
+    </table>
+    <div class="docs-callout warn" style="margin-top:14px">
+      <span class="docs-callout-icon">⚠</span>
+      <span><strong>Update this table at the start of each new show</strong> with client-confirmed delivery specs. Source specifications from the client's technical requirements document or via email from the VFX supervisor. Do not assume specs carry over from previous shows with the same client.</span>
+    </div>
+  </section>
+
+  <div class="docs-footer">
+    <span class="docs-footer-brand">CBFX · Internal Use Only</span>
+    <span class="docs-footer-meta">Last updated 2026-05-24</span>
   </div>
 
-  <!-- Slate Requirements -->
-  <div class="card">
-    <div class="card-header"><h2>Slate Requirements</h2></div>
-    <div class="card-body">
-      <p>All client deliveries must include a <strong>1-second (24–25 frame) slate</strong> before the first handle frame. The slate must display the following information in a legible layout:</p>
-      <ul>
-        <li><strong>Show Name</strong> — full show title as agreed with client</li>
-        <li><strong>Shot Code</strong> — in standard CBFX format (e.g. PROJ_010_0100)</li>
-        <li><strong>Version</strong> — version string (e.g. v003)</li>
-        <li><strong>Date</strong> — package date in YYYY-MM-DD format</li>
-        <li><strong>Colorspace</strong> — the display colorspace baked into the delivery (e.g. Rec.709)</li>
-        <li><strong>Artist Initials</strong> — 2–3 letter initials of the lead artist responsible for the delivery</li>
-        <li><strong>Duration</strong> — total frame count including handles (e.g. 116 frames)</li>
-      </ul>
-      <p style="margin-top:14px;">Use the approved CBFX slate template from <code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:13px;">Y:\_TOOLS\templates\cbfx_slate_v2.nk</code>. Do not create ad-hoc slates.</p>
-    </div>
-  </div>
-
-  <!-- Audio -->
-  <div class="card">
-    <div class="card-header"><h2>Audio</h2></div>
-    <div class="card-body">
-      <p>VFX deliveries are <strong>MOS (no audio)</strong> by default. Do not mux audio into any VFX delivery file under any circumstances.</p>
-      <p>If editorial explicitly requests audio (e.g. for client review cuts), deliver audio as a <strong>separate file</strong> alongside the video — never embedded in the container:</p>
-      <ul>
-        <li>Preferred: <strong>WAV</strong> (48kHz, 24-bit, stereo)</li>
-        <li>Acceptable: <strong>AAC</strong> (48kHz, 256kbps stereo) for screener-only use</li>
-      </ul>
-      <div class="notice">
-        <strong>Never mux audio into a video delivery.</strong> Downstream tools in the finishing pipeline assume MOS VFX elements — embedded audio causes sync issues in editorial and automated QC failures.
-      </div>
-    </div>
-  </div>
-
-  <!-- Client Specs Placeholder -->
-  <div class="card">
-    <div class="card-header"><h2>Client Delivery Specs — Per Show</h2></div>
-    <div class="card-body" style="padding:0 0 0 0;">
-      <table>
-        <thead>
-          <tr>
-            <th>Client</th>
-            <th>Format</th>
-            <th>Resolution</th>
-            <th>FPS</th>
-            <th>Colorspace</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-          </tr>
-          <tr>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-          </tr>
-          <tr>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-            <td><span class="tbd">TBD</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="padding:16px 24px;">
-        <div class="notice">
-          <strong>Update this table at the start of each new show</strong> with client-confirmed delivery specs. Source specifications from the client's technical requirements document or confirmed via email from the VFX supervisor. Do not assume specs carry over from previous shows with the same client.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">CBFX &middot; Internal Use Only</div>
 </div>
 
+<script src="../assets/docs-toc.js"></script>
 </body>
 </html>

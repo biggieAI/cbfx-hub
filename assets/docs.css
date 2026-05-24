@@ -1,0 +1,197 @@
+/* CBFX Hub — shared documentation reading layout
+ * Loaded by every /docs/*.html page.
+ * Pairs with the global style.css design tokens.
+ */
+
+/* ── Page chrome ──────────────────────────────────────────── */
+.docs-wrap{
+  max-width:840px;
+  margin:0 auto;
+  padding:48px 28px 96px;
+}
+
+.docs-header{margin-bottom:32px}
+.docs-eyebrow{
+  font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:10px;
+}
+.docs-eyebrow a{color:var(--ink-4);text-decoration:none}
+.docs-eyebrow a:hover{color:var(--blue)}
+.docs-eyebrow .sep{margin:0 6px;opacity:.5}
+
+.docs-title{
+  font-family:'Manrope',sans-serif;
+  font-size:38px;font-weight:800;letter-spacing:-.025em;line-height:1.1;
+  color:var(--ink);margin-bottom:12px;
+}
+.docs-sub{
+  font-size:15px;color:var(--ink-3);line-height:1.55;
+  max-width:640px;
+}
+
+.docs-meta{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;
+}
+.docs-meta-item{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  color:var(--ink-3);padding:5px 12px;
+  background:var(--surface);border:.5px solid var(--hairline);
+  border-radius:999px;
+}
+.docs-meta-item strong{color:var(--ink);font-weight:600;margin-left:4px}
+
+/* ── Section cards ────────────────────────────────────────── */
+.docs-section{
+  background:var(--surface);
+  border:.5px solid var(--hairline);
+  border-radius:18px;
+  padding:24px 28px;
+  margin-bottom:18px;
+  box-shadow:var(--sh-1);
+}
+.docs-section.danger{
+  background:#fdf3f2;border-color:#f3b5b1;
+}
+.docs-section.danger .docs-section-title{color:#7a1c1c}
+
+.docs-section-title{
+  font-family:'Manrope',sans-serif;
+  font-size:17px;font-weight:700;letter-spacing:-.015em;
+  color:var(--ink);margin-bottom:14px;
+  padding-bottom:10px;border-bottom:.5px solid var(--hairline);
+}
+
+/* ── Prose ────────────────────────────────────────────────── */
+.docs-section p{
+  font-size:14.5px;line-height:1.65;color:var(--ink-2);
+  margin-bottom:12px;
+}
+.docs-section p:last-child{margin-bottom:0}
+.docs-section p strong{color:var(--ink);font-weight:700}
+.docs-section a{color:var(--blue);text-decoration:none;font-weight:600}
+.docs-section a:hover{text-decoration:underline}
+
+.docs-section ul,.docs-section ol{
+  padding-left:22px;margin:6px 0 14px;
+  font-size:14.5px;line-height:1.7;color:var(--ink-2);
+}
+.docs-section ul:last-child,.docs-section ol:last-child{margin-bottom:0}
+.docs-section li{margin-bottom:6px}
+.docs-section li strong{color:var(--ink);font-weight:600}
+
+/* ── Inline code + code blocks ────────────────────────────── */
+.docs-section code,
+code.inline{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:rgba(15,23,42,.06);color:var(--ink);
+  padding:2px 7px;border-radius:6px;font-weight:500;
+}
+.code-block{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:var(--ink);color:#dbe8fd;
+  padding:14px 18px;border-radius:12px;
+  overflow-x:auto;line-height:1.5;
+  margin:8px 0 6px;
+  white-space:pre;
+}
+.code-note{
+  font-size:12.5px;color:var(--ink-4);font-style:italic;margin-top:8px;
+}
+
+/* ── Tables ──────────────────────────────────────────────── */
+.docs-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  background:#fff;border:.5px solid var(--hairline);border-radius:12px;
+  overflow:hidden;font-family:inherit;
+  margin:4px 0;
+}
+.docs-table th,.docs-table td{
+  padding:10px 14px;text-align:left;
+  border-bottom:.5px solid var(--hairline);
+  font-size:13.5px;line-height:1.5;vertical-align:top;
+}
+.docs-table thead th{
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-4);background:rgba(15,23,42,.025);
+}
+.docs-table tbody tr:last-child td{border-bottom:0}
+.docs-table strong,.docs-table b{color:var(--ink);font-weight:700}
+.docs-table code,.docs-table .mono{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  color:var(--blue);font-weight:600;
+}
+
+/* ── Meta tags inline ─────────────────────────────────────── */
+.meta-tag{
+  display:inline-block;
+  font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-4);
+  background:var(--surface);border:.5px solid var(--hairline);
+  padding:2px 9px;border-radius:999px;margin-right:6px;
+}
+
+/* ── Callouts ─────────────────────────────────────────────── */
+.docs-callout{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:14px 16px;border-radius:12px;
+  font-size:13.5px;line-height:1.55;
+  margin:10px 0;
+}
+.docs-callout.info{background:var(--blue-soft);color:#1d3fb8;border:.5px solid #c4d3f7}
+.docs-callout.warn{background:#fff4e6;color:#73431a;border:.5px solid #f3d3a8}
+.docs-callout.danger{background:#fdecea;color:#7a1c1c;border:.5px solid #f3b5b1}
+.docs-callout strong{color:inherit;font-weight:700}
+.docs-callout-icon{
+  flex-shrink:0;font-size:16px;line-height:1.4;
+}
+
+/* ── TOC ──────────────────────────────────────────────────── */
+.docs-toc{
+  position:sticky;top:80px;
+  background:var(--surface);border:.5px solid var(--hairline);
+  border-radius:14px;padding:14px 16px;
+  margin-bottom:24px;
+}
+.docs-toc-label{
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:8px;
+}
+.docs-toc ul{list-style:none;padding:0;margin:0}
+.docs-toc li{margin:4px 0}
+.docs-toc a{
+  display:inline-block;font-size:13px;font-weight:500;
+  color:var(--ink-3);text-decoration:none;
+  padding:2px 0;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;
+  transition:color .15s, border-color .15s;
+}
+.docs-toc a:hover{color:var(--blue)}
+.docs-toc a.active{color:var(--blue);border-left-color:var(--blue);font-weight:600}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.docs-footer{
+  margin-top:40px;padding-top:18px;border-top:.5px solid var(--hairline);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.docs-footer-brand{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);
+}
+.docs-footer-meta{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-4);
+}
+
+/* ── Print ────────────────────────────────────────────────── */
+@media print{
+  .topbar,.docs-toc{display:none!important}
+  body{background:#fff}
+  .docs-section{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+}
+
+/* ── Mobile ───────────────────────────────────────────────── */
+@media (max-width: 720px){
+  .docs-wrap{padding:32px 18px 64px}
+  .docs-title{font-size:30px}
+  .docs-section{padding:18px 18px}
+  .docs-table{font-size:12.5px}
+  .docs-table th,.docs-table td{padding:8px 10px}
+}

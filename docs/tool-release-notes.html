@@ -6,164 +6,163 @@
 <title>Tool Release Notes — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/docs.css">
+<link rel="stylesheet" href="../assets/interactions.css">
 <style>
-:root{
-  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-  --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;--red:#e8504a;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh;line-height:1.6}
-a{color:var(--blue-dark);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* Topbar */
-.topbar{background:var(--nav);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.topbar-brand{font-weight:700;font-size:14px;letter-spacing:0.12em;color:#fff;text-transform:uppercase}
-.topbar-title{font-size:11px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;font-weight:500}
-
-/* Back link */
-.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:28px;font-weight:500;transition:color .15s}
-.back-link:hover{color:var(--text);text-decoration:none}
-
-/* Layout */
-.page-content{max-width:860px;margin:0 auto;padding:48px 24px 80px}
-
-/* Intro */
-.intro{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:32px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
-.intro a{color:var(--blue-dark);font-weight:500}
-
-/* Section label */
-.section-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-
-/* Changelog entry card */
-.changelog-entry{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;transition:border-color .15s}
-.changelog-entry:hover{border-color:var(--border-dark)}
-
-.entry-header{background:var(--nav);padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.version-badge{background:rgba(255,255,255,0.12);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;font-family:'Figtree',monospace;letter-spacing:0.03em;white-space:nowrap}
-.tool-name{color:#fff;font-weight:700;font-size:15px;flex:1}
-.entry-date{color:var(--muted);font-size:12px;font-weight:400;margin-left:auto}
-
-.entry-body{padding:18px 20px;display:flex;align-items:flex-start;gap:14px}
-.type-tag{flex-shrink:0;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px}
-.type-tag.new-feature{background:var(--green);color:#0a2a15}
-.type-tag.bug-fix{background:var(--blue-dark);color:#c8ddf0}
-.type-tag.breaking{background:var(--red);color:#fff}
-.entry-desc{font-size:14px;color:var(--text2);line-height:1.65}
-
-/* Footer note */
-.footer-note{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-size:13px;color:var(--muted);margin-top:8px}
-.footer-note a{color:var(--blue-dark);font-weight:500}
-
-/* Footer */
-footer{text-align:center;font-size:12px;color:var(--muted);padding:24px;border-top:1px solid var(--border);background:var(--surface);letter-spacing:0.05em}
+  .changelog-entry{
+    display:grid;grid-template-columns:160px 1fr;gap:18px;align-items:start;
+    padding:16px 0;border-bottom:.5px dashed rgba(15,23,42,.08);
+  }
+  .changelog-entry:last-child{border-bottom:0}
+  @media (max-width: 640px){ .changelog-entry{grid-template-columns:1fr;gap:8px} }
+  .ce-meta{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .ce-version{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+    background:var(--ink);color:#fff;
+    padding:3px 10px;border-radius:6px;
+  }
+  .ce-tool{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .ce-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-4)}
+  .ce-body{}
+  .ce-tag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-bottom:6px;
+  }
+  .ce-tag.new{background:#dbf4e8;color:#0f7a4a}
+  .ce-tag.fix{background:var(--blue-soft);color:var(--blue)}
+  .ce-tag.break{background:#fdecea;color:#7a1c1c}
+  .ce-desc{font-size:14px;color:var(--ink-2);line-height:1.55}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <span class="topbar-brand">CBFX Hub</span>
-  <span class="topbar-title">Tool Release Notes</span>
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/></linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
 </div>
 
-<div class="page-content">
-  <a href="../index.html" class="back-link">← Back to Hub</a>
+<div class="docs-wrap">
 
-  <div class="intro">
-    Internal pipeline tools are versioned and documented here. All entries are listed newest first.
-    For bug reports or feature requests, submit a <a href="../tools/support-ticket.html">Support Ticket</a>.
+  <div class="docs-header">
+    <div class="docs-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Documentation</span>
+    </div>
+    <h1 class="docs-title">Tool Release Notes</h1>
+    <p class="docs-sub">Changelog for CBFX pipeline tools — CompReview, LocalBurn, Fast Cache, and adjacent pipeline utilities. Most recent at the top.</p>
   </div>
 
-  <div class="section-label">Changelog</div>
+  <section class="docs-section">
+    <h2 class="docs-section-title">Changelog</h2>
 
-  <!-- Entry 1 -->
-  <div class="changelog-entry">
-    <div class="entry-header">
-      <span class="version-badge">v2.3.1</span>
-      <span class="tool-name">LocalBurn</span>
-      <span class="entry-date">2025-03-14</span>
+    <div class="changelog-entry">
+      <div class="ce-meta">
+        <span class="ce-version">v2.3.1</span>
+        <span class="ce-tool">LocalBurn</span>
+        <span class="ce-date">2025-03-14</span>
+      </div>
+      <div class="ce-body">
+        <span class="ce-tag fix">Bug Fix</span>
+        <p class="ce-desc">Fixed frame range override not applying on multi-machine Deadline Cloud submits. Affected batch renders with frame stepping enabled.</p>
+      </div>
     </div>
-    <div class="entry-body">
-      <span class="type-tag bug-fix">Bug Fix</span>
-      <p class="entry-desc">Fixed frame range override not applying on multi-machine Deadline Cloud submits. Affected batch renders with frame stepping enabled.</p>
+
+    <div class="changelog-entry">
+      <div class="ce-meta">
+        <span class="ce-version">v1.8.0</span>
+        <span class="ce-tool">Fast Cache</span>
+        <span class="ce-date">2025-02-28</span>
+      </div>
+      <div class="ce-body">
+        <span class="ce-tag new">New Feature</span>
+        <p class="ce-desc">Added ACEScg → sRGB preview bake option for client review exports. Accessible via the Export menu in the Fast Cache panel.</p>
+      </div>
     </div>
+
+    <div class="changelog-entry">
+      <div class="ce-meta">
+        <span class="ce-version">v3.1.0</span>
+        <span class="ce-tool">CompReview</span>
+        <span class="ce-date">2025-02-10</span>
+      </div>
+      <div class="ce-body">
+        <span class="ce-tag new">New Feature</span>
+        <p class="ce-desc">ShotGrid version auto-link on publish. CompReview now queries the active SG context and links the published version automatically without manual entry.</p>
+      </div>
+    </div>
+
+    <div class="changelog-entry">
+      <div class="ce-meta">
+        <span class="ce-version">v2.3.0</span>
+        <span class="ce-tool">LocalBurn</span>
+        <span class="ce-date">2025-01-22</span>
+      </div>
+      <div class="ce-body">
+        <span class="ce-tag new">New Feature</span>
+        <p class="ce-desc">Deadline Cloud worker pool selection added to submit UI. Artists can now target specific pools (e.g. gpu-pool, cpu-pool) from the LocalBurn panel.</p>
+      </div>
+    </div>
+
+    <div class="changelog-entry">
+      <div class="ce-meta">
+        <span class="ce-version">v1.7.2</span>
+        <span class="ce-tool">Fast Cache</span>
+        <span class="ce-date">2024-12-05</span>
+      </div>
+      <div class="ce-body">
+        <span class="ce-tag fix">Bug Fix</span>
+        <p class="ce-desc">Resolved NAS path resolution failure on Y: drive remount. Fast Cache now re-validates mount points on session startup.</p>
+      </div>
+    </div>
+
+    <div class="changelog-entry">
+      <div class="ce-meta">
+        <span class="ce-version">v3.0.0</span>
+        <span class="ce-tool">CompReview</span>
+        <span class="ce-date">2024-11-18</span>
+      </div>
+      <div class="ce-body">
+        <span class="ce-tag break">Breaking Change</span>
+        <p class="ce-desc">Requires Nuke 16.0 or higher. Nuke 15 support has been dropped. Artists on Nuke 15 must upgrade before using CompReview v3.x.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="docs-callout info">
+    <span class="docs-callout-icon">ℹ</span>
+    <span>Submit a <a href="../tools/support-ticket.html">Support Ticket</a> for bug reports. Feature requests can be included in the ticket notes field.</span>
   </div>
 
-  <!-- Entry 2 -->
-  <div class="changelog-entry">
-    <div class="entry-header">
-      <span class="version-badge">v1.8.0</span>
-      <span class="tool-name">Fast Cache</span>
-      <span class="entry-date">2025-02-28</span>
-    </div>
-    <div class="entry-body">
-      <span class="type-tag new-feature">New Feature</span>
-      <p class="entry-desc">Added ACEScg → sRGB preview bake option for client review exports. Accessible via the Export menu in the Fast Cache panel.</p>
-    </div>
-  </div>
-
-  <!-- Entry 3 -->
-  <div class="changelog-entry">
-    <div class="entry-header">
-      <span class="version-badge">v3.1.0</span>
-      <span class="tool-name">CompReview</span>
-      <span class="entry-date">2025-02-10</span>
-    </div>
-    <div class="entry-body">
-      <span class="type-tag new-feature">New Feature</span>
-      <p class="entry-desc">ShotGrid version auto-link on publish. CompReview now queries the active SG context and links the published version automatically without manual entry.</p>
-    </div>
-  </div>
-
-  <!-- Entry 4 -->
-  <div class="changelog-entry">
-    <div class="entry-header">
-      <span class="version-badge">v2.3.0</span>
-      <span class="tool-name">LocalBurn</span>
-      <span class="entry-date">2025-01-22</span>
-    </div>
-    <div class="entry-body">
-      <span class="type-tag new-feature">New Feature</span>
-      <p class="entry-desc">Deadline Cloud worker pool selection added to submit UI. Artists can now target specific pools (e.g. gpu-pool, cpu-pool) from the LocalBurn panel.</p>
-    </div>
-  </div>
-
-  <!-- Entry 5 -->
-  <div class="changelog-entry">
-    <div class="entry-header">
-      <span class="version-badge">v1.7.2</span>
-      <span class="tool-name">Fast Cache</span>
-      <span class="entry-date">2024-12-05</span>
-    </div>
-    <div class="entry-body">
-      <span class="type-tag bug-fix">Bug Fix</span>
-      <p class="entry-desc">Resolved NAS path resolution failure on Y: drive remount. Fast Cache now re-validates mount points on session startup.</p>
-    </div>
-  </div>
-
-  <!-- Entry 6 -->
-  <div class="changelog-entry">
-    <div class="entry-header">
-      <span class="version-badge">v3.0.0</span>
-      <span class="tool-name">CompReview</span>
-      <span class="entry-date">2024-11-18</span>
-    </div>
-    <div class="entry-body">
-      <span class="type-tag breaking">Breaking Change</span>
-      <p class="entry-desc">Requires Nuke 16.0 or higher. Nuke 15 support has been dropped. Artists on Nuke 15 must upgrade before using CompReview v3.x.</p>
-    </div>
-  </div>
-
-  <div class="footer-note">
-    Submit a <a href="../tools/support-ticket.html">Support Ticket</a> for bug reports. Feature requests can be included in the ticket notes field.
+  <div class="docs-footer">
+    <span class="docs-footer-brand">CBFX · Internal Use Only</span>
+    <span class="docs-footer-meta">Last updated 2026-05-24</span>
   </div>
 
 </div>
-
-<footer>CBFX · Internal Use Only</footer>
 
 </body>
 </html>
