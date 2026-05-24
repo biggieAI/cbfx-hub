@@ -97,7 +97,7 @@ body{
 /* ── Comet streak field (top right) ─────────────────────── */
 .cube-scene{
   position:absolute;
-  top:0;right:-10px;
+  top:0;right:-30px;
   width:200px;height:100%;
   pointer-events:none;
   overflow:hidden;
