@@ -1,5 +1,14 @@
 /* CBFX Hub — infra data adapter
  *
+ * STATUS (2026-05-24): The cbfx-hub-api Worker is implemented but frozen
+ * pending elevated credentials (ShotGrid script user, AWS IAM, CF deploy).
+ * In the meantime:
+ *   - window.CBFX_API_BASE is NOT set on the infra pages
+ *   - Fetch goes to relative /api/* which 404s on Pages (no Worker bound)
+ *   - The adapter catches the 404 silently and falls back to fixtures
+ *   - lastSync footer correctly labels the source as 'local fixture'
+ * To thaw: see https://github.com/biggieAI/cbfx-hub-api/blob/main/STATE.md
+ *
  * Data flow:
  *   1. Hit the cbfx-hub-api Worker (window.CBFX_API_BASE + /api/<route>)
  *   2. If the Worker returns source:'live', use it
