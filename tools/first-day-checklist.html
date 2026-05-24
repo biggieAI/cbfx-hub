@@ -1,372 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>First Day Checklist — CBFX Hub</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #dde4ed;
-      --surface: #eaeff5;
-      --surface2: #d5dce7;
-      --nav: #1a1c22;
-      --border: #c0c8d4;
-      --border-dark: #a8b2bf;
-      --text: #1a1c22;
-      --text2: #3d4452;
-      --muted: #6b7585;
-      --white: #f4f7fa;
-      --blue-dark: #1e3a5a;
-      --green: #3ecf6e;
-      --green-light: #e8faf0;
-      --green-mid: #c5f0d8;
-      --print-hidden: block;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Figtree', sans-serif;
-      font-size: 15px;
-      min-height: 100vh;
-    }
-
-    /* ── TOPBAR ── */
-    .topbar {
-      background: var(--nav);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .topbar-brand {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: 0.08em;
-      text-decoration: none;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .topbar-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(244,247,250,0.55);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    .topbar-back {
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(244,247,250,0.7);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-    .topbar-back:hover { color: var(--white); }
-
-    /* ── LAYOUT ── */
-    .page {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 36px 20px 80px;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      margin-bottom: 28px;
-    }
-    .hero h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--blue-dark);
-      line-height: 1.2;
-      margin-bottom: 8px;
-    }
-    .hero p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* ── PROGRESS BAR ── */
-    .progress-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-    .progress-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text2);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .progress-count {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-    .progress-track {
-      height: 8px;
-      background: var(--surface2);
-      border-radius: 99px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--green);
-      border-radius: 99px;
-      transition: width 0.35s cubic-bezier(.4,0,.2,1);
-      width: 0%;
-    }
-    .progress-actions {
-      display: flex;
-      gap: 10px;
-      margin-left: auto;
-    }
-    .btn {
-      font-family: 'Figtree', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 7px 14px;
-      border-radius: 7px;
-      border: 1px solid var(--border-dark);
-      background: var(--surface);
-      color: var(--text2);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .btn:hover { background: var(--surface2); border-color: var(--border-dark); color: var(--text); }
-    .btn-primary {
-      background: var(--blue-dark);
-      color: var(--white);
-      border-color: var(--blue-dark);
-    }
-    .btn-primary:hover { background: #16304d; border-color: #16304d; color: var(--white); }
-
-    /* ── COMPLETION BANNER ── */
-    .completion-banner {
-      display: none;
-      background: linear-gradient(135deg, #e8faf0 0%, #d0f5e3 100%);
-      border: 1.5px solid var(--green);
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin-bottom: 28px;
-      align-items: center;
-      gap: 16px;
-    }
-    .completion-banner.visible { display: flex; }
-    .completion-icon {
-      font-size: 32px;
-      flex-shrink: 0;
-    }
-    .completion-text h2 {
-      font-size: 17px;
-      font-weight: 700;
-      color: #1a5c35;
-      margin-bottom: 3px;
-    }
-    .completion-text p {
-      font-size: 13px;
-      color: #2d7a4f;
-    }
-
-    /* ── SECTION ── */
-    .section {
-      margin-bottom: 20px;
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-      padding: 0 2px;
-    }
-    .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-    }
-    .section-badge {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 1px 8px;
-    }
-    .section-badge.done {
-      background: var(--green-mid);
-      border-color: #a3e8c1;
-      color: #1a5c35;
-    }
-
-    /* ── CHECKLIST CARD ── */
-    .checklist-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    /* ── ITEM ── */
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
-      cursor: pointer;
-      transition: background 0.15s;
-      border-bottom: 1px solid var(--border);
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .item:last-child { border-bottom: none; }
-    .item:hover { background: var(--surface2); }
-    .item.checked {
-      background: var(--green-light);
-    }
-    .item.checked:hover { background: #daf5e9; }
-
-    .checkbox {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      border-radius: 6px;
-      border: 1.5px solid var(--border-dark);
-      background: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.15s, background 0.15s;
-    }
-    .item.checked .checkbox {
-      background: var(--green);
-      border-color: var(--green);
-    }
-    .checkmark {
-      display: none;
-    }
-    .item.checked .checkmark {
-      display: block;
-    }
-    /* SVG checkmark */
-    .checkmark svg {
-      width: 12px;
-      height: 12px;
-      stroke: #fff;
-      stroke-width: 2.5;
-      fill: none;
-    }
-
-    .item-content {
-      flex: 1;
-      min-width: 0;
-    }
-    .item-label {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.4;
-      transition: color 0.15s;
-    }
-    .item.checked .item-label {
-      color: var(--muted);
-      text-decoration: line-through;
-      text-decoration-color: #a3e8c1;
-    }
-    .item-link {
-      display: inline-block;
-      margin-top: 3px;
-      font-size: 12px;
-      font-weight: 500;
-      color: #2a6fa8;
-      text-decoration: none;
-    }
-    .item-link:hover { text-decoration: underline; }
-    .item-link svg {
-      display: inline;
-      vertical-align: middle;
-      margin-left: 2px;
-      width: 10px;
-      height: 10px;
-    }
-
-    /* ── CONFETTI CANVAS ── */
-    #confetti-canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ── PRINT ── */
-    @media print {
-      .topbar-back, .progress-actions, #confetti-canvas, .completion-banner { display: none !important; }
-      .topbar { position: static; background: #1a1c22 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .item { break-inside: avoid; }
-      .item.checked { background: #e8faf0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .item.checked .checkbox { background: #3ecf6e !important; border-color: #3ecf6e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      body { background: white; }
-      .page { padding: 20px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Day Checklist — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/wizard.css">
 <link rel="stylesheet" href="../assets/interactions.css">
+<style>
+  #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:999}
+
+  .progress-card{
+    background:var(--surface);
+    border:.5px solid var(--hairline);
+    border-radius:24px;
+    padding:18px 20px;
+    box-shadow:var(--sh-1);
+    margin-bottom:24px;
+  }
+  .progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .progress-label{font-size:11px;font-weight:700;color:var(--ink-4);letter-spacing:.08em;text-transform:uppercase}
+  .progress-count{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-3);font-weight:500}
+  .progress-track{height:8px;background:rgba(15,23,42,.06);border-radius:999px;overflow:hidden}
+  .progress-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,#3a6bff 0%,var(--blue) 60%,#2557ff 100%);
+    border-radius:999px;
+    transition:width .45s cubic-bezier(.2,.7,.2,1);
+    box-shadow:0 0 12px rgba(37,87,255,.45);
+  }
+  .progress-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+  .section-block{margin-bottom:22px}
+  .section-head{display:flex;justify-content:space-between;align-items:center;padding:0 4px;margin-bottom:10px}
+  .section-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em;text-transform:uppercase}
+  .section-badge{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+    color:var(--ink-4);background:var(--surface);
+    border:.5px solid var(--hairline);border-radius:999px;
+    padding:3px 10px;letter-spacing:.02em;
+    transition:all .2s ease;
+  }
+  .section-badge.done{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+
+  .check-item{
+    display:flex;align-items:flex-start;gap:14px;
+    padding:14px 16px;background:var(--surface);
+    border:.5px solid var(--hairline);border-radius:14px;
+    margin-bottom:8px;cursor:pointer;
+    transition:all .2s cubic-bezier(.2,.7,.2,1);
+    user-select:none;
+  }
+  .check-item:hover{background:#fff;border-color:var(--ink-5);transform:translateY(-1px)}
+  .check-item.checked{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .check-box{
+    flex-shrink:0;width:22px;height:22px;border-radius:7px;
+    border:1.5px solid var(--ink-5);background:#fff;
+    display:grid;place-items:center;transition:all .18s ease;margin-top:1px;
+  }
+  .check-item.checked .check-box{
+    background:var(--blue);border-color:var(--blue);
+    box-shadow:0 0 0 4px var(--blue-soft);
+  }
+  .check-box svg{
+    width:12px;height:10px;stroke:#fff;stroke-width:2.5;fill:none;
+    stroke-linecap:round;stroke-linejoin:round;
+    opacity:0;transform:scale(.6);transition:all .2s ease;
+  }
+  .check-item.checked .check-box svg{opacity:1;transform:scale(1)}
+  .check-body{flex:1;min-width:0}
+  .check-label{font-size:14px;font-weight:500;color:var(--ink);line-height:1.45;transition:color .2s ease}
+  .check-item.checked .check-label{color:var(--ink-3);text-decoration:line-through;text-decoration-color:rgba(15,23,42,.25)}
+  .check-link{
+    display:inline-flex;align-items:center;gap:5px;
+    margin-top:6px;font-size:12.5px;font-weight:600;color:var(--blue);text-decoration:none;
+  }
+  .check-link:hover{text-decoration:underline}
+  .check-link svg{width:12px;height:12px}
+
+  .completion-banner{
+    display:none;align-items:center;gap:16px;
+    background:linear-gradient(135deg,#dbe8fd 0%,#e8faf0 100%);
+    border:.5px solid var(--hairline);border-radius:24px;
+    padding:18px 22px;margin-bottom:24px;
+    box-shadow:var(--sh-1);
+  }
+  .completion-banner.visible{display:flex;animation:fade-in .4s ease}
+  .completion-icon{font-size:32px;line-height:1;flex-shrink:0}
+  .completion-text h2{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:2px}
+  .completion-text p{font-size:13.5px;color:var(--ink-3);line-height:1.5}
+
+  .summary-card{display:none}
+  .summary-card.visible{display:block;animation:fade-in .4s ease}
+
+  @media print{
+    #confetti-canvas,.topbar,.progress-actions,.summary-card,.wizard-eyebrow{display:none!important}
+    .check-item{break-inside:avoid;page-break-inside:avoid}
+    body{background:#fff}
+  }
+</style>
 </head>
 <body>
 
 <canvas id="confetti-canvas"></canvas>
 
-<!-- TOPBAR -->
-<nav class="topbar">
-  <a class="topbar-brand" href="../index.html">CBFX Hub</a>
-  <div class="topbar-right">
-    <span class="topbar-title">First Day Checklist</span>
-    <a class="topbar-back" href="../index.html">← Back to Hub</a>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
   </div>
-</nav>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#0b1220" stop-opacity="0"/>
+          <stop offset="70%"  stop-color="#0b1220" stop-opacity=".55"/>
+          <stop offset="92%"  stop-color="#0b1220" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#5b6478" stop-opacity="0"/>
+          <stop offset="78%"  stop-color="#5b6478" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/>
+        </linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#2557ff" stop-opacity="0"/>
+          <stop offset="80%"  stop-color="#2557ff" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
+</div>
 
-<!-- PAGE -->
-<div class="page">
+<div class="wizard-wrap">
 
-  <!-- HERO -->
-  <div class="hero">
-    <h1>First Day Checklist</h1>
-    <p>Complete these steps to get fully set up on your first day.</p>
+  <div class="wizard-header">
+    <div class="wizard-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Onboarding</span>
+    </div>
+    <h1 class="wizard-title">First Day Checklist</h1>
+    <p class="wizard-sub">Walk through these steps on your first day to get fully provisioned and pipeline-ready. Progress saves automatically — pick up wherever you left off.</p>
   </div>
 
-  <!-- PROGRESS -->
   <div class="progress-card">
     <div class="progress-header">
       <span class="progress-label">Progress</span>
@@ -375,16 +166,12 @@
     <div class="progress-track">
       <div class="progress-fill" id="progress-fill"></div>
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
-      <button class="btn" id="reset-btn">Reset</button>
-      <button class="btn btn-primary" onclick="window.print()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print
-      </button>
+    <div class="progress-actions">
+      <button class="btn-ghost" id="reset-btn">Reset</button>
+      <button class="btn-secondary" onclick="window.print()">Print</button>
     </div>
   </div>
 
-  <!-- COMPLETION BANNER -->
   <div class="completion-banner" id="completion-banner">
     <div class="completion-icon">🎉</div>
     <div class="completion-text">
@@ -393,168 +180,120 @@
     </div>
   </div>
 
-  <!-- SECTIONS -->
   <div id="checklist-root"></div>
+
+  <div class="wcard summary-card" id="summary-card">
+    <div class="wcard-title">Send Completion Summary</div>
+    <div class="wcard-desc">Let your supervisor and onboarding know you're fully set up. Optional, but recommended.</div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="artistName">Your Name</label>
+        <input type="text" id="artistName" placeholder="e.g. Jane R. Doe">
+      </div>
+      <div class="field">
+        <label for="artistEmail">Your Email</label>
+        <input type="email" id="artistEmail" placeholder="jane@chicken-bone.com">
+      </div>
+    </div>
+    <div class="field-row full">
+      <div class="field">
+        <label for="supervisorEmail">Supervisor Email <span class="opt">(optional)</span></label>
+        <input type="email" id="supervisorEmail" placeholder="supervisor@chicken-bone.com">
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:16px">
+      <span class="spacer"></span>
+      <button class="btn-ghost" onclick="copySummary()">Copy</button>
+      <button class="btn-success" onclick="sendSummary()">✉ Send Completion Email</button>
+      <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
+    </div>
+  </div>
 
 </div>
 
 <script>
-  const STORAGE_KEY = 'cbfx-first-day-checklist-v1';
+  const STORAGE_KEY = 'cbfx-first-day-checklist-v2';
 
   const sections = [
-    {
-      id: 'account-access',
-      title: 'Account Access',
-      items: [
-        { id: 'aa1', label: 'Log in to VDI at vdi.cbfx.com (credentials from IT/GPL Tech)' },
-        { id: 'aa2', label: 'Confirm ShotGrid login at cbfx.shotgunstudio.com' },
-        { id: 'aa3', label: 'Verify email access (check with supervisor for domain)' },
-        { id: 'aa4', label: 'Test WireGuard VPN connection' },
-      ]
-    },
-    {
-      id: 'workstation-setup',
-      title: 'Workstation Setup',
-      items: [
-        { id: 'ws1', label: 'Confirm EC2 instance is running (check with supervisor)' },
-        { id: 'ws2', label: 'Launch Nuke — verify license checkout from RLM (10.243.0.139:5053)' },
-        { id: 'ws3', label: 'Verify NAS mount at \\\\192.168.100.187\\SYSXS (mapped Y:)' },
-        { id: 'ws4', label: 'Check Deadline Cloud worker is registered and active' },
-      ]
-    },
-    {
-      id: 'pipeline-orientation',
-      title: 'Pipeline Orientation',
-      items: [
-        { id: 'po1', label: 'Review CBFX Naming Conventions', link: { href: '../docs/naming-conventions.html', text: 'Open Naming Conventions' } },
-        { id: 'po2', label: 'Review Color Pipeline Reference / ACES 1.3 config', link: { href: '../docs/color-pipeline.html', text: 'Open Color Pipeline Reference' } },
-        { id: 'po3', label: 'Confirm OCIO environment variable is set correctly' },
-        { id: 'po4', label: 'Open a test shot in Nuke from ShotGrid' },
-      ]
-    },
-    {
-      id: 'production-checkin',
-      title: 'Production Check-in',
-      items: [
-        { id: 'pc1', label: 'Introduction call with your supervisor' },
-        { id: 'pc2', label: 'Review your assigned show in ShotGrid' },
-        { id: 'pc3', label: 'Confirm your booking dates and rate with production' },
-        { id: 'pc4', label: 'Understand the daily/weekly dailies schedule' },
-      ]
-    },
-    {
-      id: 'wrap',
-      title: 'Wrap',
-      items: [
-        { id: 'wr1', label: 'Introduce yourself in the team chat' },
-        { id: 'wr2', label: 'Confirm you can submit a Deadline render job (test render OK)' },
-        { id: 'wr3', label: 'Ask your supervisor any outstanding questions' },
-      ]
-    },
+    { id:'account-access', title:'Account Access', items:[
+      { id:'aa1', label:'Log in to VDI at vdi.cbfx.com (credentials from IT/GPL Tech)' },
+      { id:'aa2', label:'Confirm ShotGrid login at cbfx.shotgunstudio.com' },
+      { id:'aa3', label:'Verify email access (check with supervisor for domain)' },
+      { id:'aa4', label:'Test WireGuard VPN connection' },
+    ]},
+    { id:'workstation-setup', title:'Workstation Setup', items:[
+      { id:'ws1', label:'Confirm EC2 instance is running (check with supervisor)' },
+      { id:'ws2', label:'Launch Nuke — verify license checkout from RLM (10.243.0.139:5053)' },
+      { id:'ws3', label:'Verify NAS mount at \\\\192.168.100.187\\SYSXS (mapped Y:)' },
+      { id:'ws4', label:'Check Deadline Cloud worker is registered and active' },
+    ]},
+    { id:'pipeline-orientation', title:'Pipeline Orientation', items:[
+      { id:'po1', label:'Review CBFX Naming Conventions', link:{ href:'../docs/naming-conventions.html', text:'Open Naming Conventions' }},
+      { id:'po2', label:'Review Color Pipeline Reference / ACES 1.3 config', link:{ href:'../docs/color-pipeline.html', text:'Open Color Pipeline Reference' }},
+      { id:'po3', label:'Confirm OCIO environment variable is set correctly' },
+      { id:'po4', label:'Open a test shot in Nuke from ShotGrid' },
+    ]},
+    { id:'production-checkin', title:'Production Check-in', items:[
+      { id:'pc1', label:'Introduction call with your supervisor' },
+      { id:'pc2', label:'Review your assigned show in ShotGrid' },
+      { id:'pc3', label:'Confirm your booking dates and rate with production' },
+      { id:'pc4', label:'Understand the daily/weekly dailies schedule' },
+    ]},
+    { id:'wrap', title:'Wrap', items:[
+      { id:'wr1', label:'Introduce yourself in the team chat' },
+      { id:'wr2', label:'Confirm you can submit a Deadline render job (test render OK)' },
+      { id:'wr3', label:'Ask your supervisor any outstanding questions' },
+    ]},
   ];
 
   const totalItems = sections.reduce((n, s) => n + s.items.length, 0);
-
-  // Load state
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch { return {}; }
-  }
-
-  function saveState(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
+  function loadState(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+  function saveState(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function escapeHtml(str){ return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   let state = loadState();
+  function getChecked(){ return Object.values(state).filter(Boolean).length; }
 
-  function getCheckedCount() {
-    return Object.values(state).filter(Boolean).length;
-  }
-
-  // Build DOM
-  function buildChecklist() {
+  function buildChecklist(){
     const root = document.getElementById('checklist-root');
     root.innerHTML = '';
-
     sections.forEach(section => {
-      const sectionEl = document.createElement('div');
-      sectionEl.className = 'section';
-      sectionEl.dataset.sectionId = section.id;
-
-      const header = document.createElement('div');
-      header.className = 'section-header';
-
-      const titleEl = document.createElement('span');
-      titleEl.className = 'section-title';
-      titleEl.textContent = section.title;
-
-      const badge = document.createElement('span');
-      badge.className = 'section-badge';
-      badge.dataset.sectionBadge = section.id;
-
-      header.appendChild(titleEl);
-      header.appendChild(badge);
-      sectionEl.appendChild(header);
-
-      const card = document.createElement('div');
-      card.className = 'checklist-card';
-
+      const block = document.createElement('div');
+      block.className = 'section-block';
+      const head = document.createElement('div');
+      head.className = 'section-head';
+      head.innerHTML = `<span class="section-name">${escapeHtml(section.title)}</span>
+        <span class="section-badge" data-section-badge="${section.id}">0/${section.items.length}</span>`;
+      block.appendChild(head);
       section.items.forEach(item => {
         const row = document.createElement('div');
-        row.className = 'item' + (state[item.id] ? ' checked' : '');
+        row.className = 'check-item' + (state[item.id] ? ' checked' : '');
         row.dataset.itemId = item.id;
-
         row.innerHTML = `
-          <div class="checkbox">
-            <span class="checkmark">
-              <svg viewBox="0 0 12 10"><polyline points="1.5,5.5 4.5,8.5 10.5,1.5" /></svg>
-            </span>
-          </div>
-          <div class="item-content">
-            <div class="item-label">${escapeHtml(item.label)}</div>
-            ${item.link ? `<a class="item-link" href="${escapeHtml(item.link.href)}" target="_blank" onclick="event.stopPropagation()">${escapeHtml(item.link.text)}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
-          </div>
-        `;
-
+          <div class="check-box"><svg viewBox="0 0 12 10"><polyline points="1.5,5.5 4.5,8.5 10.5,1.5"/></svg></div>
+          <div class="check-body">
+            <div class="check-label">${escapeHtml(item.label)}</div>
+            ${item.link ? `<a class="check-link" href="${escapeHtml(item.link.href)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(item.link.text)}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
+          </div>`;
         row.addEventListener('click', () => toggleItem(item.id));
-        card.appendChild(row);
+        block.appendChild(row);
       });
-
-      sectionEl.appendChild(card);
-      root.appendChild(sectionEl);
+      root.appendChild(block);
     });
-
     updateProgress();
   }
 
-  function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function toggleItem(id) {
+  function toggleItem(id){
     state[id] = !state[id];
     saveState(state);
-
-    const row = document.querySelector(`.item[data-item-id="${id}"]`);
+    const row = document.querySelector(`.check-item[data-item-id="${id}"]`);
     if (row) row.classList.toggle('checked', state[id]);
-
     updateProgress();
-    updateSectionBadge(id);
   }
 
-  function updateSectionBadge(itemId) {
-    // Find which section this item belongs to
-    for (const section of sections) {
-      if (section.items.some(i => i.id === itemId)) {
-        refreshSectionBadge(section);
-        break;
-      }
-    }
-  }
-
-  function refreshSectionBadge(section) {
+  function refreshSectionBadge(section){
     const checked = section.items.filter(i => state[i.id]).length;
     const total = section.items.length;
     const badge = document.querySelector(`[data-section-badge="${section.id}"]`);
@@ -563,103 +302,136 @@
     badge.classList.toggle('done', checked === total);
   }
 
-  function updateProgress() {
-    const checked = getCheckedCount();
+  function updateProgress(){
+    const checked = getChecked();
     const pct = totalItems > 0 ? (checked / totalItems) * 100 : 0;
-
     document.getElementById('progress-fill').style.width = pct + '%';
     document.getElementById('progress-count').textContent = `${checked} of ${totalItems} complete`;
-
-    // Refresh all section badges
-    sections.forEach(s => refreshSectionBadge(s));
-
-    // Completion
+    sections.forEach(refreshSectionBadge);
     const banner = document.getElementById('completion-banner');
-    if (checked === totalItems) {
-      if (!banner.classList.contains('visible')) {
+    const summary = document.getElementById('summary-card');
+    if (checked === totalItems){
+      if (!banner.classList.contains('visible')){
         banner.classList.add('visible');
+        summary.classList.add('visible');
         launchConfetti();
       }
     } else {
       banner.classList.remove('visible');
+      summary.classList.remove('visible');
     }
   }
 
-  // Reset
   document.getElementById('reset-btn').addEventListener('click', () => {
     if (!confirm('Reset all checkboxes?')) return;
     state = {};
     saveState(state);
-    document.querySelectorAll('.item.checked').forEach(el => el.classList.remove('checked'));
+    document.querySelectorAll('.check-item.checked').forEach(el => el.classList.remove('checked'));
     document.getElementById('completion-banner').classList.remove('visible');
+    document.getElementById('summary-card').classList.remove('visible');
     updateProgress();
   });
 
-  // ── CONFETTI ──
-  function launchConfetti() {
+  function buildSummaryBody(){
+    const name = document.getElementById('artistName').value.trim();
+    const email = document.getElementById('artistEmail').value.trim();
+    const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    const lines = [];
+    lines.push('FIRST DAY CHECKLIST — COMPLETION CONFIRMED');
+    lines.push('============================================');
+    lines.push('');
+    lines.push('Artist:            ' + (name || '—'));
+    lines.push('Email:             ' + (email || '—'));
+    lines.push('Date Completed:    ' + date);
+    lines.push('');
+    lines.push('All ' + totalItems + ' first-day items are checked off:');
+    lines.push('');
+    sections.forEach(s => {
+      lines.push('  ' + s.title.toUpperCase());
+      s.items.forEach(i => lines.push('    [x] ' + i.label));
+      lines.push('');
+    });
+    lines.push('---');
+    lines.push('Submitted via CBFX Hub — First Day Checklist');
+    return lines.join('\n');
+  }
+
+  function sendSummary(){
+    const name = document.getElementById('artistName').value.trim() || 'Artist';
+    const sup = document.getElementById('supervisorEmail').value.trim();
+    const to = 'onboarding@chicken-bone.com' + (sup ? ',' + sup : '');
+    const subject = '[First Day Complete] ' + name + ' — fully provisioned';
+    const url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=' + encodeURIComponent(to)
+      + '&su=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(buildSummaryBody());
+    window.open(url, '_blank');
+  }
+
+  function copySummary(){
+    const name = document.getElementById('artistName').value.trim() || 'Artist';
+    const subject = '[First Day Complete] ' + name + ' — fully provisioned';
+    const text = 'To: onboarding@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildSummaryBody();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(() => fallbackCopy(text));
+    } else fallbackCopy(text);
+  }
+  function fallbackCopy(t){
+    const ta = document.createElement('textarea');
+    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta); showCopyConfirm();
+  }
+  function showCopyConfirm(){
+    const el = document.getElementById('copyConfirm');
+    if (el){ el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2500); }
+  }
+
+  function launchConfetti(){
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    const colors = ['#3ecf6e','#1e3a5a','#f4c430','#e8faf0','#2a6fa8','#ffffff','#a3e8c1'];
-    const pieces = Array.from({ length: 120 }, () => ({
+    const colors = ['#2557ff','#3a6bff','#5b8bff','#0fcf78','#dbe8fd','#ffffff'];
+    const pieces = Array.from({length:140}, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * -200 - 10,
       w: Math.random() * 8 + 5,
       h: Math.random() * 5 + 3,
       color: colors[Math.floor(Math.random() * colors.length)],
       rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.15,
-      vx: (Math.random() - 0.5) * 2.5,
+      rotSpeed: (Math.random() - .5) * .15,
+      vx: (Math.random() - .5) * 2.5,
       vy: Math.random() * 3 + 2,
       opacity: 1,
     }));
-
-    let frame;
-    let elapsed = 0;
+    let frame, elapsed = 0;
     const duration = 3500;
-
-    function draw(ts) {
+    function draw(ts){
       if (!draw.start) draw.start = ts;
       elapsed = ts - draw.start;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+      ctx.clearRect(0,0,canvas.width,canvas.height);
       let alive = 0;
       pieces.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rot += p.rotSpeed;
-        if (elapsed > duration * 0.6) {
-          p.opacity = Math.max(0, p.opacity - 0.018);
-        }
+        p.x += p.vx; p.y += p.vy; p.rot += p.rotSpeed;
+        if (elapsed > duration * .6) p.opacity = Math.max(0, p.opacity - .018);
         if (p.y < canvas.height + 20 && p.opacity > 0) alive++;
-
         ctx.save();
         ctx.globalAlpha = p.opacity;
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot);
         ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
         ctx.restore();
       });
-
-      if (alive > 0 && elapsed < duration + 1000) {
-        frame = requestAnimationFrame(draw);
-      } else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
+      if (alive > 0 && elapsed < duration + 1000) frame = requestAnimationFrame(draw);
+      else ctx.clearRect(0,0,canvas.width,canvas.height);
     }
-
     cancelAnimationFrame(frame);
     requestAnimationFrame(draw);
   }
 
-  // Init
   buildChecklist();
 </script>
-<script src="../assets/dev-mock-fill.js"></script>
 <script src="../assets/date-clamp.js"></script>
 </body>
 </html>

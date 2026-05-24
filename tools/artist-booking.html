@@ -3,957 +3,764 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artist Booking Request — CBFX Hub</title>
+<title>Artist Booking — CBFX Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:#dde4ed;--surface:#eaeff5;--surface2:#d5dce7;
-  --nav:#1a1c22;--border:#c0c8d4;--border-dark:#a8b2bf;
-  --text:#1a1c22;--text2:#3d4452;--muted:#6b7585;--white:#f4f7fa;
-  --blue-dark:#1e3a5a;--green:#3ecf6e;--yellow:#e8c74a;
-  --green-dim:rgba(62,207,110,0.12);--yellow-dim:rgba(232,199,74,0.15);
-  --red:#e85a4a;--red-dim:rgba(232,90,74,0.1);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Figtree',sans-serif;font-size:15px;min-height:100vh}
-
-/* TOPBAR */
-.topbar{
-  background:var(--nav);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;height:52px;
-  position:sticky;top:0;z-index:100;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-.topbar-brand{
-  font-size:13px;font-weight:700;letter-spacing:0.12em;
-  color:#fff;text-transform:uppercase;text-decoration:none;
-}
-.topbar-title{
-  font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);
-  letter-spacing:0.02em;
-}
-.topbar-back{
-  font-size:12.5px;font-weight:500;color:rgba(255,255,255,0.45);
-  text-decoration:none;transition:color 0.15s;letter-spacing:0.01em;
-}
-.topbar-back:hover{color:rgba(255,255,255,0.8)}
-.topbar-left{display:flex;align-items:center;gap:20px}
-
-/* PROGRESS BAR */
-.progress-wrap{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:16px 28px 0;
-}
-.progress-steps{
-  display:flex;gap:0;max-width:700px;margin:0 auto;
-}
-.progress-step{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  position:relative;cursor:default;
-}
-.progress-step:not(:last-child)::after{
-  content:'';
-  position:absolute;
-  top:14px;left:50%;
-  width:100%;height:2px;
-  background:var(--border);
-  z-index:0;
-}
-.progress-step.done:not(:last-child)::after,
-.progress-step.active:not(:last-child)::after{
-  background:var(--blue-dark);
-}
-.step-circle{
-  width:28px;height:28px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;
-  border:2px solid var(--border);
-  background:var(--surface);color:var(--muted);
-  position:relative;z-index:1;transition:all 0.2s;
-}
-.progress-step.done .step-circle{
-  background:var(--blue-dark);border-color:var(--blue-dark);color:#fff;
-}
-.progress-step.active .step-circle{
-  background:var(--text);border-color:var(--text);color:#fff;
-}
-.step-label{
-  font-size:11px;font-weight:600;margin-top:6px;margin-bottom:14px;
-  color:var(--muted);letter-spacing:0.03em;text-transform:uppercase;
-  white-space:nowrap;
-}
-.progress-step.active .step-label{color:var(--text)}
-.progress-step.done .step-label{color:var(--blue-dark)}
-
-/* CONTENT */
-.content{max-width:700px;margin:0 auto;padding:36px 28px 80px;}
-
-.step-heading{
-  font-size:22px;font-weight:700;margin-bottom:4px;color:var(--text);
-}
-.step-sub{font-size:14px;color:var(--muted);margin-bottom:28px;}
-
-/* FORM ELEMENTS */
-.field{margin-bottom:20px}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-label.field-label{
-  display:block;font-size:12.5px;font-weight:600;
-  letter-spacing:0.04em;text-transform:uppercase;
-  color:var(--text2);margin-bottom:6px;
-}
-label.field-label span.opt{
-  font-weight:400;color:var(--muted);text-transform:none;
-  font-size:11.5px;letter-spacing:0;
-}
-input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
-  width:100%;
-  background:var(--surface);
-  border:1.5px solid var(--border);
-  border-radius:8px;
-  padding:10px 13px;
-  font-family:'Figtree',sans-serif;
-  font-size:14.5px;
-  color:var(--text);
-  outline:none;
-  transition:border-color 0.15s,box-shadow 0.15s;
-  appearance:none;
-}
-input[type=text]:focus,input[type=email]:focus,input[type=number]:focus,input[type=date]:focus,textarea:focus{
-  border-color:var(--blue-dark);
-  box-shadow:0 0 0 3px rgba(30,58,90,0.12);
-}
-input.error,textarea.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-dim);}
-textarea{resize:vertical;min-height:90px;line-height:1.5}
-.field-hint{font-size:12px;color:var(--muted);margin-top:5px;}
-.field-error{font-size:12px;color:var(--red);margin-top:5px;display:none;}
-.field-error.show{display:block;}
-
-/* PREFIX INPUT */
-.input-prefix{position:relative;}
-.input-prefix span{
-  position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  font-size:14.5px;color:var(--muted);font-weight:600;pointer-events:none;
-}
-.input-prefix input{padding-left:26px;}
-
-/* RADIO CARDS */
-.radio-cards{display:flex;flex-wrap:wrap;gap:10px;}
-.radio-cards.two .radio-card{flex:1;min-width:200px;}
-.radio-card{
-  position:relative;cursor:pointer;
-}
-.radio-card input[type=radio]{
-  position:absolute;opacity:0;width:0;height:0;
-}
-.radio-card-inner{
-  border:1.5px solid var(--border);
-  border-radius:9px;
-  padding:11px 15px;
-  background:var(--surface);
-  transition:all 0.15s;
-  user-select:none;
-}
-.radio-card:hover .radio-card-inner{border-color:var(--border-dark);background:var(--surface2);}
-.radio-card input:checked + .radio-card-inner{
-  border-color:var(--blue-dark);
-  background:rgba(30,58,90,0.07);
-  box-shadow:0 0 0 3px rgba(30,58,90,0.1);
-}
-/* Booking type cards */
-.radio-card.hold input:checked + .radio-card-inner{
-  border-color:var(--yellow);
-  background:var(--yellow-dim);
-  box-shadow:0 0 0 3px rgba(232,199,74,0.18);
-}
-.radio-card.confirm input:checked + .radio-card-inner{
-  border-color:var(--green);
-  background:var(--green-dim);
-  box-shadow:0 0 0 3px rgba(62,207,110,0.18);
-}
-.radio-card-title{font-size:13.5px;font-weight:700;color:var(--text);}
-.radio-card-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;}
-.booking-badge{
-  display:inline-block;
-  font-size:11px;font-weight:700;letter-spacing:0.08em;
-  padding:2px 8px;border-radius:4px;margin-bottom:6px;
-  text-transform:uppercase;
-}
-.badge-hold{background:var(--yellow-dim);color:#7a6400;border:1px solid rgba(232,199,74,0.5);}
-.badge-confirm{background:var(--green-dim);color:#1a7a3e;border:1px solid rgba(62,207,110,0.5);}
-
-/* RATE TOGGLE */
-.rate-toggle{
-  display:flex;gap:0;margin-bottom:10px;
-  border:1.5px solid var(--border);border-radius:7px;
-  width:fit-content;overflow:hidden;
-}
-.rate-toggle-btn{
-  padding:7px 18px;font-size:13px;font-weight:600;
-  background:var(--surface);color:var(--muted);
-  cursor:pointer;border:none;font-family:'Figtree',sans-serif;
-  transition:all 0.15s;
-}
-.rate-toggle-btn.active{
-  background:var(--blue-dark);color:#fff;
-}
-
-/* DIVIDER */
-.section-divider{
-  border:none;border-top:1px solid var(--border);
-  margin:28px 0;
-}
-
-/* REVIEW SECTION */
-.review-section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:10px;
-  margin-bottom:16px;
-  overflow:hidden;
-}
-.review-section-head{
-  background:var(--surface2);
-  padding:10px 16px;
-  font-size:11.5px;font-weight:700;letter-spacing:0.07em;
-  text-transform:uppercase;color:var(--muted);
-  border-bottom:1px solid var(--border);
-}
-.review-rows{padding:4px 0;}
-.review-row{
-  display:flex;padding:9px 16px;gap:12px;
-  border-bottom:1px solid var(--border);
-  align-items:baseline;
-}
-.review-row:last-child{border-bottom:none;}
-.review-key{
-  flex:0 0 160px;font-size:12px;font-weight:600;
-  color:var(--muted);letter-spacing:0.03em;text-transform:uppercase;
-}
-.review-val{
-  flex:1;font-size:14px;font-weight:500;color:var(--text);
-  word-break:break-word;
-}
-.review-val.muted{color:var(--muted);font-style:italic;font-weight:400;}
-.review-badge{
-  display:inline-block;
-  font-size:12px;font-weight:700;letter-spacing:0.07em;
-  padding:3px 12px;border-radius:5px;text-transform:uppercase;
-}
-.review-badge.hold{background:var(--yellow-dim);color:#7a6400;border:1.5px solid rgba(232,199,74,0.6);}
-.review-badge.confirm{background:var(--green-dim);color:#1a7a3e;border:1.5px solid rgba(62,207,110,0.6);}
-
-/* BUTTONS */
-.btn-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  gap:7px;
-  padding:11px 22px;
-  border-radius:8px;
-  font-family:'Figtree',sans-serif;
-  font-size:14px;font-weight:600;
-  cursor:pointer;border:none;
-  transition:all 0.15s;
-  text-decoration:none;
-  white-space:nowrap;
-}
-.btn-primary{
-  background:var(--blue-dark);color:#fff;
-}
-.btn-primary:hover{background:#162d47;box-shadow:0 2px 8px rgba(30,58,90,0.25);}
-.btn-ghost{
-  background:var(--surface2);color:var(--text2);
-  border:1.5px solid var(--border);
-}
-.btn-ghost:hover{background:var(--border);color:var(--text);}
-.btn-green{background:var(--green);color:#0d3d1f;}
-.btn-green:hover{background:#35bd60;}
-.btn-yellow{background:var(--yellow);color:#3d2e00;}
-.btn-yellow:hover{background:#d4b43e;}
-.btn-outline{
-  background:transparent;color:var(--text2);
-  border:1.5px solid var(--border-dark);
-}
-.btn-outline:hover{background:var(--surface2);}
-.btn svg{width:15px;height:15px;flex-shrink:0;}
-
-.nav-buttons{display:flex;justify-content:space-between;margin-top:32px;align-items:center;}
-.nav-buttons-left,.nav-buttons-right{display:flex;gap:10px;}
-
-/* NOTICE */
-.notice{
-  font-size:12.5px;color:var(--muted);
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:7px;
-  padding:10px 14px;
-  margin-top:14px;
-  line-height:1.5;
-}
-.notice strong{color:var(--text2);}
-
-/* COPY TOAST */
-.toast{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);
-  background:var(--nav);color:#fff;
-  font-size:13.5px;font-weight:500;
-  padding:10px 22px;border-radius:8px;
-  opacity:0;transition:all 0.25s;
-  pointer-events:none;z-index:999;
-  white-space:nowrap;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* STEP VISIBILITY */
-.step{display:none;}
-.step.active{display:block;}
-
-/* VALIDATION COLLAPSE */
-.field-collapsed{display:none!important}
-.validation-banner{
-  display:none;background:#fdecea;border:1px solid #e8504a;border-radius:8px;
-  padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
-}
-.validation-banner.show{display:flex;align-items:center;gap:8px}
-
-/* Responsive */
-@media(max-width:560px){
-  .field-row{grid-template-columns:1fr;}
-  .topbar-title{display:none;}
-  .review-key{flex:0 0 120px;}
-  .radio-cards.two .radio-card{min-width:140px;}
-}
-
-@media print {
-  .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
-  body { background: #fff !important; color: #000 !important; }
-  .card { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; page-break-inside: avoid; }
-  .wizard-step { display: block !important; }
-  .wizard-step:not(.active) { display: none !important; }
-  .review-field-label { color: #666 !important; }
-  .review-field-value { color: #000 !important; font-weight: 600 !important; }
-  .review-section-title { color: #333 !important; border-color: #ccc !important; }
-  @page { margin: 1.5cm; }
-}
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/wizard.css">
 <link rel="stylesheet" href="../assets/interactions.css">
+<style>
+  /* 4-step progress override (wizard.css ships 3 by default) */
+  .step-progress.cols-4 .step-pill{flex:1}
+
+  /* Booking-type cards: bigger, with description + badge */
+  .booking-card{
+    display:block;padding:18px 20px;border-radius:18px;
+    background:var(--surface);border:.5px solid var(--hairline);
+    cursor:pointer;transition:all .2s cubic-bezier(.2,.7,.2,1);
+    position:relative;
+  }
+  .booking-card input{position:absolute;opacity:0;pointer-events:none}
+  .booking-card:hover{background:#fff;border-color:var(--ink-5);transform:translateY(-1px)}
+  .booking-card.selected,
+  .booking-card:has(input:checked){
+    background:#fff;border-color:var(--blue);
+    box-shadow:0 0 0 3px var(--blue-soft);
+  }
+  .bc-badge{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 9px;border-radius:999px;
+    margin-bottom:8px;
+  }
+  .bc-badge.hold{background:#fff4e6;color:#73431a}
+  .bc-badge.confirm{background:#dbf4e8;color:#0f7a4a}
+  .bc-title{font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.012em;margin-bottom:4px}
+  .bc-desc{font-size:13px;color:var(--ink-3);line-height:1.45}
+
+  /* Rate toggle pill */
+  .rate-toggle{
+    display:inline-flex;background:var(--surface);
+    border:.5px solid var(--hairline);border-radius:999px;
+    padding:3px;gap:2px;margin-bottom:8px;
+  }
+  .rate-toggle-btn{
+    height:32px;padding:0 16px;border-radius:999px;border:0;
+    background:transparent;font-family:inherit;font-weight:600;font-size:12.5px;
+    color:var(--ink-3);cursor:pointer;
+    transition:all .18s ease;
+  }
+  .rate-toggle-btn.active{
+    background:#fff;color:var(--ink);
+    box-shadow:0 2px 6px -2px rgba(15,23,42,.18);
+  }
+
+  /* Currency input prefix */
+  .input-prefix{
+    display:flex;align-items:center;
+    background:var(--surface);border:.5px solid var(--hairline-strong);
+    border-radius:12px;overflow:hidden;
+    transition:border-color .15s, background .15s, box-shadow .15s;
+  }
+  .input-prefix:focus-within{
+    border-color:var(--blue);background:#fff;
+    box-shadow:0 0 0 3px var(--blue-soft);
+  }
+  .input-prefix-symbol{
+    padding:0 14px;font-size:14px;font-weight:600;color:var(--ink-3);
+    border-right:.5px solid var(--hairline);
+  }
+  .input-prefix input{
+    border:0;background:transparent;outline:none;
+    flex:1;height:44px;padding:0 14px;font-family:inherit;font-size:14px;color:var(--ink);
+  }
+
+  /* Review badge pill (HOLD/CONFIRM) */
+  .review-badge{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 9px;border-radius:999px;
+  }
+  .review-badge.hold{background:#fff4e6;color:#73431a}
+  .review-badge.confirm{background:#dbf4e8;color:#0f7a4a}
+
+  /* Btn-success-amber (production email) */
+  .btn-amber{
+    height:44px;border-radius:999px;padding:0 22px;border:0;
+    background:linear-gradient(180deg,#f9a23a 0%,#e8830f 100%);
+    color:#fff;font-family:inherit;font-weight:600;font-size:14px;
+    box-shadow:0 8px 24px -10px rgba(232,131,15,.5), inset 0 1px 0 rgba(255,255,255,.25);
+    cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  }
+</style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<nav class="topbar">
+<div class="topbar">
   <div class="topbar-left">
-    <a href="../index.html" class="topbar-brand">CBFX Hub</a>
-    <span class="topbar-title">Artist Booking Request</span>
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
   </div>
-  <a href="../index.html" class="topbar-back">← Back to Hub</a>
-</nav>
-
-<!-- PROGRESS -->
-<div class="progress-wrap">
-  <div class="progress-steps">
-    <div class="progress-step active" id="ps1">
-      <div class="step-circle">1</div>
-      <div class="step-label">Artist</div>
-    </div>
-    <div class="progress-step" id="ps2">
-      <div class="step-circle">2</div>
-      <div class="step-label">Booking</div>
-    </div>
-    <div class="progress-step" id="ps3">
-      <div class="step-circle">3</div>
-      <div class="step-label">Show & Notes</div>
-    </div>
-    <div class="progress-step" id="ps4">
-      <div class="step-circle">4</div>
-      <div class="step-label">Review</div>
-    </div>
-  </div>
-</div>
-
-<!-- CONTENT -->
-<div class="content">
-
-<!-- STEP 1 -->
-<div class="step active" id="step1">
-  <h1 class="step-heading">Artist Details</h1>
-  <p class="step-sub">Who is being booked, and who is making the request?</p>
-  <div class="validation-banner" id="val-banner-1">&#9888; Please complete the highlighted fields below.</div>
-
-  <div class="field-row">
-    <div class="field">
-      <label class="field-label" for="artistName">Artist Full Name</label>
-      <input type="text" id="artistName" placeholder="e.g. Jordan Lee">
-      <div class="field-error" id="err-artistName">Required</div>
-    </div>
-    <div class="field">
-      <label class="field-label" for="artistEmail">Artist Email</label>
-      <input type="email" id="artistEmail" placeholder="artist@example.com">
-      <div class="field-error" id="err-artistEmail">Valid email required</div>
-    </div>
-  </div>
-
-  <div class="field">
-    <label class="field-label">Department</label>
-    <div class="radio-cards" id="department-cards">
-      <label class="radio-card"><input type="radio" name="department" value="Compositing"><div class="radio-card-inner"><div class="radio-card-title">Compositing</div></div></label>
-      <label class="radio-card"><input type="radio" name="department" value="FX"><div class="radio-card-inner"><div class="radio-card-title">FX</div></div></label>
-      <label class="radio-card"><input type="radio" name="department" value="CG"><div class="radio-card-inner"><div class="radio-card-title">CG</div></div></label>
-      <label class="radio-card"><input type="radio" name="department" value="Roto/Paint"><div class="radio-card-inner"><div class="radio-card-title">Roto / Paint</div></div></label>
-      <label class="radio-card"><input type="radio" name="department" value="Edit"><div class="radio-card-inner"><div class="radio-card-title">Edit</div></div></label>
-      <label class="radio-card"><input type="radio" name="department" value="Other"><div class="radio-card-inner"><div class="radio-card-title">Other</div></div></label>
-    </div>
-    <div class="field-error" id="err-department">Please select a department</div>
-  </div>
-
-  <div class="field-row">
-    <div class="field">
-      <label class="field-label" for="roleTitle">Role / Title</label>
-      <input type="text" id="roleTitle" placeholder="e.g. Senior Compositor">
-      <div class="field-error" id="err-roleTitle">Required</div>
-    </div>
-    <div class="field">
-      <label class="field-label" for="requestedBy">Requested By</label>
-      <input type="text" id="requestedBy" placeholder="Producer name">
-      <div class="field-error" id="err-requestedBy">Required</div>
-    </div>
-  </div>
-
-  <div class="field">
-    <label class="field-label" for="requesterEmail">Requester Email</label>
-    <input type="email" id="requesterEmail" placeholder="producer@example.com">
-    <div class="field-error" id="err-requesterEmail">Valid email required</div>
-  </div>
-
-  <div class="nav-buttons">
-    <div class="nav-buttons-left"></div>
-    <div class="nav-buttons-right">
-      <button class="btn btn-primary" onclick="goNext(1)">Next: Booking Details →</button>
-    </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#0b1220" stop-opacity="0"/>
+          <stop offset="70%"  stop-color="#0b1220" stop-opacity=".55"/>
+          <stop offset="92%"  stop-color="#0b1220" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+        </linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#5b6478" stop-opacity="0"/>
+          <stop offset="78%"  stop-color="#5b6478" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/>
+        </linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#2557ff" stop-opacity="0"/>
+          <stop offset="80%"  stop-color="#2557ff" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
   </div>
 </div>
 
-<!-- STEP 2 -->
-<div class="step" id="step2">
-  <h1 class="step-heading">Booking Details</h1>
-  <p class="step-sub">Define the engagement, dates, and rate.</p>
-  <div class="validation-banner" id="val-banner-2">&#9888; Please complete the highlighted fields below.</div>
+<div class="wizard-wrap">
 
-  <div class="field">
-    <label class="field-label" for="showProject">Show / Project</label>
-    <input type="text" id="showProject" placeholder="e.g. Project Nightfall S02">
-    <div class="field-error" id="err-showProject">Required</div>
+  <div class="wizard-header">
+    <div class="wizard-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Production</span>
+    </div>
+    <h1 class="wizard-title">Artist Booking</h1>
+    <p class="wizard-sub">Place a hold or confirm a booking with an artist. Generates separate emails for the artist (booking notice) and production (internal summary) — both ready to review and send.</p>
   </div>
 
-  <div class="field">
-    <label class="field-label">Booking Type</label>
-    <div class="radio-cards two">
-      <label class="radio-card hold">
-        <input type="radio" name="bookingType" value="HOLD">
-        <div class="radio-card-inner">
-          <div class="booking-badge badge-hold">Hold</div>
-          <div class="radio-card-title">Tentative Hold</div>
-          <div class="radio-card-desc">Artist aware but not confirmed. Pending final approval.</div>
+  <!-- Step progress (4 steps) -->
+  <div>
+    <div class="step-progress cols-4">
+      <div class="step-pill active" id="ps1"><div class="fill"></div></div>
+      <div class="step-pill" id="ps2"><div class="fill"></div></div>
+      <div class="step-pill" id="ps3"><div class="fill"></div></div>
+      <div class="step-pill" id="ps4"><div class="fill"></div></div>
+    </div>
+    <div class="step-labels">
+      <span class="active" id="psl1">Artist</span>
+      <span id="psl2">Booking</span>
+      <span id="psl3">Show &amp; Notes</span>
+      <span id="psl4">Review</span>
+    </div>
+  </div>
+
+  <!-- ──────────── STEP 1 ──────────── -->
+  <div class="step-panel active" id="step1">
+
+    <div class="validation-banner" id="val-banner-1">
+      Some required fields need attention. Only those are shown.
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Artist Details</div>
+      <div class="wcard-desc">Who's being booked. All fields below are required.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="artistName">Artist Full Name</label>
+          <input type="text" id="artistName" placeholder="e.g. Jordan Lee">
+          <div class="field-error" id="artistNameErr">Required.</div>
         </div>
-      </label>
-      <label class="radio-card confirm">
-        <input type="radio" name="bookingType" value="CONFIRM">
-        <div class="radio-card-inner">
-          <div class="booking-badge badge-confirm">Confirm</div>
-          <div class="radio-card-title">Confirmed Booking</div>
-          <div class="radio-card-desc">Artist is locked in. Engagement is approved and active.</div>
+        <div class="field">
+          <label for="artistEmail">Artist Email</label>
+          <input type="email" id="artistEmail" placeholder="artist@example.com">
+          <div class="field-error" id="artistEmailErr">Valid email required.</div>
         </div>
-      </label>
-    </div>
-    <div class="field-error" id="err-bookingType">Please select a booking type</div>
-  </div>
+      </div>
 
-  <div class="field-row">
-    <div class="field">
-      <label class="field-label" for="startDate">Start Date</label>
-      <input type="date" id="startDate" onchange="calcDays()">
-      <div class="field-error" id="err-startDate">Required</div>
-    </div>
-    <div class="field">
-      <label class="field-label" for="endDate">End Date</label>
-      <input type="date" id="endDate" onchange="calcDays()">
-      <div class="field-error" id="err-endDate">Required</div>
-    </div>
-  </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="roleTitle">Role / Title</label>
+          <input type="text" id="roleTitle" placeholder="e.g. Senior Compositor">
+          <div class="field-error" id="roleTitleErr">Required.</div>
+        </div>
+        <div class="field">
+          <label for="requestedBy">Requested By</label>
+          <input type="text" id="requestedBy" placeholder="Producer name">
+          <div class="field-error" id="requestedByErr">Required.</div>
+        </div>
+      </div>
 
-  <div class="field">
-    <label class="field-label" for="estDays">Estimated Days</label>
-    <input type="number" id="estDays" min="1" placeholder="Auto-calculated from dates">
-    <div class="field-hint" id="estDaysHint">Fill in start and end dates to auto-calculate, or enter manually.</div>
-  </div>
+      <div class="field-row full">
+        <div class="field">
+          <label for="requesterEmail">Requester Email</label>
+          <input type="email" id="requesterEmail" placeholder="producer@chicken-bone.com">
+          <div class="field-error" id="requesterEmailErr">Valid email required.</div>
+        </div>
+      </div>
+    </div>
 
-  <div class="field">
-    <label class="field-label">Work Location</label>
-    <div class="radio-cards">
-      <label class="radio-card"><input type="radio" name="workLocation" value="Remote"><div class="radio-card-inner"><div class="radio-card-title">Remote</div></div></label>
-      <label class="radio-card"><input type="radio" name="workLocation" value="On-site"><div class="radio-card-inner"><div class="radio-card-title">On-site</div></div></label>
-      <label class="radio-card"><input type="radio" name="workLocation" value="Hybrid"><div class="radio-card-inner"><div class="radio-card-title">Hybrid</div></div></label>
-    </div>
-    <div class="field-error" id="err-workLocation">Please select a work location</div>
-  </div>
+    <div class="wcard">
+      <div class="wcard-title">Department</div>
+      <div class="wcard-desc">Pipeline area for this booking.</div>
 
-  <div class="field">
-    <label class="field-label">Rate</label>
-    <div class="rate-toggle" id="rateToggle">
-      <button class="rate-toggle-btn active" onclick="setRateType('daily',this)" type="button">Daily</button>
-      <button class="rate-toggle-btn" onclick="setRateType('weekly',this)" type="button">Weekly</button>
+      <div class="field-group" id="departmentGroup">
+        <div class="radio-grid cols-3">
+          <label class="radio-card"><input type="radio" name="department" value="Compositing"><span class="rc-label">Compositing</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="FX"><span class="rc-label">FX</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="CG"><span class="rc-label">CG</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Roto/Paint"><span class="rc-label">Roto / Paint</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Edit"><span class="rc-label">Edit</span></label>
+          <label class="radio-card"><input type="radio" name="department" value="Other"><span class="rc-label">Other</span></label>
+        </div>
+        <div class="field-error" id="departmentErr">Department is required.</div>
+      </div>
     </div>
-    <div class="input-prefix">
-      <span>$</span>
-      <input type="number" id="rateAmount" min="0" placeholder="Leave blank if TBD">
-    </div>
-    <div class="field-hint">Leave blank if rate is TBD or on deal memo.</div>
-  </div>
 
-  <div class="nav-buttons">
-    <div class="nav-buttons-left">
-      <button class="btn btn-ghost" onclick="goBack(2)">← Back</button>
-    </div>
-    <div class="nav-buttons-right">
-      <button class="btn btn-primary" onclick="goNext(2)">Next: Show & Notes →</button>
-    </div>
-  </div>
-</div>
-
-<!-- STEP 3 -->
-<div class="step" id="step3">
-  <h1 class="step-heading">Show & Notes</h1>
-  <p class="step-sub">Additional details about the project and any special requirements.</p>
-  <div class="validation-banner" id="val-banner-3">&#9888; Please complete the highlighted fields below.</div>
-
-  <div class="field-row">
-    <div class="field">
-      <label class="field-label" for="clientBroadcaster">Client / Broadcaster <span class="opt">optional</span></label>
-      <input type="text" id="clientBroadcaster" placeholder="e.g. Netflix, HBO, Apple TV+">
-    </div>
-    <div class="field">
-      <label class="field-label" for="episodeSegment">Episode / Segment <span class="opt">optional</span></label>
-      <input type="text" id="episodeSegment" placeholder="e.g. Ep 3–6, S02E01">
+    <div class="btn-row">
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(2)">Continue → Booking</button>
     </div>
   </div>
 
-  <div class="field">
-    <label class="field-label" for="shotCount">Shot Count Estimate <span class="opt">optional</span></label>
-    <input type="number" id="shotCount" min="0" placeholder="e.g. 45">
-  </div>
+  <!-- ──────────── STEP 2 ──────────── -->
+  <div class="step-panel" id="step2">
 
-  <div class="field">
-    <label class="field-label">Turnaround</label>
-    <div class="radio-cards">
-      <label class="radio-card"><input type="radio" name="turnaround" value="Standard"><div class="radio-card-inner"><div class="radio-card-title">Standard</div></div></label>
-      <label class="radio-card"><input type="radio" name="turnaround" value="Rush (48h)"><div class="radio-card-inner"><div class="radio-card-title">Rush <span style="color:var(--muted);font-weight:400">48h</span></div></div></label>
-      <label class="radio-card"><input type="radio" name="turnaround" value="Emergency (24h)"><div class="radio-card-inner"><div class="radio-card-title">Emergency <span style="color:var(--muted);font-weight:400">24h</span></div></div></label>
+    <div class="validation-banner" id="val-banner-2">
+      Some required fields need attention. Only those are shown.
     </div>
-    <div class="field-error" id="err-turnaround">Please select a turnaround</div>
-  </div>
 
-  <div class="field">
-    <label class="field-label" for="specialReqs">Special Requirements <span class="opt">optional</span></label>
-    <textarea id="specialReqs" placeholder="e.g. Must have Nuke 16 license. Remote only, no on-site required."></textarea>
-  </div>
+    <div class="wcard">
+      <div class="wcard-title">Show &amp; Booking Type</div>
+      <div class="wcard-desc">What project, and is this a hold or a confirmed booking?</div>
 
-  <div class="field">
-    <label class="field-label" for="internalNotes">Internal Notes <span class="opt">optional — not sent to artist</span></label>
-    <textarea id="internalNotes" placeholder="Notes for production only. Not included in artist communication."></textarea>
-  </div>
+      <div class="field-row full">
+        <div class="field">
+          <label for="showProject">Show / Project</label>
+          <input type="text" id="showProject" placeholder="e.g. Project Nightfall S02">
+          <div class="field-error" id="showProjectErr">Required.</div>
+        </div>
+      </div>
 
-  <div class="nav-buttons">
-    <div class="nav-buttons-left">
-      <button class="btn btn-ghost" onclick="goBack(3)">← Back</button>
+      <div class="field-group" id="bookingTypeGroup">
+        <label class="field-label-block" style="font-size:13px;font-weight:700;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;display:block">Booking Type</label>
+        <div class="radio-grid cols-2" style="margin-bottom:0">
+          <label class="booking-card">
+            <input type="radio" name="bookingType" value="HOLD">
+            <span class="bc-badge hold">Hold</span>
+            <div class="bc-title">Tentative Hold</div>
+            <div class="bc-desc">Artist aware but not confirmed. Pending final approval — must be resolved within 5 business days.</div>
+          </label>
+          <label class="booking-card">
+            <input type="radio" name="bookingType" value="CONFIRM">
+            <span class="bc-badge confirm">Confirm</span>
+            <div class="bc-title">Confirmed Booking</div>
+            <div class="bc-desc">Artist is locked in. Engagement is approved and active.</div>
+          </label>
+        </div>
+        <div class="field-error" id="bookingTypeErr" style="margin-top:8px">Booking type is required.</div>
+      </div>
     </div>
-    <div class="nav-buttons-right">
-      <button class="btn btn-primary" onclick="goNext(3)">Review & Submit →</button>
+
+    <div class="wcard">
+      <div class="wcard-title">Dates &amp; Rate</div>
+      <div class="wcard-desc">Engagement window and compensation. End date cannot be before start.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" onchange="calcDays()">
+          <div class="field-error" id="startDateErr">Required.</div>
+        </div>
+        <div class="field">
+          <label for="endDate">End Date</label>
+          <input type="date" id="endDate" onchange="calcDays()">
+          <div class="field-error" id="endDateErr">Required.</div>
+        </div>
+      </div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="estDays">Estimated Days</label>
+          <input type="number" id="estDays" min="1" placeholder="Auto-calculated from dates">
+          <div class="field-hint" id="estDaysHint">Fill in start and end dates to auto-calculate, or enter manually.</div>
+        </div>
+      </div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label>Rate</label>
+          <div class="rate-toggle" id="rateToggle">
+            <button type="button" class="rate-toggle-btn active" data-rate="daily" onclick="setRateType('daily',this)">Daily</button>
+            <button type="button" class="rate-toggle-btn" data-rate="weekly" onclick="setRateType('weekly',this)">Weekly</button>
+          </div>
+          <div class="input-prefix">
+            <span class="input-prefix-symbol">$</span>
+            <input type="number" id="rateAmount" min="0" placeholder="Leave blank if TBD">
+          </div>
+          <div class="field-hint">Leave blank if rate is TBD or on deal memo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Work Location</div>
+      <div class="wcard-desc">Where will this artist work from?</div>
+
+      <div class="field-group" id="workLocationGroup">
+        <div class="radio-grid cols-3">
+          <label class="radio-card"><input type="radio" name="workLocation" value="Remote"><span class="rc-label">Remote</span></label>
+          <label class="radio-card"><input type="radio" name="workLocation" value="On-site"><span class="rc-label">On-site</span></label>
+          <label class="radio-card"><input type="radio" name="workLocation" value="Hybrid"><span class="rc-label">Hybrid</span></label>
+        </div>
+        <div class="field-error" id="workLocationErr">Work location is required.</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(3)">Continue → Show &amp; Notes</button>
     </div>
   </div>
-</div>
 
-<!-- STEP 4 -->
-<div class="step" id="step4">
-  <h1 class="step-heading">Review & Submit</h1>
-  <p class="step-sub">Confirm all details before sending.</p>
+  <!-- ──────────── STEP 3 ──────────── -->
+  <div class="step-panel" id="step3">
 
-  <div id="reviewContent"></div>
-
-  <div class="notice">
-    <strong>Hold policy:</strong> Hold bookings must be confirmed or released within <strong>5 business days</strong> of this request.
-  </div>
-
-  <div class="btn-row" id="actionButtons">
-    <!-- Injected by JS -->
-  </div>
-
-  <div class="nav-buttons" style="margin-top:20px;">
-    <div class="nav-buttons-left">
-      <button class="btn btn-ghost" onclick="goBack(4)">← Back</button>
+    <div class="validation-banner" id="val-banner-3">
+      Some required fields need attention. Only those are shown.
     </div>
-    <div class="nav-buttons-right"></div>
+
+    <div class="wcard">
+      <div class="wcard-title">Show Details <span class="opt" style="font-weight:500;color:var(--ink-4);font-size:13px">(all optional)</span></div>
+      <div class="wcard-desc">Helpful context — fill in what you know.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="clientBroadcaster">Client / Broadcaster</label>
+          <input type="text" id="clientBroadcaster" placeholder="e.g. Netflix, HBO, Apple TV+">
+        </div>
+        <div class="field">
+          <label for="episodeSegment">Episode / Segment</label>
+          <input type="text" id="episodeSegment" placeholder="e.g. Ep 3-6, S02E01">
+        </div>
+      </div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="shotCount">Shot Count Estimate</label>
+          <input type="number" id="shotCount" min="0" placeholder="e.g. 45">
+        </div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Turnaround</div>
+      <div class="wcard-desc">How fast is the delivery cadence?</div>
+
+      <div class="field-group" id="turnaroundGroup">
+        <div class="radio-grid cols-3">
+          <label class="radio-card">
+            <input type="radio" name="turnaround" value="Standard">
+            <span class="rc-label">Standard</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="turnaround" value="Rush (48h)">
+            <span class="rc-label">Rush</span>
+            <span class="rc-sub">48-hour turnaround</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="turnaround" value="Emergency (24h)">
+            <span class="rc-label">Emergency</span>
+            <span class="rc-sub">24-hour turnaround</span>
+          </label>
+        </div>
+        <div class="field-error" id="turnaroundErr">Turnaround is required.</div>
+      </div>
+    </div>
+
+    <div class="wcard">
+      <div class="wcard-title">Notes <span class="opt" style="font-weight:500;color:var(--ink-4);font-size:13px">(optional)</span></div>
+      <div class="wcard-desc">Anything else worth recording.</div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="specialReqs">Special Requirements</label>
+          <textarea id="specialReqs" placeholder="e.g. Must have Nuke 16 license. Remote only, no on-site required."></textarea>
+          <div class="field-hint">Included in the artist's email.</div>
+        </div>
+      </div>
+
+      <div class="field-row full">
+        <div class="field">
+          <label for="internalNotes">Internal Notes</label>
+          <textarea id="internalNotes" placeholder="Notes for production only — NOT sent to the artist."></textarea>
+          <div class="field-hint">Production-only — never sent to the artist.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-primary" onclick="goStep(4)">Review &amp; Submit →</button>
+    </div>
   </div>
-</div>
 
-</div><!-- /content -->
+  <!-- ──────────── STEP 4 ──────────── -->
+  <div class="step-panel" id="step4">
+    <div class="wcard">
+      <div class="wcard-title">Review &amp; Submit</div>
+      <div class="wcard-desc">Confirm all details. Two emails are generated: one to the artist, one to production.</div>
 
-<div class="toast" id="toast">Copied to clipboard</div>
+      <div id="reviewContent"></div>
+    </div>
+
+    <div class="notice notice-warn">
+      <span class="notice-icon">⚠</span>
+      <span><strong>Hold policy:</strong> Hold bookings must be confirmed or released within <strong>5 business days</strong> of this request.</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
+      <span class="spacer"></span>
+      <button class="btn-ghost" onclick="copySummary()">Copy Summary</button>
+      <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
+      <button class="btn-amber" onclick="sendToProduction()">✉ Email Production</button>
+      <button class="btn-success" onclick="sendToArtist()">✉ Email Artist</button>
+      <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
+    </div>
+  </div>
+
+</div><!-- /wizard-wrap -->
 
 <script>
-// ─── State ───────────────────────────────────────────────────────────────────
-let rateType = 'daily';
-let currentStep = 1;
+  var currentStep = 1;
+  var rateType = 'daily';
 
-// ─── Rate toggle ─────────────────────────────────────────────────────────────
-function setRateType(type, btn) {
-  rateType = type;
-  document.querySelectorAll('.rate-toggle-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
+  function v(id){ return (document.getElementById(id)?.value || '').trim(); }
+  function vRadio(name){ var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function isEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
-// ─── Day calc ─────────────────────────────────────────────────────────────────
-function calcDays() {
-  const s = document.getElementById('startDate').value;
-  const e = document.getElementById('endDate').value;
-  if (s && e) {
-    const start = new Date(s), end = new Date(e);
-    if (end >= start) {
-      const diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
-      document.getElementById('estDays').value = diff;
-      document.getElementById('estDaysHint').textContent = `Auto-calculated: ${diff} day${diff !== 1 ? 's' : ''} inclusive.`;
+  function setProgress(step){
+    for (var i = 1; i <= 4; i++){
+      var pill = document.getElementById('ps' + i);
+      var lbl  = document.getElementById('psl' + i);
+      pill.className = 'step-pill';
+      lbl.className  = '';
+      if (i < step)        { pill.classList.add('done');   lbl.classList.add('done'); }
+      else if (i === step) { pill.classList.add('active'); lbl.classList.add('active'); }
     }
   }
-}
 
-// ─── Validation ───────────────────────────────────────────────────────────────
-function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-function setErr(id, show, msg) {
-  const el = document.getElementById('err-' + id);
-  const inp = document.getElementById(id);
-  if (!el) return;
-  if (show) {
-    el.textContent = msg || el.textContent;
-    el.classList.add('show');
-    if (inp) inp.classList.add('error');
-  } else {
-    el.classList.remove('show');
-    if (inp) inp.classList.remove('error');
-  }
-}
-
-function clearErrs() {
-  document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
-  document.querySelectorAll('.error').forEach(e => e.classList.remove('error'));
-}
-
-function validateStep(n) {
-  clearErrs();
-  let ok = true;
-
-  if (n === 1) {
-    const name = v('artistName'), email = v('artistEmail');
-    const dept = vRadio('department'), role = v('roleTitle');
-    const reqBy = v('requestedBy'), reqEmail = v('requesterEmail');
-    if (!name) { setErr('artistName', true, 'Required'); ok = false; }
-    if (!email || !isEmail(email)) { setErr('artistEmail', true, 'Valid email required'); ok = false; }
-    if (!dept) { setErr('department', true, 'Please select a department'); ok = false; }
-    if (!role) { setErr('roleTitle', true, 'Required'); ok = false; }
-    if (!reqBy) { setErr('requestedBy', true, 'Required'); ok = false; }
-    if (!reqEmail || !isEmail(reqEmail)) { setErr('requesterEmail', true, 'Valid email required'); ok = false; }
+  function goStep(n){
+    if (n > currentStep && !validateStep(currentStep)) return;
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step' + n).classList.add('active');
+    setProgress(n);
+    if (n === 4) buildReview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  if (n === 2) {
-    const show = v('showProject'), bType = vRadio('bookingType');
-    const start = v('startDate'), end = v('endDate');
-    const loc = vRadio('workLocation');
-    if (!show) { setErr('showProject', true, 'Required'); ok = false; }
-    if (!bType) { setErr('bookingType', true, 'Please select a booking type'); ok = false; }
-    if (!start) { setErr('startDate', true, 'Required'); ok = false; }
-    if (!end) { setErr('endDate', true, 'Required'); ok = false; }
-    if (start && end && new Date(end) < new Date(start)) {
-      setErr('endDate', true, 'End date must be after start date'); ok = false;
-    }
-    if (!loc) { setErr('workLocation', true, 'Please select a work location'); ok = false; }
+  function setRateType(type, btn){
+    rateType = type;
+    document.querySelectorAll('.rate-toggle-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
   }
 
-  if (n === 3) {
-    const ta = vRadio('turnaround');
-    if (!ta) { setErr('turnaround', true, 'Please select a turnaround'); ok = false; }
-  }
-
-  // Collapse valid fields, surface invalid ones
-  const banner = document.getElementById('val-banner-' + n);
-  const stepEl = document.getElementById('step' + n);
-  const allFields = stepEl ? stepEl.querySelectorAll('.field') : [];
-
-  if (!ok) {
-    if (banner) banner.classList.add('show');
-    allFields.forEach(function(field) {
-      const hasErr = field.querySelector('.field-error.show, .error');
-      if (hasErr) {
-        field.classList.remove('field-collapsed');
-      } else {
-        field.classList.add('field-collapsed');
+  function calcDays(){
+    var s = document.getElementById('startDate').value;
+    var e = document.getElementById('endDate').value;
+    if (s && e){
+      var start = new Date(s), end = new Date(e);
+      if (end >= start){
+        var diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        var d = document.getElementById('estDays');
+        if (!d.value) d.value = diff;
+        document.getElementById('estDaysHint').textContent = 'Auto-calculated: ' + diff + ' day' + (diff !== 1 ? 's' : '') + ' inclusive.';
       }
+    }
+  }
+
+  function setErr(id, errId, show){
+    var input = document.getElementById(id);
+    var err   = document.getElementById(errId);
+    if (show){ input.classList.add('invalid'); err.classList.add('show'); }
+    else     { input.classList.remove('invalid'); err.classList.remove('show'); }
+    return show;
+  }
+  function validateRadio(name, groupId, errId){
+    var val = vRadio(name);
+    var grp = document.getElementById(groupId);
+    var err = document.getElementById(errId);
+    if (!val){
+      err.classList.add('show');
+      grp.classList.add('radio-group-invalid');
+      return false;
+    }
+    err.classList.remove('show');
+    grp.classList.remove('radio-group-invalid');
+    return true;
+  }
+
+  function collapseStep(stepId, bannerId){
+    var banner = document.getElementById(bannerId);
+    banner.classList.add('show');
+    var stepEl = document.getElementById(stepId);
+    stepEl.querySelectorAll('.field-row').forEach(function(row){
+      var bad = row.querySelector('.invalid, .field-error.show');
+      if (bad) row.classList.remove('field-row-collapsed');
+      else     row.classList.add('field-row-collapsed');
     });
-  } else {
-    if (banner) banner.classList.remove('show');
-    allFields.forEach(function(field) { field.classList.remove('field-collapsed'); });
+    stepEl.querySelectorAll('.field-group').forEach(function(grp){
+      var bad = grp.querySelector('.field-error.show, .radio-group-invalid')
+             || grp.classList.contains('radio-group-invalid');
+      if (bad) grp.classList.remove('field-row-collapsed');
+      else     grp.classList.add('field-row-collapsed');
+    });
+  }
+  function clearCollapse(stepId, bannerId){
+    var banner = document.getElementById(bannerId);
+    banner.classList.remove('show');
+    document.getElementById(stepId).querySelectorAll('.field-row-collapsed')
+      .forEach(function(g){ g.classList.remove('field-row-collapsed'); });
   }
 
-  return ok;
-}
+  function validateStep(n){
+    var ok = true;
+    if (n === 1){
+      if (!v('artistName'))    ok = !setErr('artistName',    'artistNameErr',    true) && ok;
+      else                          setErr('artistName',    'artistNameErr',    false);
+      if (!isEmail(v('artistEmail'))) ok = !setErr('artistEmail','artistEmailErr',true) && ok;
+      else                          setErr('artistEmail',   'artistEmailErr',   false);
+      if (!v('roleTitle'))     ok = !setErr('roleTitle',    'roleTitleErr',     true) && ok;
+      else                          setErr('roleTitle',    'roleTitleErr',     false);
+      if (!v('requestedBy'))   ok = !setErr('requestedBy',  'requestedByErr',   true) && ok;
+      else                          setErr('requestedBy',  'requestedByErr',   false);
+      if (!isEmail(v('requesterEmail'))) ok = !setErr('requesterEmail','requesterEmailErr',true) && ok;
+      else                          setErr('requesterEmail','requesterEmailErr',false);
+      if (!validateRadio('department', 'departmentGroup', 'departmentErr')) ok = false;
+      if (!ok) collapseStep('step1', 'val-banner-1');
+      else     clearCollapse('step1', 'val-banner-1');
+      return ok;
+    }
+    if (n === 2){
+      if (!v('showProject')) ok = !setErr('showProject', 'showProjectErr', true) && ok;
+      else                       setErr('showProject', 'showProjectErr', false);
+      if (!validateRadio('bookingType', 'bookingTypeGroup', 'bookingTypeErr')) ok = false;
+      if (!v('startDate')) ok = !setErr('startDate', 'startDateErr', true) && ok;
+      else                     setErr('startDate', 'startDateErr', false);
+      if (!v('endDate'))   ok = !setErr('endDate',   'endDateErr',   true) && ok;
+      else                     setErr('endDate',   'endDateErr',   false);
+      if (v('startDate') && v('endDate') && new Date(v('endDate')) < new Date(v('startDate'))){
+        setErr('endDate', 'endDateErr', true);
+        document.getElementById('endDateErr').textContent = 'End date cannot be before start date.';
+        ok = false;
+      }
+      if (!validateRadio('workLocation', 'workLocationGroup', 'workLocationErr')) ok = false;
+      if (!ok) collapseStep('step2', 'val-banner-2');
+      else     clearCollapse('step2', 'val-banner-2');
+      return ok;
+    }
+    if (n === 3){
+      if (!validateRadio('turnaround', 'turnaroundGroup', 'turnaroundErr')) ok = false;
+      if (!ok) collapseStep('step3', 'val-banner-3');
+      else     clearCollapse('step3', 'val-banner-3');
+      return ok;
+    }
+    return true;
+  }
 
-// Re-expand collapsed fields when user starts editing
-document.querySelectorAll('.step input, .step textarea, .step select').forEach(function(el) {
-  el.addEventListener('input', expandAllGroups);
-  el.addEventListener('change', expandAllGroups);
-});
-function expandAllGroups() {
-  document.querySelectorAll('.field-collapsed').forEach(function(g) { g.classList.remove('field-collapsed'); });
-  document.querySelectorAll('.validation-banner.show').forEach(function(b) { b.classList.remove('show'); });
-}
-
-function v(id) { return (document.getElementById(id)?.value || '').trim(); }
-function vRadio(name) {
-  const el = document.querySelector(`input[name="${name}"]:checked`);
-  return el ? el.value : '';
-}
-
-// ─── Navigation ───────────────────────────────────────────────────────────────
-function goNext(from) {
-  if (!validateStep(from)) return;
-  setStep(from + 1);
-}
-function goBack(from) { setStep(from - 1); }
-
-function setStep(n) {
-  currentStep = n;
-  document.querySelectorAll('.step').forEach((el, i) => {
-    el.classList.toggle('active', i + 1 === n);
+  // Auto re-expand on any input
+  document.addEventListener('input', function(e){
+    if (!e.target.matches('input, textarea, select')) return;
+    document.querySelectorAll('.field-row-collapsed').forEach(function(g){ g.classList.remove('field-row-collapsed'); });
+    document.querySelectorAll('.validation-banner.show').forEach(function(b){ b.classList.remove('show'); });
+    document.querySelectorAll('.radio-group-invalid').forEach(function(g){
+      if (g.querySelector('input[type="radio"]:checked')) g.classList.remove('radio-group-invalid');
+    });
+    document.querySelectorAll('.field-error.show').forEach(function(err){
+      var grp = err.closest('.field, .field-group');
+      if (grp && !grp.querySelector('.invalid') && !grp.classList.contains('radio-group-invalid')) err.classList.remove('show');
+    });
   });
-  for (let i = 1; i <= 4; i++) {
-    const ps = document.getElementById('ps' + i);
-    ps.classList.remove('active', 'done');
-    if (i < n) ps.classList.add('done');
-    if (i === n) ps.classList.add('active');
+
+  // Format helpers
+  function fmtDate(d){
+    if (!d) return '';
+    return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (n === 4) buildReview();
-}
+  function fmtRate(){
+    var amt = v('rateAmount');
+    if (!amt) return 'TBD / On deal memo';
+    return '$' + Number(amt).toLocaleString() + ' / ' + (rateType === 'daily' ? 'day' : 'week');
+  }
 
-// ─── Format helpers ──────────────────────────────────────────────────────────
-function fmtDate(d) {
-  if (!d) return '';
-  const dt = new Date(d + 'T00:00:00');
-  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-function fmtRate() {
-  const amt = v('rateAmount');
-  if (!amt) return 'TBD / On deal memo';
-  return `$${Number(amt).toLocaleString()} / ${rateType === 'daily' ? 'day' : 'week'}`;
-}
+  // Review
+  function buildReview(){
+    var bType = vRadio('bookingType');
+    var badgeClass = bType === 'HOLD' ? 'hold' : 'confirm';
+    var bLabel = bType === 'HOLD' ? 'Hold' : 'Confirmed';
 
-// ─── Build review ─────────────────────────────────────────────────────────────
-function buildReview() {
-  const bType = vRadio('bookingType');
-  const badgeClass = bType === 'HOLD' ? 'hold' : 'confirm';
-  const bLabel = bType === 'HOLD' ? 'Hold' : 'Confirm';
-
-  const sections = [
-    {
-      title: 'Artist',
-      rows: [
+    var sections = [
+      { title: 'Artist', rows: [
         ['Name', v('artistName')],
         ['Email', v('artistEmail')],
         ['Department', vRadio('department')],
         ['Role / Title', v('roleTitle')],
-      ]
-    },
-    {
-      title: 'Request',
-      rows: [
+      ]},
+      { title: 'Requester', rows: [
         ['Requested By', v('requestedBy')],
         ['Requester Email', v('requesterEmail')],
-      ]
-    },
-    {
-      title: 'Booking',
-      rows: [
+      ]},
+      { title: 'Booking', rows: [
         ['Show / Project', v('showProject')],
-        ['Booking Type', `<span class="review-badge ${badgeClass}">${bLabel}</span>`],
+        ['Booking Type', '<span class="review-badge ' + badgeClass + '">' + bLabel + '</span>'],
         ['Start Date', fmtDate(v('startDate'))],
         ['End Date', fmtDate(v('endDate'))],
         ['Estimated Days', v('estDays') || '—'],
         ['Work Location', vRadio('workLocation')],
         ['Rate', fmtRate()],
-      ]
-    },
-    {
-      title: 'Show Details',
-      rows: [
-        ['Client / Broadcaster', v('clientBroadcaster') || '<span class="muted">—</span>'],
-        ['Episode / Segment', v('episodeSegment') || '<span class="muted">—</span>'],
-        ['Shot Count', v('shotCount') || '<span class="muted">—</span>'],
+      ]},
+      { title: 'Show Details', rows: [
+        ['Client / Broadcaster', v('clientBroadcaster') || '—'],
+        ['Episode / Segment', v('episodeSegment') || '—'],
+        ['Shot Count', v('shotCount') || '—'],
         ['Turnaround', vRadio('turnaround')],
-        ['Special Requirements', v('specialReqs') || '<span class="muted">None</span>'],
-      ]
-    },
-    {
-      title: 'Internal Notes (not sent to artist)',
-      rows: [
-        ['Notes', v('internalNotes') || '<span class="muted">None</span>'],
-      ]
-    }
-  ];
+        ['Special Requirements', v('specialReqs') || '—'],
+      ]},
+      { title: 'Internal Notes (production only)', rows: [
+        ['Notes', v('internalNotes') || '—'],
+      ]}
+    ];
 
-  let html = '';
-  sections.forEach(sec => {
-    html += `<div class="review-section">
-      <div class="review-section-head">${sec.title}</div>
-      <div class="review-rows">`;
-    sec.rows.forEach(([k, val]) => {
-      html += `<div class="review-row">
-        <div class="review-key">${k}</div>
-        <div class="review-val">${val}</div>
-      </div>`;
+    var html = '';
+    sections.forEach(function(sec){
+      html += '<div class="review-section"><div class="review-section-title">' + sec.title + '</div><div class="review-grid">';
+      sec.rows.forEach(function(pair){
+        var k = pair[0], val = pair[1];
+        var isEmpty = !val || val === '—';
+        html += '<div class="review-field">'
+          + '<span class="review-field-label">' + k + '</span>'
+          + '<span class="review-field-value' + (isEmpty ? ' empty' : '') + '">' + (val || '—') + '</span>'
+          + '</div>';
+      });
+      html += '</div></div>';
     });
-    html += `</div></div>`;
-  });
 
-  document.getElementById('reviewContent').innerHTML = html;
+    document.getElementById('reviewContent').innerHTML = html;
+  }
 
-  // Build action buttons
-  document.getElementById('actionButtons').innerHTML = `
-    <button class="btn btn-green" onclick="sendToArtist()">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l14-7-5 14-3-5-6-2z"/></svg>
-      Open in Gmail (Artist)
-    </button>
-    <button class="btn btn-yellow" onclick="sendToProduction()">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l14-7-5 14-3-5-6-2z"/></svg>
-      Open in Gmail (Production)
-    </button>
-    <button class="btn btn-outline" onclick="copySummary()">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="10" height="12" rx="2"/><path d="M13 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2"/></svg>
-      Copy Summary
-    </button>
-    <button class="btn btn-outline" onclick="exportPDF()">&#x2193; Export PDF</button>
-  `;
-}
+  // Email body builders
+  function artistEmailBody(){
+    var bType = vRadio('bookingType');
+    var bLabel = bType === 'HOLD' ? 'HOLD' : 'CONFIRMED';
+    var name = v('artistName').split(' ')[0] || v('artistName');
 
-// ─── Email body builders ──────────────────────────────────────────────────────
-function artistEmailBody() {
-  const bType = vRadio('bookingType');
-  const bLabel = bType === 'HOLD' ? 'HOLD' : 'CONFIRMED';
-  const name = v('artistName').split(' ')[0] || v('artistName');
+    var body = 'Hi ' + name + ',\n\n';
+    body += bType === 'HOLD'
+      ? 'We\'d like to place a tentative hold on your availability for the following project. This is not a confirmed booking — we\'ll follow up with confirmation or release within 5 business days.\n\n'
+      : 'We\'re excited to confirm your booking for the following project. Please review the details below.\n\n';
 
-  let body = `Hi ${name},\n\n`;
-  body += bType === 'HOLD'
-    ? `We'd like to place a tentative hold on your availability for the following project. This is not a confirmed booking — we'll follow up with confirmation or release within 5 business days.\n\n`
-    : `We're excited to confirm your booking for the following project. Please review the details below.\n\n`;
+    body += '──────────────────────────────\n';
+    body += 'BOOKING STATUS: ' + bLabel + '\n';
+    body += '──────────────────────────────\n\n';
+    body += 'Project: ' + v('showProject') + '\n';
+    if (v('clientBroadcaster')) body += 'Client: ' + v('clientBroadcaster') + '\n';
+    if (v('episodeSegment'))    body += 'Episode / Segment: ' + v('episodeSegment') + '\n';
+    body += 'Department: ' + vRadio('department') + '\n';
+    body += 'Role: ' + v('roleTitle') + '\n';
+    body += 'Start Date: ' + fmtDate(v('startDate')) + '\n';
+    body += 'End Date: ' + fmtDate(v('endDate')) + '\n';
+    if (v('estDays')) body += 'Estimated Days: ' + v('estDays') + '\n';
+    body += 'Work Location: ' + vRadio('workLocation') + '\n';
+    body += 'Rate: ' + fmtRate() + '\n';
+    body += 'Turnaround: ' + vRadio('turnaround') + '\n';
+    if (v('specialReqs')) body += '\nSpecial Requirements:\n' + v('specialReqs') + '\n';
+    body += '\n──────────────────────────────\n\n';
+    body += 'Please confirm receipt of this ' + (bType === 'HOLD' ? 'hold' : 'booking') + '. If you have any questions, don\'t hesitate to reach out.\n\n';
+    body += 'Best,\n' + v('requestedBy') + '\nCBFX';
+    return body;
+  }
 
-  body += `──────────────────────────────\n`;
-  body += `BOOKING STATUS: ${bLabel}\n`;
-  body += `──────────────────────────────\n\n`;
-  body += `Project: ${v('showProject')}\n`;
-  if (v('clientBroadcaster')) body += `Client: ${v('clientBroadcaster')}\n`;
-  if (v('episodeSegment')) body += `Episode / Segment: ${v('episodeSegment')}\n`;
-  body += `Department: ${vRadio('department')}\n`;
-  body += `Role: ${v('roleTitle')}\n`;
-  body += `Start Date: ${fmtDate(v('startDate'))}\n`;
-  body += `End Date: ${fmtDate(v('endDate'))}\n`;
-  if (v('estDays')) body += `Estimated Days: ${v('estDays')}\n`;
-  body += `Work Location: ${vRadio('workLocation')}\n`;
-  body += `Rate: ${fmtRate()}\n`;
-  body += `Turnaround: ${vRadio('turnaround')}\n`;
-  if (v('specialReqs')) body += `\nSpecial Requirements:\n${v('specialReqs')}\n`;
-  body += `\n──────────────────────────────\n\n`;
-  body += `Please confirm receipt of this ${bType === 'HOLD' ? 'hold' : 'booking'}. If you have any questions, don't hesitate to reach out.\n\n`;
-  body += `Best,\n${v('requestedBy')}\nCBFX`;
+  function productionEmailBody(){
+    var bType = vRadio('bookingType');
+    var body = 'CBFX INTERNAL BOOKING SUMMARY\n';
+    body += 'Generated: ' + new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) + '\n';
+    body += '═══════════════════════════════════════\n\n';
+    body += 'BOOKING STATUS: ' + bType + '\n\n';
+    body += 'ARTIST\n';
+    body += '  Name:          ' + v('artistName') + '\n';
+    body += '  Email:         ' + v('artistEmail') + '\n';
+    body += '  Department:    ' + vRadio('department') + '\n';
+    body += '  Role:          ' + v('roleTitle') + '\n\n';
+    body += 'REQUEST\n';
+    body += '  Requested By:  ' + v('requestedBy') + '\n';
+    body += '  Email:         ' + v('requesterEmail') + '\n\n';
+    body += 'BOOKING\n';
+    body += '  Show:          ' + v('showProject') + '\n';
+    if (v('clientBroadcaster')) body += '  Client:        ' + v('clientBroadcaster') + '\n';
+    if (v('episodeSegment'))    body += '  Episode:       ' + v('episodeSegment') + '\n';
+    body += '  Start Date:    ' + fmtDate(v('startDate')) + '\n';
+    body += '  End Date:      ' + fmtDate(v('endDate')) + '\n';
+    if (v('estDays'))   body += '  Est. Days:     ' + v('estDays') + '\n';
+    body += '  Work Location: ' + vRadio('workLocation') + '\n';
+    body += '  Rate:          ' + fmtRate() + '\n';
+    body += '  Turnaround:    ' + vRadio('turnaround') + '\n';
+    if (v('shotCount')) body += '  Shot Count:    ' + v('shotCount') + '\n';
+    if (v('specialReqs'))    body += '\nSPECIAL REQUIREMENTS\n  ' + v('specialReqs') + '\n';
+    if (v('internalNotes'))  body += '\nINTERNAL NOTES\n  ' + v('internalNotes') + '\n';
+    body += '\n═══════════════════════════════════════\n';
+    body += 'Hold bookings must be confirmed or released within 5 business days.\n';
+    return body;
+  }
 
-  return body;
-}
-
-function productionEmailBody() {
-  const bType = vRadio('bookingType');
-  let body = `CBFX INTERNAL BOOKING SUMMARY\n`;
-  body += `Generated: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}\n`;
-  body += `═══════════════════════════════════════\n\n`;
-  body += `BOOKING STATUS: ${bType}\n\n`;
-  body += `ARTIST\n`;
-  body += `  Name:          ${v('artistName')}\n`;
-  body += `  Email:         ${v('artistEmail')}\n`;
-  body += `  Department:    ${vRadio('department')}\n`;
-  body += `  Role:          ${v('roleTitle')}\n\n`;
-  body += `REQUEST\n`;
-  body += `  Requested By:  ${v('requestedBy')}\n`;
-  body += `  Email:         ${v('requesterEmail')}\n\n`;
-  body += `BOOKING\n`;
-  body += `  Show:          ${v('showProject')}\n`;
-  if (v('clientBroadcaster')) body += `  Client:        ${v('clientBroadcaster')}\n`;
-  if (v('episodeSegment')) body += `  Episode:       ${v('episodeSegment')}\n`;
-  body += `  Start Date:    ${fmtDate(v('startDate'))}\n`;
-  body += `  End Date:      ${fmtDate(v('endDate'))}\n`;
-  if (v('estDays')) body += `  Est. Days:     ${v('estDays')}\n`;
-  body += `  Work Location: ${vRadio('workLocation')}\n`;
-  body += `  Rate:          ${fmtRate()}\n`;
-  body += `  Turnaround:    ${vRadio('turnaround')}\n`;
-  if (v('shotCount')) body += `  Shot Count:    ${v('shotCount')}\n`;
-  if (v('specialReqs')) { body += `\nSPECIAL REQUIREMENTS\n  ${v('specialReqs')}\n`; }
-  if (v('internalNotes')) { body += `\nINTERNAL NOTES\n  ${v('internalNotes')}\n`; }
-  body += `\n═══════════════════════════════════════\n`;
-  body += `Hold bookings must be confirmed or released within 5 business days.\n`;
-  return body;
-}
-
-function sendToArtist() {
-  const bType = vRadio('bookingType');
-  const show = v('showProject');
-  const start = fmtDate(v('startDate'));
-  const end = fmtDate(v('endDate'));
-  const subject = encodeURIComponent(`[CBFX Booking | ${bType}] ${show} — ${start} to ${end}`);
-  const body = encodeURIComponent(artistEmailBody());
-  const to = encodeURIComponent(v('artistEmail'));
-  window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=${to}&su=${subject}&body=${body}`, '_blank');
-}
-
-function sendToProduction() {
-  const bType = vRadio('bookingType');
-  const show = v('showProject');
-  const start = fmtDate(v('startDate'));
-  const end = fmtDate(v('endDate'));
-  const subject = encodeURIComponent(`[CBFX Internal | ${bType}] ${show} — ${v('artistName')} | ${start} to ${end}`);
-  const body = encodeURIComponent(productionEmailBody());
-  window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=production@chicken-bone.com&su=${subject}&body=${body}`, '_blank');
-}
-
-function copySummary() {
-  const text = productionEmailBody();
-  navigator.clipboard.writeText(text).then(() => {
-    const t = document.getElementById('toast');
-    if (t) { t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    const t = document.getElementById('toast');
-    if (t) { t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
-  });
-}
-
-function exportPDF() {
-  window.print();
-}
+  function sendToArtist(){
+    var bType = vRadio('bookingType');
+    var show = v('showProject');
+    var subject = '[CBFX Booking | ' + bType + '] ' + show + ' — ' + fmtDate(v('startDate')) + ' to ' + fmtDate(v('endDate'));
+    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=' + encodeURIComponent(v('artistEmail'))
+      + '&su=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(artistEmailBody());
+    window.open(url, '_blank');
+  }
+  function sendToProduction(){
+    var bType = vRadio('bookingType');
+    var show = v('showProject');
+    var subject = '[CBFX Internal | ' + bType + '] ' + show + ' — ' + v('artistName') + ' | ' + fmtDate(v('startDate')) + ' to ' + fmtDate(v('endDate'));
+    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=production@chicken-bone.com'
+      + '&su=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(productionEmailBody());
+    window.open(url, '_blank');
+  }
+  function copySummary(){
+    var text = productionEmailBody();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
+    } else fallbackCopy(text);
+  }
+  function fallbackCopy(t){
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta); showCopyConfirm();
+  }
+  function showCopyConfirm(){
+    var el = document.getElementById('copyConfirm');
+    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+  }
+  function exportPDF(){ window.print(); }
 </script>
-<script src="../assets/dev-mock-fill.js"></script>
 <script src="../assets/date-clamp.js"></script>
 </body>
 </html>
