@@ -157,6 +157,12 @@ textarea{resize:vertical;min-height:80px}
   padding:10px 14px;font-size:13px;font-weight:600;color:#c0392b;margin-bottom:20px;
 }
 .validation-banner.show{display:flex;align-items:center;gap:8px}
+input.invalid, textarea.invalid{border-color:#e8504a !important;background:#fdf3f2 !important}
+.artist-card.artist-card-invalid{border-color:#e8504a;box-shadow:0 0 0 2px rgba(232,80,74,.12)}
+.artist-card.artist-card-invalid .artist-card-header{background:#fdecea}
+.field-error{display:none;font-size:11px;color:#c0392b;font-weight:600;margin-top:4px}
+.field-error.show{display:block}
+.radio-group-invalid{border:1px solid #e8504a;border-radius:6px;padding:8px;background:#fdf3f2}
 
 @media print {
   .topbar, .progress-wrap, .actions, .back-link, .note-box { display: none !important; }
@@ -205,19 +211,21 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div class="panel-body">
 
-      <div class="field-group">
+      <div class="validation-banner" id="val-banner-1">⚠ Please complete the highlighted fields below.</div>
+
+      <div class="field-group" id="fg-req-by">
         <label class="field-label">Requested By</label>
         <input type="text" id="req-by" placeholder="e.g. ruben.rodas" value="ruben.rodas">
       </div>
 
-      <div class="field-group">
+      <div class="field-group" id="fg-batch-label">
         <label class="field-label">Batch Label <span>— optional</span></label>
         <input type="text" id="batch-label" placeholder="e.g. #002 — Dexter S2 prep">
       </div>
 
-      <hr class="divider">
+      <hr class="divider" id="fg-divider-1">
 
-      <div class="field-group">
+      <div class="field-group" id="fg-artists">
         <label class="field-label">Artists to onboard</label>
         <div id="artist-list"></div>
         <button class="add-artist-btn" onclick="addArtist()">+ Add Artist</button>
@@ -226,7 +234,7 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div class="panel-footer">
       <span></span>
-      <button class="btn-next" onclick="goTo(2)">Next: Services →</button>
+      <button class="btn-next" onclick="validateStep1()">Next: Services →</button>
     </div>
   </div>
 
@@ -238,15 +246,18 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div class="panel-body">
 
-      <div class="field-group">
+      <div class="validation-banner" id="val-banner-2">⚠ Please complete the highlighted fields below.</div>
+
+      <div class="field-group" id="fg-instance">
         <label class="field-label">Instance Type</label>
-        <div class="radio-group">
+        <div class="radio-group" id="instance-group">
           <div class="radio-opt"><input type="radio" name="instance" id="inst-g6" value="g6.4xlarge" checked><label for="inst-g6">g6.4xlarge<br><span style="font-size:11px;opacity:.6;font-weight:400">Artist Workstation</span></label></div>
           <div class="radio-opt"><input type="radio" name="instance" id="inst-g6-2" value="g6.12xlarge"><label for="inst-g6-2">g6.12xlarge<br><span style="font-size:11px;opacity:.6;font-weight:400">Senior / Lead</span></label></div>
           <div class="radio-opt"><input type="radio" name="instance" id="inst-other" value="other"><label for="inst-other">Other<br><span style="font-size:11px;opacity:.6;font-weight:400">Specify below</span></label></div>
         </div>
         <div id="inst-other-wrap" style="display:none;margin-top:10px">
           <input type="text" id="inst-custom" placeholder="e.g. g6.48xlarge">
+          <div class="field-error" id="inst-custom-err">Specify the custom instance type.</div>
         </div>
       </div>
 
@@ -299,6 +310,7 @@ textarea{resize:vertical;min-height:80px}
         </div>
         <div id="cc-other-wrap" style="display:none;margin-top:10px">
           <input type="text" id="cc-custom" placeholder="Name or username">
+          <div class="field-error" id="cc-custom-err">Specify the credential contact.</div>
         </div>
       </div>
 
@@ -310,7 +322,7 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div class="panel-footer">
       <button class="btn-back" onclick="goTo(1)">← Back</button>
-      <button class="btn-next" onclick="goTo(3)">Next: Review →</button>
+      <button class="btn-next" onclick="validateStep2()">Next: Review →</button>
     </div>
   </div>
 
@@ -362,14 +374,17 @@ function addArtist(data) {
       <div class="field-group" style="margin:0">
         <label class="field-label">First Name</label>
         <input type="text" id="fn-${id}" placeholder="Arslan" value="${d.first||''}" ${isReserve?'disabled':''}>
+        <div class="field-error" id="fn-err-${id}">Required.</div>
       </div>
       <div class="field-group" style="margin:0">
         <label class="field-label">Last Name</label>
         <input type="text" id="ln-${id}" placeholder="Naqvi" value="${d.last||''}" ${isReserve?'disabled':''}>
+        <div class="field-error" id="ln-err-${id}">Required.</div>
       </div>
       <div class="field-group" style="margin:0;grid-column:1/-1">
         <label class="field-label">Email</label>
         <input type="email" id="em-${id}" placeholder="arslan.n@gmail.com" value="${d.email||''}" ${isReserve?'disabled':''}>
+        <div class="field-error" id="em-err-${id}">Valid email required.</div>
       </div>
       <div class="field-group" style="margin:0;grid-column:1/-1">
         <label class="field-label">Artist Type</label>
@@ -438,6 +453,133 @@ function collectArtists() {
     return { id, fn, ln, em, type, pw };
   }).filter(Boolean);
 }
+
+function validateStep1() {
+  let hasError = false;
+  const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const setErr = (id, errId, bad) => {
+    const el = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (!el) return;
+    if (bad) { el.classList.add('invalid'); err && err.classList.add('show'); hasError = true; }
+    else { el.classList.remove('invalid'); err && err.classList.remove('show'); }
+  };
+
+  // Requested By required
+  const rb = document.getElementById('req-by');
+  if (!rb.value.trim()) { rb.classList.add('invalid'); hasError = true; }
+  else rb.classList.remove('invalid');
+
+  // Per-artist validation
+  if (artists.length === 0) hasError = true;
+  artists.forEach(id => {
+    const typeEl = document.querySelector(`input[name="type-${id}"]:checked`);
+    const isReserve = typeEl?.value === 'reserve';
+    const card = document.getElementById('artist-card-' + id);
+    let cardBad = false;
+    if (isReserve) {
+      // Reserve: no name/email needed
+      setErr(`fn-${id}`, `fn-err-${id}`, false);
+      setErr(`ln-${id}`, `ln-err-${id}`, false);
+      setErr(`em-${id}`, `em-err-${id}`, false);
+    } else {
+      const fn = document.getElementById(`fn-${id}`).value.trim();
+      const ln = document.getElementById(`ln-${id}`).value.trim();
+      const em = document.getElementById(`em-${id}`).value.trim();
+      if (!fn) { setErr(`fn-${id}`, `fn-err-${id}`, true); cardBad = true; } else setErr(`fn-${id}`, `fn-err-${id}`, false);
+      if (!ln) { setErr(`ln-${id}`, `ln-err-${id}`, true); cardBad = true; } else setErr(`ln-${id}`, `ln-err-${id}`, false);
+      if (!em || !isEmail(em)) { setErr(`em-${id}`, `em-err-${id}`, true); cardBad = true; } else setErr(`em-${id}`, `em-err-${id}`, false);
+    }
+    if (card) card.classList.toggle('artist-card-invalid', cardBad);
+  });
+
+  const banner = document.getElementById('val-banner-1');
+  const stepEl = document.getElementById('step-1');
+  const groups = stepEl.querySelectorAll('.field-group');
+
+  if (hasError) {
+    banner.classList.add('show');
+    groups.forEach(g => {
+      const bad = g.querySelector('.invalid, .artist-card-invalid');
+      if (bad || g.id === 'fg-artists' && artists.length === 0) g.classList.remove('field-group-collapsed');
+      else g.classList.add('field-group-collapsed');
+    });
+    document.getElementById('fg-divider-1')?.classList.add('field-group-collapsed');
+  } else {
+    banner.classList.remove('show');
+    groups.forEach(g => g.classList.remove('field-group-collapsed'));
+    document.getElementById('fg-divider-1')?.classList.remove('field-group-collapsed');
+    goTo(2);
+  }
+}
+
+function validateStep2() {
+  let hasError = false;
+  const instVal = document.querySelector('input[name="instance"]:checked')?.value;
+  const instCustomEl = document.getElementById('inst-custom');
+  const instCustomErr = document.getElementById('inst-custom-err');
+  if (instVal === 'other') {
+    if (!instCustomEl.value.trim()) {
+      instCustomEl.classList.add('invalid');
+      instCustomErr.classList.add('show');
+      hasError = true;
+    } else {
+      instCustomEl.classList.remove('invalid');
+      instCustomErr.classList.remove('show');
+    }
+  } else {
+    instCustomEl.classList.remove('invalid');
+    instCustomErr.classList.remove('show');
+  }
+
+  const ccVal = document.querySelector('input[name="cred-contact"]:checked')?.value;
+  const ccCustomEl = document.getElementById('cc-custom');
+  const ccCustomErr = document.getElementById('cc-custom-err');
+  if (ccVal === 'other') {
+    if (!ccCustomEl.value.trim()) {
+      ccCustomEl.classList.add('invalid');
+      ccCustomErr.classList.add('show');
+      hasError = true;
+    } else {
+      ccCustomEl.classList.remove('invalid');
+      ccCustomErr.classList.remove('show');
+    }
+  } else {
+    ccCustomEl.classList.remove('invalid');
+    ccCustomErr.classList.remove('show');
+  }
+
+  const banner = document.getElementById('val-banner-2');
+  const stepEl = document.getElementById('step-2');
+  const groups = stepEl.querySelectorAll('.field-group');
+
+  if (hasError) {
+    banner.classList.add('show');
+    groups.forEach(g => {
+      const bad = g.querySelector('.invalid');
+      if (bad) g.classList.remove('field-group-collapsed');
+      else g.classList.add('field-group-collapsed');
+    });
+  } else {
+    banner.classList.remove('show');
+    groups.forEach(g => g.classList.remove('field-group-collapsed'));
+    goTo(3);
+  }
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.matches('input, textarea, select')) {
+    e.target.classList.remove('invalid');
+    const card = e.target.closest('.artist-card');
+    if (card && !card.querySelector('.invalid')) card.classList.remove('artist-card-invalid');
+    document.querySelectorAll('.field-group-collapsed').forEach(g => g.classList.remove('field-group-collapsed'));
+    document.querySelectorAll('.validation-banner.show').forEach(b => b.classList.remove('show'));
+    document.querySelectorAll('.field-error.show').forEach(err => {
+      const grp = err.closest('.field-group');
+      if (grp && !grp.querySelector('.invalid')) err.classList.remove('show');
+    });
+  }
+});
 
 function goTo(step) {
   [1,2,3].forEach(s => {
