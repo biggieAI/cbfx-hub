@@ -38,7 +38,7 @@
   background:var(--surface);border:.5px solid var(--hairline);
   border-radius:999px;
 }
-.docs-meta-item strong{color:var(--ink);font-weight:600;margin-left:4px}
+.docs-meta-item strong{color:var(--ink);font-weight:600;margin-left:6px}
 
 /* ── Section cards ────────────────────────────────────────── */
 .docs-section{
@@ -166,6 +166,22 @@ code.inline{
 }
 .docs-toc a:hover{color:var(--blue)}
 .docs-toc a.active{color:var(--blue);border-left-color:var(--blue);font-weight:600}
+
+/* ── Numbered step list (escalation, workflows) ─────────────── */
+.step-list{list-style:none;padding:0;margin:6px 0}
+.step-list li{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:12px 0;border-bottom:.5px dashed rgba(15,23,42,.08);
+  font-size:14px;color:var(--ink-2);line-height:1.5;
+}
+.step-list li:last-child{border-bottom:0}
+.step-list .step-num{
+  flex-shrink:0;width:26px;height:26px;border-radius:50%;
+  background:var(--blue);color:#fff;
+  display:grid;place-items:center;
+  font-family:'Inter',sans-serif;font-weight:800;font-size:12.5px;
+}
+.step-list strong{color:var(--ink);font-weight:700}
 
 /* ── Footer ───────────────────────────────────────────────── */
 .docs-footer{
