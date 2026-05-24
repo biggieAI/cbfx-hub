@@ -275,4 +275,8 @@
   .stat-row{grid-template-columns:1fr 1fr}
   .infra-table{font-size:12px}
   .infra-table th,.infra-table td{padding:9px 10px}
+  /* Block iOS auto-zoom on the filter inputs (search box, dept selector). */
+  input,select{font-size:16px !important}
+  /* Defensive overflow lock for tables + stat cards that can stretch. */
+  html,body{overflow-x:hidden;max-width:100vw}
 }

@@ -299,4 +299,16 @@
   .btn-row{flex-direction:column;align-items:stretch}
   .btn-row .spacer{display:none}
   .btn-row button{width:100%;justify-content:center}
+
+  /* iOS Safari auto-zooms any input/textarea/select with font-size < 16px on
+     focus, and on some iOS versions it doesn't restore the zoom after blur.
+     Bumping mobile inputs to 16px keeps the zoom from ever firing. */
+  input,
+  textarea,
+  select{font-size:16px !important}
+
+  /* Defensive overflow lock: prevents any rogue child from pushing the page
+     wider than the viewport, which would otherwise let iOS Safari rescale
+     the document and never snap it back. */
+  html,body{overflow-x:hidden;max-width:100vw}
 }
