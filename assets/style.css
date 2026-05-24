@@ -49,6 +49,7 @@
 }
 
 html{min-height:100%;
+  overflow-x:hidden;
   background:
     radial-gradient(1200px 700px at 15% 0%, #e9ebf6 0%, transparent 70%) no-repeat,
     radial-gradient(1100px 800px at 85% 100%, #e6e3f1 0%, transparent 70%) no-repeat,
@@ -56,6 +57,7 @@ html{min-height:100%;
   background-size: 100% 100vh, 100% 100vh, 100% 100%;
 }
 body{
+  overflow-x:hidden;
   background:transparent;
   color:var(--ink);
   font-family:var(--f-sans);
