@@ -1,0 +1,119 @@
+/* CBFX Hub — shared interaction polish
+ * Loaded by every wizard. Adds tactile press / lift / focus states
+ * across BOTH the new design system (btn-primary/secondary/success)
+ * and the legacy per-file buttons (btn-next/back/generate/add-artist).
+ */
+
+/* ── Pointer affordance + reset ─────────────────────────── */
+button, .btn-next, .btn-back, .btn-generate, .btn-primary,
+.btn-secondary, .btn-success, .btn-ghost, .add-artist-btn,
+.remove-btn, [role="button"]{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  will-change:transform, box-shadow;
+}
+button:disabled, .btn-next:disabled, .btn-back:disabled,
+.btn-generate:disabled, .btn-primary:disabled,
+.btn-secondary:disabled, .btn-success:disabled{
+  cursor:not-allowed; opacity:.55; filter:saturate(.6);
+  transform:none !important;
+}
+
+/* ── Smooth motion baseline ─────────────────────────────── */
+.btn-next, .btn-back, .btn-generate, .btn-primary,
+.btn-secondary, .btn-success, .btn-ghost, .add-artist-btn{
+  transition:
+    transform .14s cubic-bezier(.2,.7,.2,1),
+    box-shadow .18s cubic-bezier(.2,.7,.2,1),
+    background-color .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    filter .18s ease;
+}
+
+/* ── Hover lift (filled / primary actions) ──────────────── */
+.btn-next:not(:disabled):hover,
+.btn-generate:not(:disabled):hover,
+.btn-primary:not(:disabled):hover,
+.btn-success:not(:disabled):hover{
+  transform:translateY(-1px);
+  filter:brightness(1.04);
+  box-shadow:0 12px 28px -10px rgba(15,23,42,.28),
+             inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+/* ── Hover lift (ghost / outlined) ──────────────────────── */
+.btn-back:not(:disabled):hover,
+.btn-secondary:not(:disabled):hover,
+.btn-ghost:not(:disabled):hover,
+.add-artist-btn:not(:disabled):hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px -8px rgba(15,23,42,.18);
+}
+
+/* ── Active press (universal) ───────────────────────────── */
+.btn-next:not(:disabled):active,
+.btn-back:not(:disabled):active,
+.btn-generate:not(:disabled):active,
+.btn-primary:not(:disabled):active,
+.btn-secondary:not(:disabled):active,
+.btn-success:not(:disabled):active,
+.btn-ghost:not(:disabled):active,
+.add-artist-btn:not(:disabled):active{
+  transform:translateY(0) scale(.97);
+  transition-duration:.06s;
+  filter:brightness(.96);
+  box-shadow:0 2px 6px -2px rgba(15,23,42,.18);
+}
+
+/* ── Focus ring (keyboard only) ─────────────────────────── */
+.btn-next:focus-visible,
+.btn-back:focus-visible,
+.btn-generate:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-success:focus-visible,
+.btn-ghost:focus-visible,
+.add-artist-btn:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(37,87,255,.28),
+             0 8px 24px -10px rgba(15,23,42,.25);
+}
+
+/* ── Click ripple (lightweight, no JS) ──────────────────── */
+.btn-next, .btn-generate, .btn-primary, .btn-success{
+  position:relative; overflow:hidden;
+}
+.btn-next::after, .btn-generate::after,
+.btn-primary::after, .btn-success::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),
+              rgba(255,255,255,.45) 0%,
+              rgba(255,255,255,0) 55%);
+  opacity:0; pointer-events:none;
+  transition:opacity .5s ease;
+}
+.btn-next:active::after, .btn-generate:active::after,
+.btn-primary:active::after, .btn-success:active::after{
+  opacity:1; transition:opacity 0s;
+}
+
+/* ── Tiny icon buttons (remove X etc) ───────────────────── */
+.remove-btn{
+  transition:color .15s ease, transform .15s ease, background-color .15s ease;
+  border-radius:6px;
+}
+.remove-btn:hover{transform:scale(1.15)}
+.remove-btn:active{transform:scale(.9)}
+
+/* ── Respect reduced motion ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  .btn-next, .btn-back, .btn-generate, .btn-primary,
+  .btn-secondary, .btn-success, .btn-ghost, .add-artist-btn,
+  .remove-btn{
+    transition:background-color .15s ease, color .15s ease,
+               border-color .15s ease !important;
+    transform:none !important;
+  }
+}
