@@ -340,18 +340,7 @@
     currentStep = n;
     document.getElementById('step' + n).classList.add('active');
     setProgress(n);
-    resetZoom();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Briefly clamp zoom to 1 then release it, forcing iOS Safari/Chrome
-  // to reset any user-applied pinch zoom on step change.
-  function resetZoom() {
-    var meta = document.querySelector('meta[name="viewport"]');
-    if (!meta) return;
-    var original = meta.getAttribute('content');
-    meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0');
-    setTimeout(function() { meta.setAttribute('content', original); }, 80);
   }
 
   // ─── VALIDATION HELPERS ───────────────────────────────────────────────────
