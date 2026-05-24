@@ -358,33 +358,24 @@
 
   function sendSummary(){
     const name = document.getElementById('artistName').value.trim() || 'Artist';
-    const sup = document.getElementById('supervisorEmail').value.trim();
-    const to = 'onboarding@chicken-bone.com' + (sup ? ',' + sup : '');
-    const subject = '[First Day Complete] ' + name + ' — fully provisioned';
-    const url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=' + encodeURIComponent(to)
-      + '&su=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(buildSummaryBody());
-    window.open(url, '_blank');
+    const sup  = document.getElementById('supervisorEmail').value.trim();
+    cbfxSendViaGmail({
+      to:      'onboarding@chicken-bone.com',
+      cc:      sup || undefined,
+      subject: '[First Day Complete] ' + name + ' — fully provisioned',
+      body:    buildSummaryBody()
+    });
   }
 
   function copySummary(){
     const name = document.getElementById('artistName').value.trim() || 'Artist';
-    const subject = '[First Day Complete] ' + name + ' — fully provisioned';
-    const text = 'To: onboarding@chicken-bone.com\nSubject: ' + subject + '\n\n' + buildSummaryBody();
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(() => fallbackCopy(text));
-    } else fallbackCopy(text);
-  }
-  function fallbackCopy(t){
-    const ta = document.createElement('textarea');
-    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta); showCopyConfirm();
-  }
-  function showCopyConfirm(){
-    const el = document.getElementById('copyConfirm');
-    if (el){ el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2500); }
+    const sup  = document.getElementById('supervisorEmail').value.trim();
+    cbfxCopyEmail({
+      to:      'onboarding@chicken-bone.com',
+      cc:      sup || undefined,
+      subject: '[First Day Complete] ' + name + ' — fully provisioned',
+      body:    buildSummaryBody()
+    });
   }
 
   function launchConfetti(){
@@ -433,5 +424,6 @@
   buildChecklist();
 </script>
 <script src="../assets/date-clamp.js"></script>
+<script src="../assets/gmail-dashboard.js"></script>
 </body>
 </html>

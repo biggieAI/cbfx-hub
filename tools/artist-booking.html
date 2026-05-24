@@ -726,41 +726,29 @@
 
   function sendToArtist(){
     var bType = vRadio('bookingType');
-    var show = v('showProject');
-    var subject = '[CBFX Booking | ' + bType + '] ' + show + ' — ' + fmtDate(v('startDate')) + ' to ' + fmtDate(v('endDate'));
-    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=' + encodeURIComponent(v('artistEmail'))
-      + '&su=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(artistEmailBody());
-    window.open(url, '_blank');
+    var show  = v('showProject');
+    cbfxSendViaGmail({
+      to:      v('artistEmail'),
+      subject: '[CBFX Booking | ' + bType + '] ' + show + ' — ' + fmtDate(v('startDate')) + ' to ' + fmtDate(v('endDate')),
+      body:    artistEmailBody()
+    });
   }
   function sendToProduction(){
     var bType = vRadio('bookingType');
-    var show = v('showProject');
-    var subject = '[CBFX Internal | ' + bType + '] ' + show + ' — ' + v('artistName') + ' | ' + fmtDate(v('startDate')) + ' to ' + fmtDate(v('endDate'));
-    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=production@chicken-bone.com'
-      + '&su=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(productionEmailBody());
-    window.open(url, '_blank');
+    var show  = v('showProject');
+    cbfxSendViaGmail({
+      to:      'production@chicken-bone.com',
+      subject: '[CBFX Internal | ' + bType + '] ' + show + ' — ' + v('artistName') + ' | ' + fmtDate(v('startDate')) + ' to ' + fmtDate(v('endDate')),
+      body:    productionEmailBody()
+    });
   }
   function copySummary(){
-    var text = productionEmailBody();
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
-    } else fallbackCopy(text);
-  }
-  function fallbackCopy(t){
-    var ta = document.createElement('textarea');
-    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta); showCopyConfirm();
-  }
-  function showCopyConfirm(){
-    var el = document.getElementById('copyConfirm');
-    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+    // Body-only copy.
+    cbfxCopyEmail({ body: productionEmailBody() });
   }
   function exportPDF(){ window.print(); }
 </script>
 <script src="../assets/date-clamp.js"></script>
+<script src="../assets/gmail-dashboard.js"></script>
 </body>
 </html>

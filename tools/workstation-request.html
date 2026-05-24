@@ -373,7 +373,10 @@
     <div class="btn-row">
       <button class="btn-back" onclick="goTo(2)">← Back</button>
       <span class="spacer"></span>
+      <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
+      <button class="btn-ghost" onclick="copyRequest()">Copy</button>
       <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
+      <button class="btn-success" onclick="sendRequest()">✉ Copy + Open Gmail</button>
       <button class="btn-generate" onclick="generateDoc()">⬇ Generate Build Doc</button>
     </div>
   </div>
@@ -687,6 +690,106 @@
       + '</div>';
   }
 
+  // ── Email body for Gmail send ─────────────────────────────────
+  function buildEmailBody(){
+    const data = collectArtists();
+    const inst = getInstanceType();
+    const contact = getCredContact();
+    const reqBy = document.getElementById('req-by').value || 'ruben.rodas';
+    const batchLabel = document.getElementById('batch-label').value || '';
+    const notes = document.getElementById('batch-notes').value || '';
+    const svcLeo = document.getElementById('svc-leo').checked;
+    const svcDL  = document.getElementById('svc-deadline').checked;
+    const svcSG  = document.getElementById('svc-sg').checked;
+    const svcWG  = document.getElementById('svc-wg').checked;
+    const wgType = document.querySelector('input[name="wg-type"]:checked')?.value || 'new';
+    const wgPeer = document.getElementById('wg-peer-note')?.value.trim() || '';
+    const today  = new Date().toISOString().slice(0,10);
+    const named   = data.filter(a => a.type === 'named').length;
+    const reserve = data.filter(a => a.type === 'reserve').length;
+
+    const svcs = ['EC2'];
+    if (svcLeo) svcs.push('Leostream');
+    if (svcDL)  svcs.push('Deadline Cloud');
+    if (svcSG)  svcs.push('ShotGrid');
+    if (svcWG)  svcs.push('WireGuard VPN');
+
+    const lines = [];
+    lines.push('═══════════════════════════════════════');
+    lines.push('  CBFX WORKSTATION REQUEST');
+    lines.push('═══════════════════════════════════════');
+    lines.push('');
+    lines.push('Requested by:    ' + reqBy);
+    lines.push('Date:            ' + today);
+    if (batchLabel) lines.push('Batch:           ' + batchLabel);
+    lines.push('Machines:        ' + data.length + ' × ' + inst);
+    lines.push('Named artists:   ' + named);
+    lines.push('Reserve slots:   ' + reserve);
+    lines.push('Services:        ' + svcs.join(', '));
+    if (svcWG) lines.push('WireGuard:       ' + (wgType === 'existing' ? ('Reuse existing cert' + (wgPeer ? ' — ' + wgPeer : '')) : 'Generate new certificate'));
+    lines.push('Cred contact:    ' + contact);
+    if (notes) {
+      lines.push('');
+      lines.push('NOTES');
+      lines.push('  ' + notes);
+    }
+
+    if (data.length === 0){
+      lines.push('');
+      lines.push('(No artists added.)');
+    } else {
+      lines.push('');
+      lines.push('───────────────────────────────────────');
+      lines.push('ARTISTS (' + data.length + ')');
+      lines.push('───────────────────────────────────────');
+      data.forEach((a, i) => {
+        const username = (a.fn && a.ln) ? (a.fn.toLowerCase() + '.' + a.ln.toLowerCase()) : 'TBD';
+        const isReserve = a.type === 'reserve';
+        const slotIdx = data.slice(0, i+1).filter(x => x.type==='reserve').length - 1;
+        const label = isReserve
+          ? ('Reserve Slot ' + String.fromCharCode(65 + slotIdx))
+          : ((a.fn && a.ln) ? (a.fn + ' ' + a.ln) : ('Artist #' + (i+1)));
+        lines.push('');
+        lines.push((i+1) + '. ' + label + (isReserve ? '  [Reserve]' : '  [Named]'));
+        lines.push('     Username:  ' + (isReserve ? 'TBD' : username));
+        lines.push('     Email:     ' + (isReserve ? 'TBD' : (a.em || '—')));
+        lines.push('     Instance:  ' + inst);
+        lines.push('     Password:  ' + (a.pw === 'existing' ? 'Use existing' : 'Generate new'));
+      });
+    }
+
+    lines.push('');
+    lines.push('═══════════════════════════════════════');
+    lines.push('Submitted via CBFX Hub — Workstation Request');
+    return lines.join('\n');
+  }
+
+  function buildEmailSubject(){
+    const data = collectArtists();
+    const inst = getInstanceType();
+    const batchLabel = document.getElementById('batch-label').value || '';
+    const tag = batchLabel ? ' — ' + batchLabel : '';
+    return '[Workstation Request] ' + data.length + ' × ' + inst + tag;
+  }
+
+  function sendRequest(){
+    cbfxSendViaGmail({
+      to:      'it@chicken-bone.com',
+      cc:      'production@chicken-bone.com',
+      subject: buildEmailSubject(),
+      body:    buildEmailBody()
+    });
+  }
+
+  function copyRequest(){
+    cbfxCopyEmail({
+      to:      'it@chicken-bone.com',
+      cc:      'production@chicken-bone.com',
+      subject: buildEmailSubject(),
+      body:    buildEmailBody()
+    });
+  }
+
   // ── Generate doc ───────────────────────────────────────────────
   function generateDoc(){
     const data = collectArtists();
@@ -907,5 +1010,6 @@
 </script>
 <script src="../assets/dev-mock-fill.js"></script>
 <script src="../assets/date-clamp.js"></script>
+<script src="../assets/gmail-dashboard.js"></script>
 </body>
 </html>

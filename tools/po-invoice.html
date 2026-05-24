@@ -332,7 +332,7 @@
       <span class="spacer"></span>
       <button class="btn-ghost" onclick="copySummary()">Copy</button>
       <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
-      <button class="btn-success" onclick="sendToAccounting()">✉ Open in Gmail</button>
+      <button class="btn-success" onclick="sendToAccounting()">✉ Copy + Open Gmail</button>
       <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
     </div>
   </div>
@@ -570,31 +570,19 @@
   function sendToAccounting(){
     var typeLabel = vRadio('subType') === 'Purchase Order' ? 'PO' : 'Invoice';
     var amtRaw = fmtMoney(v('amount'));
-    var subject = '[' + typeLabel + '] ' + v('vendor') + ' — ' + v('show') + ' — ' + v('currency') + ' ' + amtRaw;
-    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=accounting@chicken-bone.com'
-      + '&su=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(getSummaryText());
-    window.open(url, '_blank');
+    cbfxSendViaGmail({
+      to:      'accounting@chicken-bone.com',
+      subject: '[' + typeLabel + '] ' + v('vendor') + ' — ' + v('show') + ' — ' + v('currency') + ' ' + amtRaw,
+      body:    getSummaryText()
+    });
   }
   function copySummary(){
-    var text = getSummaryText();
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
-    } else fallbackCopy(text);
-  }
-  function fallbackCopy(t){
-    var ta = document.createElement('textarea');
-    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta); showCopyConfirm();
-  }
-  function showCopyConfirm(){
-    var el = document.getElementById('copyConfirm');
-    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+    // Body-only copy (memo style). cbfxCopyEmail with no to/subject yields a clean body.
+    cbfxCopyEmail({ body: getSummaryText() });
   }
   function exportPDF(){ window.print(); }
 </script>
 <script src="../assets/date-clamp.js"></script>
+<script src="../assets/gmail-dashboard.js"></script>
 </body>
 </html>

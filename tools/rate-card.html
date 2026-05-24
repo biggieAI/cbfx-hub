@@ -377,7 +377,7 @@
       <span class="spacer"></span>
       <button class="btn-ghost" onclick="copyMemo()">Copy Memo</button>
       <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
-      <button class="btn-success" onclick="sendToProduction()">✉ Open in Gmail</button>
+      <button class="btn-success" onclick="sendToProduction()">✉ Copy + Open Gmail</button>
       <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
     </div>
   </div>
@@ -620,31 +620,19 @@
   }
 
   function sendToProduction(){
-    var subject = '[Deal Memo] ' + v('artistName') + ' — ' + v('show');
-    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=production@chicken-bone.com'
-      + '&su=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(getMemoText());
-    window.open(url, '_blank');
+    cbfxSendViaGmail({
+      to:      'production@chicken-bone.com',
+      subject: '[Deal Memo] ' + v('artistName') + ' — ' + v('show'),
+      body:    getMemoText()
+    });
   }
   function copyMemo(){
-    var text = getMemoText();
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
-    } else fallbackCopy(text);
-  }
-  function fallbackCopy(t){
-    var ta = document.createElement('textarea');
-    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta); showCopyConfirm();
-  }
-  function showCopyConfirm(){
-    var el = document.getElementById('copyConfirm');
-    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+    // Body-only copy (memo style).
+    cbfxCopyEmail({ body: getMemoText() });
   }
   function exportPDF(){ window.print(); }
 </script>
 <script src="../assets/date-clamp.js"></script>
+<script src="../assets/gmail-dashboard.js"></script>
 </body>
 </html>

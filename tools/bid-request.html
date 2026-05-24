@@ -459,7 +459,7 @@
       <span class="spacer"></span>
       <button class="btn-ghost" onclick="copyToClipboard()">Copy</button>
       <button class="btn-ghost" onclick="exportPDF()">Export PDF</button>
-      <button class="btn-success" onclick="openInGmail()">✉ Open in Gmail</button>
+      <button class="btn-success" onclick="openInGmail()">✉ Copy + Open Gmail</button>
       <span class="copy-confirm" id="copyConfirm">✓ Copied to clipboard</span>
     </div>
   </div>
@@ -711,30 +711,22 @@
     return '[Bid Request] ' + v('show-title') + ' — ' + v('client') + ' — Due ' + fmtDate(v('bid-due'));
   }
   function openInGmail(){
-    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=bids@chicken-bone.com'
-      + '&su=' + encodeURIComponent(buildSubject())
-      + '&body=' + encodeURIComponent(buildEmailBody());
-    window.open(url, '_blank');
+    cbfxSendViaGmail({
+      to:      'bids@chicken-bone.com',
+      subject: buildSubject(),
+      body:    buildEmailBody()
+    });
   }
   function copyToClipboard(){
-    var text = 'To: bids@chicken-bone.com\nSubject: ' + buildSubject() + '\n\n' + buildEmailBody();
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(showCopyConfirm).catch(function(){ fallbackCopy(text); });
-    } else fallbackCopy(text);
-  }
-  function fallbackCopy(t){
-    var ta = document.createElement('textarea');
-    ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); } catch(e) {}
-    document.body.removeChild(ta); showCopyConfirm();
-  }
-  function showCopyConfirm(){
-    var el = document.getElementById('copyConfirm');
-    if (el){ el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); }, 2500); }
+    cbfxCopyEmail({
+      to:      'bids@chicken-bone.com',
+      subject: buildSubject(),
+      body:    buildEmailBody()
+    });
   }
   function exportPDF(){ window.print(); }
 </script>
 <script src="../assets/date-clamp.js"></script>
+<script src="../assets/gmail-dashboard.js"></script>
 </body>
 </html>
