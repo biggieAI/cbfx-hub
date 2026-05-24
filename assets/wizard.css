@@ -28,7 +28,7 @@
 /* ── Step progress (pills) ──────────────────────────────── */
 .step-progress{
   display:flex;gap:6px;align-items:center;
-  margin:28px 0 32px;
+  margin:32px 0 0;
 }
 .step-pill{
   flex:1;height:6px;border-radius:99px;background:var(--surface-3);
@@ -44,7 +44,8 @@
 .step-pill.active .fill{width:50%}
 .step-labels{
   display:flex;justify-content:space-between;
-  margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  margin:14px 0 36px;
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--ink-4);
 }
 .step-labels span{flex:1;text-align:center}
