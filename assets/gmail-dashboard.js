@@ -22,7 +22,7 @@
   'use strict';
 
   function buildGmailUrl(opts) {
-    var url = 'https://mail.google.com/mail/u/0/?fs=1&tf=cm';
+    var url = 'https://mail.google.com/mail/?view=cm&fs=1&tf=1';
     if (opts.to)      url += '&to='  + encodeURIComponent(opts.to);
     if (opts.cc)      url += '&cc='  + encodeURIComponent(opts.cc);
     if (opts.subject) url += '&su='  + encodeURIComponent(opts.subject);
