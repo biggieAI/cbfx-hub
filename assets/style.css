@@ -20,8 +20,15 @@
   /* accent + pastel supports */
   --blue:#2557ff;
   --blue-2:#1e44d6;
+  --blue-d:#1838b8;        /* deep blue stop for V4E gradient */
+  --blue-bright:#5b82ff;   /* light blue stop for V4E gradient */
   --blue-soft:#e6eeff;
   --blue-soft-2:#dbe6ff;
+  /* V4E-D gradient stops — restrained magenta core for primary CTA sweep.
+     Tuned cooler than pure magenta to read as cinematic accent, not consumer. */
+  --indigo:#4338ca;
+  --violet:#6d3ad9;
+  --magenta:#8a37d4;
   --sky:#bfdcff;
   --cyan:#cdeff5;
   --lavender:#dcdcf3;
@@ -322,23 +329,75 @@ a.card:hover{
 .footer-text{font-size:11px;color:var(--ink-4);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
 
 /* ── Buttons (for downstream wizards) ───────────────────── */
+/* V4E sweep with magenta core (Option D) on .btn-primary.
+   Gradient slides position during fill so the colors shift inside the band.
+   Primary keeps a static dark base at rest (--ink-2) so the sweep reveals
+   on hover rather than just brightening an already-blue surface. */
 .btn-primary{
+  position:relative;overflow:hidden;
+  isolation:isolate;
   height:44px;border-radius:999px;padding:0 22px;border:0;
-  background:linear-gradient(180deg,#3a6bff 0%,var(--blue) 100%);
+  background:var(--ink-2);
   color:#fff;font-family:inherit;font-weight:600;font-size:14px;letter-spacing:-.01em;
-  box-shadow:0 8px 24px -10px rgba(37,87,255,.6), inset 0 1px 0 rgba(255,255,255,.25);
+  box-shadow:0 8px 24px -10px rgba(15,23,42,.45), inset 0 1px 0 rgba(255,255,255,.10);
   cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:transform 120ms cubic-bezier(.2,.7,.2,1),
+             box-shadow 200ms cubic-bezier(.2,.7,.2,1);
+  -webkit-tap-highlight-color:transparent;
+  z-index:0;
 }
+.btn-primary > *{position:relative;z-index:1}
+.btn-primary::before{
+  content:"";position:absolute;
+  top:0;left:0;width:100%;height:100%;
+  transform:scaleX(0);transform-origin:0 50%;
+  /* V4E-D: blue-edged sweep with magenta core; cool indigo→violet→magenta→violet→blue */
+  background:linear-gradient(95deg,
+    var(--blue-2) 0%,
+    var(--indigo) 22%,
+    var(--violet) 46%,
+    var(--magenta) 60%,
+    var(--violet) 78%,
+    var(--blue) 100%);
+  background-size:200% 100%;
+  background-position:100% 0;
+  transition:transform 580ms cubic-bezier(.5,.05,.2,1),
+             background-position 720ms cubic-bezier(.5,.05,.2,1);
+  transition-delay:0ms, 100ms;
+  border-radius:inherit;
+  z-index:-1;
+  pointer-events:none;
+}
+.btn-primary:hover:not(:disabled)::before{
+  transform:scaleX(1);
+  background-position:0% 0;
+}
+.btn-primary:active:not(:disabled){transform:scale(.97);transition-duration:80ms}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.6)}
+.btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(109,58,217,.30)}
+
 .btn-secondary{
   height:44px;border-radius:999px;padding:0 22px;
   background:var(--surface);color:var(--ink);font-weight:600;font-size:14px;
   border:.5px solid var(--hairline-strong);box-shadow:var(--sh-1);
   cursor:pointer;font-family:inherit;
+  transition:background-color .18s ease, border-color .18s ease, transform 120ms cubic-bezier(.2,.7,.2,1);
 }
+.btn-secondary:hover{background:var(--surface-2);border-color:var(--ink-5)}
+.btn-secondary:active{transform:scale(.97)}
+
 .btn-ghost{
   height:36px;border-radius:999px;padding:0 14px;background:transparent;
   font-weight:600;font-size:13px;color:var(--ink-3);border:.5px solid var(--hairline);
   font-family:inherit;cursor:pointer;
+  transition:background-color .18s ease, color .18s ease, border-color .18s ease, transform 120ms cubic-bezier(.2,.7,.2,1);
+}
+.btn-ghost:hover{background:var(--surface-2);color:var(--ink);border-color:var(--hairline-strong)}
+.btn-ghost:active{transform:scale(.97)}
+
+@media (prefers-reduced-motion: reduce){
+  .btn-primary::before{transition-duration:0ms, 0ms}
 }
 
 /* ── Responsive (second-pass scaffolding) ───────────────── */

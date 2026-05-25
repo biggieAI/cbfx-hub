@@ -1,11 +1,16 @@
 /* CBFX Hub — shared interaction polish
  * Loaded by every wizard. Adds tactile press / lift / focus states
- * across BOTH the new design system (btn-primary/secondary/success)
- * and the legacy per-file buttons (btn-next/back/generate/add-artist).
+ * for legacy/auxiliary buttons (btn-next, btn-back, btn-generate, btn-amber,
+ * btn-secondary, btn-ghost, add-artist-btn, remove-btn).
+ *
+ * NOTE: .btn-primary and .btn-success now use the V4E sweep pattern defined
+ * in style.css / wizard.css and intentionally do NOT receive lift+brightness
+ * here. Their hover state is the gradient sweep itself. Active scale and
+ * disabled handling for them still apply via universal selectors below.
  */
 
 /* ── Pointer affordance + reset ─────────────────────────── */
-button, .btn-next, .btn-back, .btn-generate, .btn-primary,
+button, .btn-next, .btn-back, .btn-generate, .btn-amber, .btn-primary,
 .btn-secondary, .btn-success, .btn-ghost, .add-artist-btn,
 .remove-btn, [role="button"]{
   cursor:pointer;
@@ -14,15 +19,15 @@ button, .btn-next, .btn-back, .btn-generate, .btn-primary,
   will-change:transform, box-shadow;
 }
 button:disabled, .btn-next:disabled, .btn-back:disabled,
-.btn-generate:disabled, .btn-primary:disabled,
+.btn-generate:disabled, .btn-amber:disabled, .btn-primary:disabled,
 .btn-secondary:disabled, .btn-success:disabled{
   cursor:not-allowed; opacity:.55; filter:saturate(.6);
   transform:none !important;
 }
 
-/* ── Smooth motion baseline ─────────────────────────────── */
-.btn-next, .btn-back, .btn-generate, .btn-primary,
-.btn-secondary, .btn-success, .btn-ghost, .add-artist-btn{
+/* ── Smooth motion baseline (for non-V4E buttons) ─────── */
+.btn-next, .btn-back, .btn-generate, .btn-amber,
+.btn-secondary, .btn-ghost, .add-artist-btn{
   transition:
     transform .14s cubic-bezier(.2,.7,.2,1),
     box-shadow .18s cubic-bezier(.2,.7,.2,1),
@@ -32,11 +37,10 @@ button:disabled, .btn-next:disabled, .btn-back:disabled,
     filter .18s ease;
 }
 
-/* ── Hover lift (filled / primary actions) ──────────────── */
+/* ── Hover lift (filled / primary actions — V4E buttons EXCLUDED) ─ */
 .btn-next:not(:disabled):hover,
 .btn-generate:not(:disabled):hover,
-.btn-primary:not(:disabled):hover,
-.btn-success:not(:disabled):hover{
+.btn-amber:not(:disabled):hover{
   transform:translateY(-1px);
   filter:brightness(1.04);
   box-shadow:0 12px 28px -10px rgba(15,23,42,.28),
@@ -52,13 +56,15 @@ button:disabled, .btn-next:disabled, .btn-back:disabled,
   box-shadow:0 6px 18px -8px rgba(15,23,42,.18);
 }
 
-/* ── Active press (universal) ───────────────────────────── */
+/* ── Active press (universal — applies to V4E buttons too;
+       scale comes from their own styles but we ensure brightness dim
+       and clean shadow on press). The V4E buttons declare their own
+       scale(.97) so this rule's translateY(0) is a no-op for them. */
 .btn-next:not(:disabled):active,
 .btn-back:not(:disabled):active,
 .btn-generate:not(:disabled):active,
-.btn-primary:not(:disabled):active,
+.btn-amber:not(:disabled):active,
 .btn-secondary:not(:disabled):active,
-.btn-success:not(:disabled):active,
 .btn-ghost:not(:disabled):active,
 .add-artist-btn:not(:disabled):active{
   transform:translateY(0) scale(.97);
@@ -71,9 +77,8 @@ button:disabled, .btn-next:disabled, .btn-back:disabled,
 .btn-next:focus-visible,
 .btn-back:focus-visible,
 .btn-generate:focus-visible,
-.btn-primary:focus-visible,
+.btn-amber:focus-visible,
 .btn-secondary:focus-visible,
-.btn-success:focus-visible,
 .btn-ghost:focus-visible,
 .add-artist-btn:focus-visible{
   outline:none;
@@ -81,12 +86,13 @@ button:disabled, .btn-next:disabled, .btn-back:disabled,
              0 8px 24px -10px rgba(15,23,42,.25);
 }
 
-/* ── Click ripple (lightweight, no JS) ──────────────────── */
-.btn-next, .btn-generate, .btn-primary, .btn-success{
+/* ── Click ripple (lightweight, no JS) — V4E buttons OMITTED
+       because their ::after slot is reserved for future use and the
+       sweep already provides the press feedback. */
+.btn-next, .btn-generate, .btn-amber{
   position:relative; overflow:hidden;
 }
-.btn-next::after, .btn-generate::after,
-.btn-primary::after, .btn-success::after{
+.btn-next::after, .btn-generate::after, .btn-amber::after{
   content:""; position:absolute; inset:0;
   background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),
               rgba(255,255,255,.45) 0%,
@@ -94,8 +100,7 @@ button:disabled, .btn-next:disabled, .btn-back:disabled,
   opacity:0; pointer-events:none;
   transition:opacity .5s ease;
 }
-.btn-next:active::after, .btn-generate:active::after,
-.btn-primary:active::after, .btn-success:active::after{
+.btn-next:active::after, .btn-generate:active::after, .btn-amber:active::after{
   opacity:1; transition:opacity 0s;
 }
 
@@ -109,7 +114,7 @@ button:disabled, .btn-next:disabled, .btn-back:disabled,
 
 /* ── Respect reduced motion ─────────────────────────────── */
 @media (prefers-reduced-motion: reduce){
-  .btn-next, .btn-back, .btn-generate, .btn-primary,
+  .btn-next, .btn-back, .btn-generate, .btn-amber, .btn-primary,
   .btn-secondary, .btn-success, .btn-ghost, .add-artist-btn,
   .remove-btn{
     transition:background-color .15s ease, color .15s ease,
