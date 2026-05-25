@@ -123,10 +123,19 @@
 .radio-card{
   position:relative;display:block;
   background:var(--surface-2);
-  border:.5px solid var(--hairline-strong);
+  border:1px solid var(--hairline-strong);
   border-radius:var(--r-sm);
   padding:12px 14px;cursor:pointer;
-  transition:.15s;
+  /* Explicit per-property transition so the halo and color don't
+     'pop' on iOS. Border-color + background fade in unison;
+     box-shadow grows slightly slower so the halo blooms after the
+     border has settled. */
+  transition:
+    background-color 200ms cubic-bezier(.4,0,.2,1),
+    border-color    200ms cubic-bezier(.4,0,.2,1),
+    box-shadow      260ms cubic-bezier(.4,0,.2,1),
+    color           200ms ease;
+  -webkit-tap-highlight-color:transparent;
 }
 .radio-card:hover{background:#fff;border-color:var(--ink-5)}
 .radio-card input{
@@ -135,6 +144,7 @@
 .radio-card .rc-label{
   font-size:13.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em;
   display:block;
+  transition:color 200ms ease;
 }
 .radio-card .rc-sub{
   display:block;font-size:11.5px;font-weight:500;color:var(--ink-4);margin-top:2px;
