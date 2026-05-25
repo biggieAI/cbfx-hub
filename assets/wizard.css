@@ -128,16 +128,19 @@
   padding:12px 14px;cursor:pointer;
   /* Explicit per-property transition so the halo and color don't
      'pop' on iOS. Border-color + background fade in unison;
-     box-shadow grows slightly slower so the halo blooms after the
-     border has settled. */
+     box-shadow + transform spring slightly slower so the halo blooms
+     and the card pops AFTER the border has settled — reads as
+     "decision confirmed" rather than "everything snapped at once". */
   transition:
     background-color 200ms cubic-bezier(.4,0,.2,1),
     border-color    200ms cubic-bezier(.4,0,.2,1),
-    box-shadow      260ms cubic-bezier(.4,0,.2,1),
+    box-shadow      280ms cubic-bezier(.4,0,.2,1),
+    transform       320ms cubic-bezier(.34, 1.56, .64, 1),
     color           200ms ease;
   -webkit-tap-highlight-color:transparent;
 }
 .radio-card:hover{background:#fff;border-color:var(--ink-5)}
+.radio-card:active{transform:scale(.98);transition-duration:60ms}
 .radio-card input{
   position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0;
 }
@@ -149,10 +152,18 @@
 .radio-card .rc-sub{
   display:block;font-size:11.5px;font-weight:500;color:var(--ink-4);margin-top:2px;
 }
+/* SELECTED — committed blue border (2px) + brighter halo + brief scale-pop
+   that lifts the card 2% to confirm the click landed. The bounce easing
+   on transform makes the pop feel intentional rather than glitchy. */
 .radio-card:has(input:checked){
   background:#fff;
   border-color:var(--blue);
-  box-shadow:0 0 0 3px var(--blue-soft);
+  border-width:2px;
+  padding:11px 13px;          /* compensate 1px for the thicker border so layout doesn't jump */
+  box-shadow:
+    0 0 0 4px rgba(37,87,255,.18),
+    0 6px 18px -8px rgba(37,87,255,.30);
+  transform:scale(1.015);
 }
 .radio-card:has(input:checked) .rc-label{color:var(--blue-2)}
 .radio-group-invalid .radio-card{border-color:var(--err)}
@@ -286,17 +297,18 @@
 .btn-back:active{transform:scale(.97)}
 
 /* V4E sweep applied to .btn-success — green-only gradient, no magenta core.
-   Intent stays color-coded: blue+magenta for primary, all-green for success. */
+   Green resting state. Sweep enriches with brighter green stops on hover.
+   Same firmer click feedback as .btn-primary. */
 .btn-success{
   position:relative;overflow:hidden;
   isolation:isolate;
   height:44px;border-radius:999px;padding:0 22px;border:0;
-  background:var(--ink-2);
+  background:var(--ok);
   color:#fff;font-family:inherit;font-weight:600;font-size:14px;
-  box-shadow:0 8px 24px -10px rgba(15,157,99,.45), inset 0 1px 0 rgba(255,255,255,.10);
+  box-shadow:0 8px 24px -10px rgba(15,157,99,.55), inset 0 1px 0 rgba(255,255,255,.18);
   cursor:pointer;display:inline-flex;align-items:center;gap:8px;
-  transition:transform 120ms cubic-bezier(.2,.7,.2,1),
-             box-shadow 200ms cubic-bezier(.2,.7,.2,1);
+  transition:transform 140ms cubic-bezier(.34, 1.56, .64, 1),
+             box-shadow 180ms cubic-bezier(.2,.7,.2,1);
   -webkit-tap-highlight-color:transparent;
   z-index:0;
 }
@@ -305,14 +317,14 @@
   content:"";position:absolute;
   top:0;left:0;width:100%;height:100%;
   transform:scaleX(0);transform-origin:0 50%;
-  /* All-green V4E gradient — animated background-position gives the
-     same "alive" feel as the primary, no magenta. */
+  /* Green resting underneath; sweep traverses through deeper green
+     stops and ends brighter to keep the motion visible. */
   background:linear-gradient(95deg,
-    #085a37 0%,
-    #0b7a4d 25%,
-    var(--ok) 50%,
-    #1bb377 75%,
-    #25c688 100%);
+    #0b7a4d 0%,
+    var(--ok) 25%,
+    #1bb377 50%,
+    #25c688 75%,
+    #3dd897 100%);
   background-size:200% 100%;
   background-position:100% 0;
   transition:transform 580ms cubic-bezier(.5,.05,.2,1),
@@ -326,7 +338,13 @@
   transform:scaleX(1);
   background-position:0% 0;
 }
-.btn-success:active:not(:disabled){transform:scale(.97);transition-duration:80ms}
+.btn-success:active:not(:disabled){
+  transform:scale(.94);
+  box-shadow:
+    0 2px 6px -2px rgba(15,157,99,.45),
+    inset 0 2px 8px rgba(15,23,42,.35);
+  transition-duration:60ms, 60ms;
+}
 .btn-success:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.6)}
 .btn-success:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(15,157,99,.30)}
 

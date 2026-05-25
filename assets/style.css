@@ -330,20 +330,21 @@ a.card:hover{
 
 /* ── Buttons (for downstream wizards) ───────────────────── */
 /* V4E sweep with magenta core (Option D) on .btn-primary.
-   Gradient slides position during fill so the colors shift inside the band.
-   Primary keeps a static dark base at rest (--ink-2) so the sweep reveals
-   on hover rather than just brightening an already-blue surface. */
+   Blue resting state. Hover sweep is a gradient enrichment that
+   passes a magenta core through the center. Press feedback is a
+   firmer scale (0.94) + brief inset shadow that reads as physical
+   depression — landed click, not a soft tap. */
 .btn-primary{
   position:relative;overflow:hidden;
   isolation:isolate;
   height:44px;border-radius:999px;padding:0 22px;border:0;
-  background:var(--ink-2);
+  background:var(--blue);
   color:#fff;font-family:inherit;font-weight:600;font-size:14px;letter-spacing:-.01em;
-  box-shadow:0 8px 24px -10px rgba(15,23,42,.45), inset 0 1px 0 rgba(255,255,255,.10);
+  box-shadow:0 8px 24px -10px rgba(37,87,255,.55), inset 0 1px 0 rgba(255,255,255,.18);
   cursor:pointer;
   display:inline-flex;align-items:center;gap:8px;
-  transition:transform 120ms cubic-bezier(.2,.7,.2,1),
-             box-shadow 200ms cubic-bezier(.2,.7,.2,1);
+  transition:transform 140ms cubic-bezier(.34, 1.56, .64, 1),
+             box-shadow 180ms cubic-bezier(.2,.7,.2,1);
   -webkit-tap-highlight-color:transparent;
   z-index:0;
 }
@@ -352,14 +353,16 @@ a.card:hover{
   content:"";position:absolute;
   top:0;left:0;width:100%;height:100%;
   transform:scaleX(0);transform-origin:0 50%;
-  /* V4E-D: blue-edged sweep with magenta core; cool indigo→violet→magenta→violet→blue */
+  /* V4E-D enrichment: blue resting underneath, sweep passes a magenta
+     core over it. Endpoints are brighter blue so the sweep stays
+     visible over the blue base. */
   background:linear-gradient(95deg,
     var(--blue-2) 0%,
-    var(--indigo) 22%,
-    var(--violet) 46%,
-    var(--magenta) 60%,
+    var(--indigo) 24%,
+    var(--violet) 48%,
+    var(--magenta) 62%,
     var(--violet) 78%,
-    var(--blue) 100%);
+    var(--blue-bright) 100%);
   background-size:200% 100%;
   background-position:100% 0;
   transition:transform 580ms cubic-bezier(.5,.05,.2,1),
@@ -373,9 +376,15 @@ a.card:hover{
   transform:scaleX(1);
   background-position:0% 0;
 }
-.btn-primary:active:not(:disabled){transform:scale(.97);transition-duration:80ms}
+.btn-primary:active:not(:disabled){
+  transform:scale(.94);
+  box-shadow:
+    0 2px 6px -2px rgba(37,87,255,.45),
+    inset 0 2px 8px rgba(15,23,42,.35);
+  transition-duration:60ms, 60ms;
+}
 .btn-primary:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.6)}
-.btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(109,58,217,.30)}
+.btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(37,87,255,.30)}
 
 .btn-secondary{
   height:44px;border-radius:999px;padding:0 22px;
