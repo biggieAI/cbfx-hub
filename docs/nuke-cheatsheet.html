@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuke Cheatsheet — CBFX Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/docs.css">
+<link rel="stylesheet" href="../assets/interactions.css">
+<style>
+  /* ── Cheatsheet-specific styling ──────────────────────────── */
+  .kbd{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;
+    background:var(--surface);color:var(--ink);
+    border:.5px solid var(--hairline-strong);
+    border-bottom-width:1.5px;
+    padding:2px 7px;border-radius:6px;
+    min-width:18px;text-align:center;
+    box-shadow:0 1px 0 rgba(15,23,42,.04);
+    white-space:nowrap;
+  }
+  .kbd-sep{
+    color:var(--ink-4);font-size:11px;margin:0 3px;font-weight:500;
+  }
+  .cs-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;
+    margin-top:6px;
+  }
+  @media (max-width:780px){.cs-grid{grid-template-columns:1fr}}
+  .cs-row{
+    display:grid;grid-template-columns:160px 1fr;gap:14px;
+    align-items:baseline;
+    padding:6px 0;
+    border-bottom:.5px solid var(--hairline);
+  }
+  .cs-row:last-child{border-bottom:0}
+  .cs-keys{
+    display:flex;flex-wrap:wrap;gap:4px;align-items:center;
+  }
+  .cs-desc{
+    font-size:13.5px;color:var(--ink-2);line-height:1.45;
+  }
+  .cs-desc strong{color:var(--ink);font-weight:600}
+  .cs-desc .mono{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    color:var(--blue);font-weight:600;
+  }
+  .gizmo-card{
+    background:var(--surface);border:.5px solid var(--hairline);
+    border-radius:10px;padding:12px 14px;
+  }
+  .gizmo-name{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;
+    color:var(--ink);margin-bottom:4px;
+  }
+  .gizmo-purpose{
+    font-size:12.5px;color:var(--ink-3);line-height:1.45;
+  }
+  .gizmo-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;
+    margin-top:6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-mark"><img src="../assets/logo.svg" alt=""></span>
+    <span class="topbar-brand">CBFX Hub</span>
+  </div>
+  <div class="cube-scene" aria-hidden="true">
+    <svg viewBox="0 0 200 54" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+      <defs>
+        <linearGradient id="g-ink" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0b1220" stop-opacity="0"/><stop offset="70%" stop-color="#0b1220" stop-opacity=".55"/><stop offset="92%" stop-color="#0b1220" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></linearGradient>
+        <linearGradient id="g-ink-soft" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5b6478" stop-opacity="0"/><stop offset="78%" stop-color="#5b6478" stop-opacity=".5"/><stop offset="100%" stop-color="#1f2740" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="g-blue" x1="60" y1="-34" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2557ff" stop-opacity="0"/><stop offset="80%" stop-color="#2557ff" stop-opacity=".6"/><stop offset="100%" stop-color="#5b8bff" stop-opacity="1"/></linearGradient>
+      </defs>
+      <g class="streak s1"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s2"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s3"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s4"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s5"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+      <g class="streak s6"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s7"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s8"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink)"/></g>
+      <g class="streak s9"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-ink-soft)"/></g>
+      <g class="streak s10"><line x1="0" y1="0" x2="60" y2="-34" stroke="url(#g-blue)"/></g>
+    </svg>
+  </div>
+</div>
+
+<div class="docs-wrap">
+
+  <div class="docs-header">
+    <div class="docs-eyebrow">
+      <a href="../index.html">CBFX Hub</a>
+      <span class="sep">›</span>
+      <span>Documentation</span>
+    </div>
+    <h1 class="docs-title">Nuke Cheatsheet</h1>
+    <p class="docs-sub">Hotkeys and CBFX gizmos worth memorizing. Organized by task. The shortcuts you'll use 50 times a day live at the top of each section.</p>
+    <div class="docs-meta">
+      <span class="docs-meta-item">Nuke<strong>16.0v8</strong></span>
+      <span class="docs-meta-item">Modifiers<strong>⌃ Ctrl · ⇧ Shift · ⌥ Alt</strong></span>
+      <span class="docs-meta-item">Platform<strong>Win / Linux</strong></span>
+    </div>
+  </div>
+
+  <nav class="docs-toc">
+    <div class="docs-toc-label">On this page</div>
+    <ul>
+      <li><a href="#navigation">Navigation &amp; Viewer</a></li>
+      <li><a href="#node-graph">Node Graph</a></li>
+      <li><a href="#channels">Channels &amp; Layers</a></li>
+      <li><a href="#transform">Transform &amp; 2D</a></li>
+      <li><a href="#color">Color</a></li>
+      <li><a href="#roto-paint">Roto &amp; Paint</a></li>
+      <li><a href="#tracking">Tracking</a></li>
+      <li><a href="#three-d">3D</a></li>
+      <li><a href="#render-script">Render &amp; Script</a></li>
+      <li><a href="#cbfx-gizmos">CBFX Gizmos</a></li>
+      <li><a href="#if-you-remember-nothing">If You Remember Nothing Else</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── NAVIGATION & VIEWER ───────────────────────────────── -->
+  <section class="docs-section" id="navigation">
+    <h2 class="docs-section-title">Navigation &amp; Viewer</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">F</span></div><div class="cs-desc"><strong>Fit</strong> selected node / viewer to frame</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Space</span></div><div class="cs-desc">Maximise pane under cursor (toggle)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">1</span><span class="kbd-sep">–</span><span class="kbd">9</span></div><div class="cs-desc">Connect Viewer input to selected node</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Tab</span></div><div class="cs-desc">Cycle Viewer A/B comparison wipe</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">,</span></div><div class="cs-desc">Cycle Viewer through last connected nodes</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">.</span></div><div class="cs-desc">Toggle <strong>proxy</strong> mode</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">⇧</span><span class="kbd-sep">+</span><span class="kbd">F</span></div><div class="cs-desc">Zoom to <strong>1:1</strong> in Viewer</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">~</span></div><div class="cs-desc">Toggle Viewer input process (LUT/gain bar)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">G</span></div><div class="cs-desc">Toggle <strong>gain</strong> readout</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">L</span></div><div class="cs-desc">Lock Viewer to current node (won't follow selection)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Alt</span><span class="kbd-sep">+drag</span></div><div class="cs-desc">Pan Viewer (or 2D canvas)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">⌘</span><span class="kbd-sep">/</span><span class="kbd">Ctrl</span></div><div class="cs-desc">Hold to scrub timeline by frame</div></div>
+    </div>
+  </section>
+
+  <!-- ── NODE GRAPH ─────────────────────────────────────────── -->
+  <section class="docs-section" id="node-graph">
+    <h2 class="docs-section-title">Node Graph</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Tab</span></div><div class="cs-desc">Open <strong>node creation search</strong> (most-used shortcut in Nuke)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">B</span></div><div class="cs-desc">Insert <span class="mono">Blur</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">M</span></div><div class="cs-desc">Insert <span class="mono">Merge</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">G</span></div><div class="cs-desc">Insert <span class="mono">Grade</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">C</span></div><div class="cs-desc">Insert <span class="mono">ColorCorrect</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">T</span></div><div class="cs-desc">Insert <span class="mono">Transform</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">R</span></div><div class="cs-desc">Insert <span class="mono">Read</span> (file load)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">W</span></div><div class="cs-desc">Insert <span class="mono">Write</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">N</span></div><div class="cs-desc">Insert <span class="mono">Roto</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">P</span></div><div class="cs-desc">Insert <span class="mono">RotoPaint</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">O</span></div><div class="cs-desc">Insert <span class="mono">Bezier</span> (legacy roto)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">D</span></div><div class="cs-desc"><strong>Disable</strong> selected node(s)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">X</span></div><div class="cs-desc">Connect / disconnect — toggle inputs</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">⇧</span><span class="kbd-sep">+</span><span class="kbd">X</span></div><div class="cs-desc">Swap A/B inputs on selected node (e.g. Merge)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">G</span></div><div class="cs-desc">Group selected nodes</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">Y</span></div><div class="cs-desc">Add <strong>Backdrop</strong> behind selection</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">L</span></div><div class="cs-desc">Auto-layout selected nodes vertically</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Alt</span><span class="kbd-sep">+drag</span></div><div class="cs-desc"><strong>Branch</strong> a node (clone connection)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">Shift</span><span class="kbd-sep">+drag</span></div><div class="cs-desc">Clone node (lives or dies with original)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">N</span><span class="kbd-sep">on graph</span></div><div class="cs-desc">Add <span class="mono">StickyNote</span> on empty area</div></div>
+    </div>
+  </section>
+
+  <!-- ── CHANNELS & LAYERS ──────────────────────────────────── -->
+  <section class="docs-section" id="channels">
+    <h2 class="docs-section-title">Channels &amp; Layers</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">A</span></div><div class="cs-desc">Show <strong>alpha</strong> in Viewer</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">R</span><span class="kbd-sep">/</span><span class="kbd">G</span><span class="kbd-sep">/</span><span class="kbd">B</span></div><div class="cs-desc">Solo R / G / B channel</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">M</span><span class="kbd-sep">in Viewer</span></div><div class="cs-desc">Show <strong>matte overlay</strong> (red mask over RGB)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">⇧</span><span class="kbd-sep">+</span><span class="kbd">M</span></div><div class="cs-desc">Toggle matte overlay color</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Y</span></div><div class="cs-desc">Show luminance / Y channel</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Z</span></div><div class="cs-desc">Show <strong>depth</strong> channel</div></div>
+    </div>
+    <div class="docs-callout info" style="margin-top:14px">
+      <div class="docs-callout-icon">→</div>
+      <div>For multi-channel EXRs, use <span class="mono">Shuffle</span> (or <span class="mono">Shuffle2</span> in Nuke 13+) to remap layers. Never use <span class="mono">Copy</span> for channel work — it loses metadata.</div>
+    </div>
+  </section>
+
+  <!-- ── TRANSFORM ──────────────────────────────────────────── -->
+  <section class="docs-section" id="transform">
+    <h2 class="docs-section-title">Transform &amp; 2D</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">T</span></div><div class="cs-desc">Insert <span class="mono">Transform</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">⇧</span><span class="kbd-sep">+</span><span class="kbd">T</span></div><div class="cs-desc">Insert <span class="mono">TransformMasked</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+drag handle</span></div><div class="cs-desc">Scale uniformly from center</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Shift</span><span class="kbd-sep">+drag handle</span></div><div class="cs-desc">Constrain to single axis</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">E</span></div><div class="cs-desc">Set <strong>keyframe</strong> on current value</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">E</span></div><div class="cs-desc">Remove keyframe at current frame</div></div>
+    </div>
+    <div class="docs-callout warn" style="margin-top:14px">
+      <div class="docs-callout-icon">!</div>
+      <div>Always check <strong>filter</strong> on <span class="mono">Transform</span> nodes. Default is <span class="mono">Cubic</span> — for high-frequency detail use <span class="mono">Lanczos4</span> or <span class="mono">Sinc4</span>. Never use <span class="mono">Impulse</span> for final.</div>
+    </div>
+  </section>
+
+  <!-- ── COLOR ──────────────────────────────────────────────── -->
+  <section class="docs-section" id="color">
+    <h2 class="docs-section-title">Color</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">G</span></div><div class="cs-desc">Insert <span class="mono">Grade</span> (gamma/gain/lift/offset)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">C</span></div><div class="cs-desc">Insert <span class="mono">ColorCorrect</span> (master/shadows/mid/hi)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+click</span></div><div class="cs-desc">Sample color from Viewer into a knob's color picker</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">Shift</span><span class="kbd-sep">+click</span></div><div class="cs-desc">Sample <strong>area average</strong> from Viewer</div></div>
+    </div>
+    <div class="docs-callout info" style="margin-top:14px">
+      <div class="docs-callout-icon">→</div>
+      <div>All comp work is in <strong>ACEScg (AP1)</strong>. Set Read node colorspace to the camera IDT, not "linear". See the <a href="color-pipeline.html">Color Pipeline Reference</a>.</div>
+    </div>
+  </section>
+
+  <!-- ── ROTO & PAINT ───────────────────────────────────────── -->
+  <section class="docs-section" id="roto-paint">
+    <h2 class="docs-section-title">Roto &amp; Paint</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">N</span></div><div class="cs-desc">Insert <span class="mono">Roto</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">P</span></div><div class="cs-desc">Insert <span class="mono">RotoPaint</span></div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Z</span></div><div class="cs-desc">Pen tool (Bezier add point)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">V</span></div><div class="cs-desc">Selection / cusp tool</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">E</span></div><div class="cs-desc">Eraser (RotoPaint)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">B</span></div><div class="cs-desc">Brush (RotoPaint)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">C</span></div><div class="cs-desc">Clone brush (RotoPaint)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Shift</span><span class="kbd-sep">+drag</span></div><div class="cs-desc">Constrain stroke to axis</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">[</span><span class="kbd-sep">/</span><span class="kbd">]</span></div><div class="cs-desc">Decrease / increase brush size</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">Alt</span><span class="kbd-sep">+click</span></div><div class="cs-desc">Set clone source point</div></div>
+    </div>
+  </section>
+
+  <!-- ── TRACKING ───────────────────────────────────────────── -->
+  <section class="docs-section" id="tracking">
+    <h2 class="docs-section-title">Tracking</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">→</span></div><div class="cs-desc">Step forward 1 frame while tracking</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">↑</span><span class="kbd-sep">/</span><span class="kbd">↓</span></div><div class="cs-desc">Adjust pattern search size</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">⇧</span><span class="kbd-sep">+click</span></div><div class="cs-desc">Add additional tracker point</div></div>
+    </div>
+    <div class="docs-callout info" style="margin-top:14px">
+      <div class="docs-callout-icon">→</div>
+      <div>For Tracker → Transform: bake to <strong>match-move</strong> output. For stabilize: bake to <strong>stabilize</strong> and check the inverse rotation/scale doesn't crop the plate. CornerPin2D for screen replacements.</div>
+    </div>
+  </section>
+
+  <!-- ── 3D ─────────────────────────────────────────────────── -->
+  <section class="docs-section" id="three-d">
+    <h2 class="docs-section-title">3D Workspace</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Tab</span><span class="kbd-sep">in Viewer</span></div><div class="cs-desc">Toggle 2D ↔ 3D viewer</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Alt</span><span class="kbd-sep">+LMB</span></div><div class="cs-desc">Orbit 3D camera</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Alt</span><span class="kbd-sep">+MMB</span></div><div class="cs-desc">Pan 3D camera</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Alt</span><span class="kbd-sep">+RMB</span></div><div class="cs-desc">Dolly 3D camera</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">F</span></div><div class="cs-desc">Frame selected geometry</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">A</span></div><div class="cs-desc">Frame <strong>all</strong> geometry</div></div>
+    </div>
+  </section>
+
+  <!-- ── RENDER & SCRIPT ────────────────────────────────────── -->
+  <section class="docs-section" id="render-script">
+    <h2 class="docs-section-title">Render &amp; Script</h2>
+    <div class="cs-grid">
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">S</span></div><div class="cs-desc">Save script</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">⇧</span><span class="kbd-sep">+</span><span class="kbd">S</span></div><div class="cs-desc">Save as…</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">F5</span></div><div class="cs-desc">Reload all Read nodes from disk</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">F6</span></div><div class="cs-desc">Reload <strong>selected</strong> Read nodes</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">F8</span></div><div class="cs-desc">Flipbook viewer output (RAM disk)</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">Ctrl</span><span class="kbd-sep">+</span><span class="kbd">⇧</span><span class="kbd-sep">+</span><span class="kbd">F8</span></div><div class="cs-desc">Render-and-flipbook selected Write</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">F10</span></div><div class="cs-desc">Open render dialog for selected Write</div></div>
+      <div class="cs-row"><div class="cs-keys"><span class="kbd">/</span></div><div class="cs-desc">Open <strong>script editor</strong> command line</div></div>
+    </div>
+    <div class="docs-callout warn" style="margin-top:14px">
+      <div class="docs-callout-icon">!</div>
+      <div>Submit final renders via <strong>Deadline Cloud</strong>, never local F10. Local renders bypass farm tracking, version locking, and the chunking pipeline.</div>
+    </div>
+  </section>
+
+  <!-- ── CBFX GIZMOS ────────────────────────────────────────── -->
+  <section class="docs-section" id="cbfx-gizmos">
+    <h2 class="docs-section-title">CBFX Gizmos</h2>
+    <p>Studio-built gizmos available in the toolbar under <strong>CBFX ›</strong>. Source lives in <span class="mono">tk-config-cbfx v3.0.0</span>. File a Support Ticket if a gizmo misbehaves — don't fork locally.</p>
+
+    <h3 style="margin-top:18px;margin-bottom:6px;font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.02em">Read &amp; Setup</h3>
+    <div class="gizmo-grid">
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_Read</div><div class="gizmo-purpose">Read wrapper that auto-resolves colorspace from filename + show OCIO config.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_ShotSetup</div><div class="gizmo-purpose">One-click frame range + format + colorspace from ShotGrid shot context.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_PlateLoader</div><div class="gizmo-purpose">Drops in main plate, latest matchmove, and reference EXRs in a labeled backdrop.</div></div>
+    </div>
+
+    <h3 style="margin-top:18px;margin-bottom:6px;font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.02em">Comp Utilities</h3>
+    <div class="gizmo-grid">
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_Despill</div><div class="gizmo-purpose">Channel-isolated despill with edge protection. Replaces stock IBKColor for green/blue keys.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_EdgeBlend</div><div class="gizmo-purpose">Soft edge re-integration after key/roto. Premult-aware.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_LightWrap</div><div class="gizmo-purpose">Studio light-wrap recipe. Driven by BG light direction + intensity.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_Grain</div><div class="gizmo-purpose">Show-specific grain profiles. Picks the right plate match from the show config.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_LensDistort</div><div class="gizmo-purpose">Wrapper around LensDistortion with cached STMaps. ⌥+click to re-cache.</div></div>
+    </div>
+
+    <h3 style="margin-top:18px;margin-bottom:6px;font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.02em">QC &amp; Review</h3>
+    <div class="gizmo-grid">
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_QC</div><div class="gizmo-purpose">Edge / matte / black-level / alpha / NaN sanity strip. Drop near a Write to bake into review.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_Slate</div><div class="gizmo-purpose">Auto-slate from ShotGrid context: shot, version, frame, artist, date.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_ReviewBurnin</div><div class="gizmo-purpose">Timecode + frame counter + version stamp. Used for internal review only.</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_NaNCheck</div><div class="gizmo-purpose">Flags NaN / Inf pixels. Mandatory on any render-bound branch.</div></div>
+    </div>
+
+    <h3 style="margin-top:18px;margin-bottom:6px;font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.02em">Delivery</h3>
+    <div class="gizmo-grid">
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_Write</div><div class="gizmo-purpose">Write wrapper with the studio EXR settings (compression, bit depth, multichannel, ACES metadata).</div></div>
+      <div class="gizmo-card"><div class="gizmo-name">CBFX_Deliver</div><div class="gizmo-purpose">End-of-comp delivery branch. Picks the right ODT + bake settings per delivery type.</div></div>
+    </div>
+  </section>
+
+  <!-- ── KEY TAKEAWAYS ──────────────────────────────────────── -->
+  <section class="docs-section" id="if-you-remember-nothing">
+    <h2 class="docs-section-title">If You Remember Nothing Else</h2>
+    <ul>
+      <li><strong>Tab</strong> — node creation search. Live in it.</li>
+      <li><strong>D</strong> — disable. Faster than re-routing pipes to debug.</li>
+      <li><strong>F</strong> — fit. Works in Viewer and node graph. Constant use.</li>
+      <li><strong>1–9</strong> — Viewer inputs. Slam between A/B comparisons with <strong>Tab</strong>.</li>
+      <li><strong>E</strong> — keyframe at current frame. Animate without opening the curve editor.</li>
+      <li><strong>Ctrl + Y</strong> — backdrop. Tag what you build so future-you doesn't curse present-you.</li>
+      <li><strong>F8</strong> — flipbook. Always flipbook before submitting; the Viewer lies about playback.</li>
+      <li>Always use <strong>CBFX_Write</strong> on delivery branches. Stock Write nodes will pass QC and then fail at studio QC.</li>
+    </ul>
+  </section>
+
+  <div class="docs-footer">
+    <span class="docs-footer-brand">CBFX · Internal Use Only</span>
+    <span class="docs-footer-meta">Last updated 2026-05-25</span>
+  </div>
+
+</div>
+
+<script src="../assets/docs-toc.js"></script>
+</body>
+</html>
